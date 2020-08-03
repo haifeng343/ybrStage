@@ -56,7 +56,24 @@
                 console.log(this.content);
                 console.log(this.html);
                 this.$message.success('提交成功！');
+            },
+            setUserInfo(){
+                this.$store.state.userInfo = {
+                    name:'张三',
+                    age:'23',
+                    gender:'男'
+                }
             }
+        },
+        mounted(){
+            this.setUserInfo();
+            // 通过query传递的参数，不会因为刷新消失，但是会在头部显示
+            console.log(this.$route.query);
+            this.content = JSON.stringify(this.$route.query);
+            // 通过params传递，会因为刷新而消失传递参数，不会在头部显示
+            // console.log(this.$route.params);
+            // this.content = JSON.stringify(this.$route.params);
+             console.log(this.$store.state) 
         }
     }
 </script>

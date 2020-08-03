@@ -8,7 +8,13 @@ import 'element-ui/lib/theme-chalk/index.css'; // 默认主题
 // import './assets/css/theme-green/index.css'; // 浅绿色主题
 import './assets/css/icon.css';
 import './components/common/directives';
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import axios from 'axios'
+import '../src/assets/css/main.css'
 import 'babel-polyfill';
+import store from '../src/store.js'
+import $ from 'jquery'
 
 Vue.config.productionTip = false;
 Vue.use(VueI18n);
@@ -19,6 +25,17 @@ const i18n = new VueI18n({
     locale: 'zh',
     messages
 });
+
+// 指定请求地址
+axios.defaults.baseURL = 'https://api.ybrshop.com';
+// 拦截器,保证拥有获取数据的权限
+axios.interceptors.request.use(config=>{
+  config.headers.Authorization = window.localStorage.getItem('token');
+  return config
+})
+// 封装全局axios
+Vue.prototype.$http = axios;
+
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
@@ -44,5 +61,6 @@ router.beforeEach((to, from, next) => {
 new Vue({
     router,
     i18n,
+    store,
     render: h => h(App)
 }).$mount('#app');

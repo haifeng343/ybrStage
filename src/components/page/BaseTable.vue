@@ -1,39 +1,40 @@
 <template>
     <div>
-        <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 基础表格
-                </el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
-        <div class="container">
-            <div class="handle-box">
-                <el-button
-                    type="primary"
-                    icon="el-icon-delete"
-                    class="handle-del mr10"
-                    @click="delAllSelection"
-                >批量删除</el-button>
-                <el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
-                    <el-option key="1" label="广东省" value="广东省"></el-option>
-                    <el-option key="2" label="湖南省" value="湖南省"></el-option>
-                </el-select>
-                <el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
-                <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
-            </div>
+        <!-- 卡片视图 -->
+        <el-card>
+            <!-- 搜索添加区域 -->
+            <el-row :gutter="20">
+                <el-col :span="5">
+                    <el-input
+                        placeholder="请输入内容"
+                        v-model="keyword"
+                        clearable
+                        ref="mark"
+                        @clear="getData"
+                        class="input-with-select"
+                    >
+                        <el-button slot="append" type="primary" icon="el-icon-search"></el-button>
+                    </el-input>
+                </el-col>
+                <el-col :span="4">
+                    <el-button type="primary" @click="add">添加用户</el-button>
+                </el-col>
+            </el-row>
+
+            <!-- 数据表格 -->
             <el-table
                 :data="tableData"
                 border
                 class="table"
-                ref="multipleTable"
-                header-cell-class-name="table-header"
+                height="700"
+                :header-cell-style="{background:'#fff',color:'#606266'}"
+                :row-class-name="tableRowClassName"
                 @selection-change="handleSelectionChange"
             >
-                <el-table-column type="selection" width="55" align="center"></el-table-column>
+                <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="name" label="用户名"></el-table-column>
-                <el-table-column label="账户余额">
+                <el-table-column prop="name" label="用户名" align="center"></el-table-column>
+                <el-table-column label="账户余额" align="center">
                     <template slot-scope="scope">￥{{scope.row.money}}</template>
                 </el-table-column>
                 <el-table-column label="头像(查看大图)" align="center">
@@ -45,7 +46,7 @@
                         ></el-image>
                     </template>
                 </el-table-column>
-                <el-table-column prop="address" label="地址"></el-table-column>
+                <el-table-column prop="address" label="地址" align="center"></el-table-column>
                 <el-table-column label="状态" align="center">
                     <template slot-scope="scope">
                         <el-tag
@@ -54,166 +55,410 @@
                     </template>
                 </el-table-column>
 
-                <el-table-column prop="date" label="注册时间"></el-table-column>
-                <el-table-column label="操作" width="180" align="center">
+                <el-table-column prop="date" align="center" label="注册时间"></el-table-column>
+                <el-table-column label="操作" width="280" align="center" fixed="right">
                     <template slot-scope="scope">
                         <el-button
-                            type="text"
+                            size="mini"
+                            type="success"
                             icon="el-icon-edit"
                             @click="handleEdit(scope.$index, scope.row)"
-                        >编辑</el-button>
+                        ></el-button>
+                        <el-tooltip content="状态编辑" :enterable="false" placement="top">
+                            <el-button
+                                size="mini"
+                                type="warning"
+                                icon="el-icon-edit-outline"
+                                @click="handleEdit(scope.$index, scope.row)"
+                            ></el-button>
+                        </el-tooltip>
+                        <el-tooltip content="跳转详情" :enterable="false" placement="top">
+                            <el-button
+                                size="mini"
+                                type="warning"
+                                icon="el-icon-price-tag"
+                                @click="handleDrag(scope.$index, scope.row)"
+                            ></el-button>
+                        </el-tooltip>
                         <el-button
-                            type="text"
+                            size="mini"
+                            type="danger"
                             icon="el-icon-delete"
-                            class="red"
                             @click="handleDelete(scope.$index, scope.row)"
-                        >删除</el-button>
+                        ></el-button>
                     </template>
                 </el-table-column>
             </el-table>
-            <div class="pagination">
-                <el-pagination
-                    background
-                    layout="total, prev, pager, next"
-                    :current-page="query.pageIndex"
-                    :page-size="query.pageSize"
-                    :total="pageTotal"
-                    @current-change="handlePageChange"
-                ></el-pagination>
-            </div>
-        </div>
 
-        <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px">
-                <el-form-item label="用户名">
-                    <el-input v-model="form.name"></el-input>
-                </el-form-item>
-                <el-form-item label="地址">
-                    <el-input v-model="form.address"></el-input>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
-            </span>
-        </el-dialog>
+            <!-- 分页 -->
+            <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="pageIndex"
+                :page-sizes="[10, 20, 30, 40,50]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="400"
+            ></el-pagination>
+
+            <!-- 添加用户 -->
+            <el-dialog
+                title="新增用户"
+                :visible.sync="addDialogVisible"
+                width="50%"
+                @close="addDialogClosed"
+            >
+                <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
+                    <el-form-item label="用户名" prop="name">
+                        <el-input v-model="addForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="pwd">
+                        <el-input type="password" v-model="addForm.pwd"></el-input>
+                    </el-form-item>
+                    <el-form-item label="邮箱" prop="email">
+                        <el-input v-model="addForm.email"></el-input>
+                    </el-form-item>
+                    <el-form-item label="手机号" prop="mobile">
+                        <el-input type="number" v-model="addForm.mobile"></el-input>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogClosed">取 消</el-button>
+                    <el-button type="primary" @click="addSubmitForm('addForm')">确 定</el-button>
+                </span>
+            </el-dialog>
+
+            <!-- 修改用户 -->
+            <el-dialog
+                title="修改用户"
+                :visible.sync="editDialogVisible"
+                width="50%"
+                @close="editDialogClosed"
+            >
+                <el-form
+                    :model="editForm"
+                    :rules="editFormRules"
+                    ref="editFormRef"
+                    label-width="70px"
+                >
+                    <el-form-item label="用户名" prop="name">
+                        <el-input v-model="editForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="pwd">
+                        <el-input type="password" v-model="editForm.pwd"></el-input>
+                    </el-form-item>
+                    <el-form-item label="邮箱" prop="email">
+                        <el-input v-model="editForm.email"></el-input>
+                    </el-form-item>
+                    <el-form-item label="手机号" prop="mobile">
+                        <el-input type="number" v-model="editForm.mobile"></el-input>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="editDialogClosed">取 消</el-button>
+                    <el-button type="primary" @click="editSubmitForm('editForm')">确 定</el-button>
+                </span>
+            </el-dialog>
+        </el-card>
     </div>
 </template>
-
 <script>
-import { fetchData } from '../../api/index';
 export default {
-    name: 'basetable',
     data() {
+        // 校验邮箱
+        var checkEmail = (rule, value, cb) => {
+            const regEmail = /^\w+((.\w+)|(-\w+))@[A-Za-z0-9]+((.|-)[A-Za-z0-9]+).[A-Za-z0-9]+$/;
+            if (regEmail.test(value)) {
+                return cb();
+            }
+            cb(new Error('请输入合法的邮箱'));
+        };
+        // 校验手机号
+        var checkMobile = (rule, value, cb) => {
+            const regMbole = /^(13[0-9]|14[579]|15[0-3,5-9]|17[0135678]|18[0-9])\d{8}$/;
+            if (regMbole.test(value)) {
+                return cb();
+            }
+            cb(new Error('请输入正确的手机号'));
+        };
         return {
-            query: {
-                address: '',
+            loading: true,
+            name: '2',
+            keyword: '',
+            addForm: {
                 name: '',
-                pageIndex: 1,
-                pageSize: 10
+                email: '',
+                mobile: '',
+                pwd: ''
             },
-            tableData: [],
-            multipleSelection: [],
-            delList: [],
-            editVisible: false,
-            pageTotal: 0,
-            form: {},
-            idx: -1,
-            id: -1
+            addFormRules: {
+                name: [
+                    { required: true, trigger: 'blur', message: '请输入用户名' },
+                    { min: 3, max: 10, message: '用户名长度在3到10个字符之间' }
+                ],
+                pwd: [{ required: true, trigger: 'blur', message: '请输入密码' }],
+                email: [
+                    { required: true, trigger: 'blur', message: '请输入邮箱' },
+                    { validator: checkEmail, trigger: 'blur' }
+                ],
+                mobile: [
+                    { required: true, trigger: 'blur', message: '请输入手机号' },
+                    { validator: checkMobile, trigger: 'blur' }
+                ]
+            },
+            addDialogVisible: false, //添加对话框的显示隐藏
+
+            editForm: {
+                name: '',
+                email: '',
+                mobile: '',
+                pwd: ''
+            },
+            editFormRules: {
+                name: [
+                    { required: true, trigger: 'blur', message: '请输入用户名' },
+                    { min: 2, max: 10, message: '用户名长度在2到10个字符之间' }
+                ],
+                pwd: [{ required: true, trigger: 'blur', message: '请输入密码' }],
+                email: [
+                    { required: true, trigger: 'blur', message: '请输入邮箱' },
+                    { validator: checkEmail, trigger: 'blur' }
+                ],
+                mobile: [
+                    { required: true, trigger: 'blur', message: '请输入手机号' },
+                    { validator: checkMobile, trigger: 'blur' }
+                ]
+            },
+            editDialogVisible: false, //添加对话框的显示隐藏
+            pageIndex: 1,
+            pageSize: 10,
+            tableData: [
+                {
+                    id: 1,
+                    name: '张丹',
+                    money: 1245.4,
+                    thumb:
+                        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596175086941&di=1295a56df3fd7adeb0432262a1377772&imgtype=0&src=http%3A%2F%2Fp2.so.qhimgs1.com%2Ft01dfcbc38578dac4c2.jpg',
+                    address: '上海市浦东区',
+                    state: '成功',
+                    date: '2020-04-28'
+                },
+                {
+                    id: 2,
+                    name: '老师',
+                    money: 321.4,
+                    thumb:
+                        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596175086940&di=8561b6c6b958abf8b5f93e2de23a42ab&imgtype=0&src=http%3A%2F%2Fa.hiphotos.baidu.com%2Fzhidao%2Fpic%2Fitem%2Fcc11728b4710b912d81c7b33c3fdfc0393452219.jpg',
+                    address: '上海市浦东新区',
+                    state: '未审核',
+                    date: '2020-05-12'
+                },
+                {
+                    id: 3,
+                    name: '老师',
+                    money: 321.4,
+                    thumb:
+                        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596175086940&di=8561b6c6b958abf8b5f93e2de23a42ab&imgtype=0&src=http%3A%2F%2Fa.hiphotos.baidu.com%2Fzhidao%2Fpic%2Fitem%2Fcc11728b4710b912d81c7b33c3fdfc0393452219.jpg',
+                    address: '上海市浦东新区',
+                    state: '失败',
+                    date: '2020-05-12'
+                },
+                {
+                    id: 4,
+                    name: '老师',
+                    money: 321.4,
+                    thumb:
+                        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596175086940&di=8561b6c6b958abf8b5f93e2de23a42ab&imgtype=0&src=http%3A%2F%2Fa.hiphotos.baidu.com%2Fzhidao%2Fpic%2Fitem%2Fcc11728b4710b912d81c7b33c3fdfc0393452219.jpg',
+                    address: '上海市浦东新区',
+                    state: '成功',
+                    date: '2020-05-12'
+                },
+                {
+                    id: 5,
+                    name: '张丹',
+                    money: 1245.4,
+                    thumb:
+                        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596175086941&di=1295a56df3fd7adeb0432262a1377772&imgtype=0&src=http%3A%2F%2Fp2.so.qhimgs1.com%2Ft01dfcbc38578dac4c2.jpg',
+                    address: '上海市浦东区',
+                    state: '成功',
+                    date: '2020-04-28'
+                },
+                {
+                    id: 6,
+                    name: '老师',
+                    money: 321.4,
+                    thumb:
+                        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596175086940&di=8561b6c6b958abf8b5f93e2de23a42ab&imgtype=0&src=http%3A%2F%2Fa.hiphotos.baidu.com%2Fzhidao%2Fpic%2Fitem%2Fcc11728b4710b912d81c7b33c3fdfc0393452219.jpg',
+                    address: '上海市浦东新区',
+                    state: '未审核',
+                    date: '2020-05-12'
+                },
+                {
+                    id: 7,
+                    name: '老师',
+                    money: 321.4,
+                    thumb:
+                        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596175086940&di=8561b6c6b958abf8b5f93e2de23a42ab&imgtype=0&src=http%3A%2F%2Fa.hiphotos.baidu.com%2Fzhidao%2Fpic%2Fitem%2Fcc11728b4710b912d81c7b33c3fdfc0393452219.jpg',
+                    address: '上海市浦东新区',
+                    state: '失败',
+                    date: '2020-05-12'
+                },
+                {
+                    id: 8,
+                    name: '老师',
+                    money: 321.4,
+                    thumb:
+                        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596175086940&di=8561b6c6b958abf8b5f93e2de23a42ab&imgtype=0&src=http%3A%2F%2Fa.hiphotos.baidu.com%2Fzhidao%2Fpic%2Fitem%2Fcc11728b4710b912d81c7b33c3fdfc0393452219.jpg',
+                    address: '上海市浦东新区',
+                    state: '成功',
+                    date: '2020-05-12'
+                },
+                {
+                    id: 9,
+                    name: '张丹',
+                    money: 1245.4,
+                    thumb:
+                        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596175086941&di=1295a56df3fd7adeb0432262a1377772&imgtype=0&src=http%3A%2F%2Fp2.so.qhimgs1.com%2Ft01dfcbc38578dac4c2.jpg',
+                    address: '上海市浦东区',
+                    state: '成功',
+                    date: '2020-04-28'
+                },
+                {
+                    id: 10,
+                    name: '老师',
+                    money: 321.4,
+                    thumb:
+                        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596175086940&di=8561b6c6b958abf8b5f93e2de23a42ab&imgtype=0&src=http%3A%2F%2Fa.hiphotos.baidu.com%2Fzhidao%2Fpic%2Fitem%2Fcc11728b4710b912d81c7b33c3fdfc0393452219.jpg',
+                    address: '上海市浦东新区',
+                    state: '未审核',
+                    date: '2020-05-12'
+                }
+            ]
         };
     },
     created() {
         this.getData();
     },
     methods: {
-        // 获取 easy-mock 的模拟数据
-        getData() {
-            fetchData(this.query).then(res => {
-                console.log(res);
-                this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
+        handleSelectionChange(e) {
+            console.log(e);
+        },
+        handleDrag(item) {
+            // 参数会在头部拼接
+            this.$router.push({
+                query: {
+                    id: 1,
+                    name: 'zhangsan'
+                },
+                path: '/markdown'
             });
+            // 参数不会在头部显示
+            // this.$router.push({
+            //   name:'markdown',
+            //   params:{
+            //     name:'zhangsan',
+            //     id:'1'
+            //   }
+            // })
         },
-        // 触发搜索按钮
-        handleSearch() {
-            this.$set(this.query, 'pageIndex', 1);
-            this.getData();
+        tableRowClassName({ row }) {
+            if (row.state === '失败') {
+                return 'warning-row';
+            } else if (row.state === '成功') {
+                return 'success-row';
+            }
+            return '';
         },
-        // 删除操作
-        handleDelete(index, row) {
-            // 二次确认删除
-            this.$confirm('确定要删除吗？', '提示', {
+        // 监听 pagesize 改变事件
+        handleSizeChange(val) {
+            this.pageSize = val;
+        },
+        // 监听页码值改变的事件
+        handleCurrentChange(val) {
+            this.pageIndex = val;
+        },
+        // 添加
+        add() {
+            this.addDialogVisible = true;
+            // console.log(this.$refs.childRef.getData)//调用子组件的属性和方法
+        },
+        // 编辑
+        edit(item) {
+            console.log(item);
+            this.editForm = {
+                name: item.name,
+                pwd: item.id,
+                email: item.email,
+                mobile: item.mobile
+            };
+            this.editDialogVisible = true;
+        },
+        // 删除
+        deleted(item) {
+            this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
                 type: 'warning'
             })
                 .then(() => {
-                    this.$message.success('删除成功');
-                    this.tableData.splice(index, 1);
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                    this.getData();
                 })
-                .catch(() => {});
+                .catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
         },
-        // 多选操作
-        handleSelectionChange(val) {
-            this.multipleSelection = val;
+        // 当前状态改变的时候
+        swichChange(item) {},
+        // 获取数据
+        getData() {
+            setTimeout(() => {
+                this.loading = false;
+            }, 1000);
         },
-        delAllSelection() {
-            const length = this.multipleSelection.length;
-            let str = '';
-            this.delList = this.delList.concat(this.multipleSelection);
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
-            }
-            this.$message.error(`删除了${str}`);
-            this.multipleSelection = [];
+        // 提交校验
+        addSubmitForm(formName) {
+            this.$refs.addFormRef.validate((valid) => {
+                if (valid) {
+                    this.addDialogVisible = false;
+                    this.getData();
+                }
+            });
         },
-        // 编辑操作
-        handleEdit(index, row) {
-            this.idx = index;
-            this.form = row;
-            this.editVisible = true;
+        // 关闭弹窗
+        addDialogClosed() {
+            this.$refs.addFormRef.resetFields();
+            this.addDialogVisible = false;
         },
-        // 保存编辑
-        saveEdit() {
-            this.editVisible = false;
-            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-            this.$set(this.tableData, this.idx, this.form);
+
+        // 提交校验
+        editSubmitForm(formName) {
+            this.$refs.editFormRef.validate((valid) => {
+                if (valid) {
+                    this.editDialogVisible = false;
+                    this.getData();
+                }
+            });
         },
-        // 分页导航
-        handlePageChange(val) {
-            this.$set(this.query, 'pageIndex', val);
-            this.getData();
+        // 关闭弹窗
+        editDialogClosed() {
+            this.editForm = {
+                name: '',
+                email: '',
+                mobile: '',
+                pwd: ''
+            };
+            this.$refs.editFormRef.resetFields();
+            this.editDialogVisible = false;
         }
     }
 };
 </script>
-
 <style scoped>
-.handle-box {
-    margin-bottom: 20px;
-}
-
-.handle-select {
-    width: 120px;
-}
-
-.handle-input {
-    width: 300px;
-    display: inline-block;
-}
-.table {
-    width: 100%;
-    font-size: 14px;
-}
-.red {
-    color: #ff0000;
-}
-.mr10 {
-    margin-right: 10px;
-}
-.table-td-thumb {
-    display: block;
-    margin: auto;
-    width: 40px;
-    height: 40px;
-}
 </style>

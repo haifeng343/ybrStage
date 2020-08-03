@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 module.exports = {
     baseUrl: './',
     assetsDir: 'static',
@@ -5,12 +6,21 @@ module.exports = {
     // devServer: {
     //     proxy: {
     //         '/api':{
-    //             target:'http://jsonplaceholder.typicode.com',
+    //             target:'http://localhost:8080',
     //             changeOrigin:true,
     //             pathRewrite:{
     //                 '/api':''
     //             }
     //         }
     //     }
-    // }
+    // },
+    configureWebpack:{
+        plugins:[
+            new webpack.ProvidePlugin({
+                $:'jquery',
+                jQuery:'jQuery',
+                "windows.jQuery":'jquery'
+            })
+        ]
+    }
 }
