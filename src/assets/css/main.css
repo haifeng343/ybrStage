@@ -340,6 +340,7 @@ body,
 .el-menu--inline {
     background: #293057;
     padding: 10px 0;
+    text-align: center;
 }
 .is-active .el-submenu__title{
     color: #fff;
