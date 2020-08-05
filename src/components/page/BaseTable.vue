@@ -115,10 +115,10 @@
                     <el-form-item label="密码" prop="pwd">
                         <el-input type="password" v-model="addForm.pwd"></el-input>
                     </el-form-item>
-                    <el-form-item label="邮箱" prop="email">
+                    <el-form-item label="邮箱" prop="email" :status-icon="true">
                         <el-input v-model="addForm.email"></el-input>
                     </el-form-item>
-                    <el-form-item label="手机号" prop="mobile">
+                    <el-form-item label="手机号" prop="mobile" :status-icon="true">
                         <el-input type="number" v-model="addForm.mobile"></el-input>
                     </el-form-item>
                 </el-form>

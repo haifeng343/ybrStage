@@ -21,22 +21,29 @@
                     v-if="showId == 2"
                 >
                     <el-form-item prop="username">
-                        <el-input v-model="param.username" class="input1" placeholder="username"></el-input>
+                        <el-input
+                            v-model="param.username"
+                            :class="['input1',param.username!==''?'selectd':'']"
+                            placeholder="username"
+                        ></el-input>
+                        <img src="../../assets/img/user.png" class="imgBg" alt />
                     </el-form-item>
                     <el-form-item prop="password">
                         <el-input
-                            class="input1"
+                            :class="['input1',param.password!==''?'selectd':'']"
                             type="password"
                             placeholder="password"
                             v-model="param.password"
                             @keyup.enter.native="submitForm()"
                         ></el-input>
+                        <img src="../../assets/img/suo.png" class="imgBg" alt />
                     </el-form-item>
                     <div class="drag">
                         <div class="drag_bg"></div>
                         <div class="drag_text">{{confirmWords}}</div>
                         <div @mousedown="mousedownFn($event)" class="handler handler_bg">
-                            <i class="el-icon-d-arrow-right"></i>
+                            <i class="el-icon-d-arrow-right" v-if="!confirmSuccess"></i>
+                            <i class="el-icon-circle-check kpl" v-else></i>
                         </div>
                     </div>
                     <div class="login-btn">
@@ -85,8 +92,8 @@ export default {
                 password: '000000'
             },
             rules: {
-                username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-                password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+                username: [{ required: true, message: '请输入用户名', trigger: 'change' }],
+                password: [{ required: true, message: '请输入密码', trigger: 'change' }]
             },
             beginClientX: 0,
             /*距离屏幕左端距离*/
@@ -103,6 +110,8 @@ export default {
     methods: {
         // 设置选中菜单
         setNav(Id) {
+            this.mouseMoveStata = false;
+            this.beginClientX = 0;
             this.showId = Id;
             let tempArr = this.nav;
             tempArr.forEach((item) => {
@@ -121,6 +130,8 @@ export default {
         },
         // 设置当前选中的扫码/账号登录
         setActive() {
+            this.mouseMoveStata = false;
+            this.beginClientX = 0;
             if (this.showId == 1) {
                 this.showId = 2;
                 this.img1 = require('../../assets/img/pc.png');
@@ -179,22 +190,20 @@ export default {
             this.beginClientX = e.clientX;
         }, //按下滑块函数
         successFunction() {
-            $('.handler').removeClass('handler_bg').addClass('handler_ok_bg');
+            $('.handler').removeClass('handler_bg').addClass('handler_ok_bg').css({
+                left: this.maxwidth
+            });
             this.confirmWords = '验证通过';
             $('.drag').css({
                 'background-color': '#fff ',
                 color: '#333'
-            });
-            $('.handler').css({
-                left: this.maxwidth
             });
             $('.drag_text').css({ color: '#fff' });
             $('.handler_ok_bg').css({ 'background-color': '#fff ', color: '#5d81f4 ' });
             $('.drag_bg').css({
                 width: this.maxwidth
             });
-            $('body').unbind('mousemove');
-            $('body').unbind('mouseup');
+            $('body').unbind('mousemove').unbind('mouseup');
             this.confirmSuccess = true;
         }
     },
@@ -203,6 +212,7 @@ export default {
             //拖动，这里需要用箭头函数，不然this的指向不会是vue对象
             if (this.mouseMoveStata) {
                 var width = e.clientX - this.beginClientX;
+                console.log(width);
                 if (width > 0 && width <= this.maxwidth) {
                     $('.handler').css({
                         left: width
@@ -233,16 +243,36 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.el-input--small .el-input__inner {
+    padding-left: 35px !important;
+}
 .el-input--small {
     height: 40px !important;
+}
+.el-form-item--small .el-form-item__content,
+.el-form-item--small .el-form-item__label {
+    height: 32px;
+    position: relative;
+}
+.imgBg {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-63%);
+    z-index: 2;
+    left: 4px;
 }
 // div >>> .el-input > input {
 //     height: 40px;
 // }
 .login-wrap {
     position: relative;
+
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
     width: 100%;
-    height: 100%;
+    height: 890px;
     background-image: url(../../assets/img/login_bg.png);
     background-size: 100%;
 }
@@ -307,6 +337,7 @@ export default {
 .login-btn {
     text-align: center;
 }
+
 .login-btn button {
     width: 100%;
     height: 36px;
@@ -337,6 +368,9 @@ export default {
     font-size: 14px;
     font-weight: 400;
     color: rgba(112, 115, 126, 1);
+}
+.kpl {
+    color: #5d81f4;
 }
 .drag {
     border-radius: 6px;
@@ -402,5 +436,13 @@ export default {
     user-select: none;
     -o-user-select: none;
     -ms-user-select: none;
+}
+</style>
+<style>
+.input1 .el-input__inner {
+    padding-left: 35px !important;
+}
+.selectd > input {
+    border: 1px solid #5d81f4  !important;
 }
 </style>

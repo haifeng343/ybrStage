@@ -3,10 +3,7 @@
     padding: 0;
 }
 
-html,
-body,
-#app,
-.wrapper {
+html, body, #app, .wrapper {
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -20,7 +17,6 @@ body {
 a {
     text-decoration: none
 }
-
 
 /* 头部导航栏 */
 
@@ -59,7 +55,6 @@ a {
     background: transparent;
 }
 
-
 /* 侧边导航栏 */
 
 .sidebar-el-menu {
@@ -84,7 +79,6 @@ a {
     color: #8094BF;
 }
 
-
 /* .el-menu-item:hover {
     background: red;
 }
@@ -101,15 +95,13 @@ a {
     background: #38406A;
 }
 
-.el-submenu__title i,
-.el-menu-item i {
+.el-submenu__title i, .el-menu-item i {
     color: #8094BF;
 }
 
 .is-active {
     color: #fff;
 }
-
 
 /* 头部进度条 */
 
@@ -182,16 +174,13 @@ a {
     margin-bottom: 20px;
 }
 
-.move-enter-active,
-.move-leave-active {
+.move-enter-active, .move-leave-active {
     transition: opacity .5s;
 }
 
-.move-enter,
-.move-leave {
+.move-enter, .move-leave {
     opacity: 0;
 }
-
 
 /*BaseForm*/
 
@@ -203,15 +192,13 @@ a {
     text-align: center;
 }
 
-.el-time-panel__content::after,
-.el-time-panel__content::before {
+.el-time-panel__content::after, .el-time-panel__content::before {
     margin-top: -7px;
 }
 
 .el-time-spinner__wrapper .el-scrollbar__wrap:not(.el-scrollbar__wrap--hidden-default) {
     padding-bottom: 0;
 }
-
 
 /*Upload*/
 
@@ -258,7 +245,6 @@ a {
     font-style: normal;
 }
 
-
 /*VueEditor*/
 
 .ql-container {
@@ -273,12 +259,9 @@ a {
     margin-top: 20px;
 }
 
-
 /*markdown*/
 
-html,
-body,
-#app {
+html, body, #app {
     margin: 0;
     padding: 0;
     height: 100%;
@@ -305,8 +288,7 @@ body,
     margin-top: 15px;
 }
 
-.el-table td,
-.el-table th {
+.el-table td, .el-table th {
     text-align: center;
 }
 
@@ -314,8 +296,7 @@ body,
     white-space: nowrap!important;
 }
 
-.el-table td,
-.el-table td {
+.el-table td, .el-table td {
     white-space: nowrap!important;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -342,7 +323,8 @@ body,
     padding: 10px 0;
     text-align: center;
 }
-.is-active .el-submenu__title{
+
+.is-active .el-submenu__title {
     color: #fff;
 }
 
@@ -363,12 +345,15 @@ body,
 .el-menu-item.is-active:hover {
     background-color: #FA483A !important;
 }
+
 /* .el-submenu {
     margin: 4px 0;
 } */
-.sidebar .el-menu li.is-active .el-menu--inline .el-menu-item{
+
+.sidebar .el-menu li.is-active .el-menu--inline .el-menu-item {
     text-align: center;
 }
+
 .el-menu .el-menu-item:first-child {
     margin-top: 24px;
     height: 38px;
@@ -380,7 +365,6 @@ body,
 .ybr-submenu .el-menu-item:first-child {
     margin: 4px 0!important;
 }
-
 
 .ybr-submenu .el-menu--inline .el-menu-item .is-active {
     margin: 0!important;
@@ -400,8 +384,7 @@ body,
     padding-left: 10px;
 }
 
-ul,
-ol {
+ul, ol {
     list-style-type: none;
 }
 
@@ -421,7 +404,6 @@ ol {
     width: 30px;
 }
 
-
 /*打开时文字位置设置*/
 
 .el-switch__label--right {
@@ -430,7 +412,6 @@ ol {
     top: 0.5px;
 }
 
-
 /*关闭时文字位置设置*/
 
 .el-switch__label--left {
@@ -438,7 +419,6 @@ ol {
     left: 12px;
     top: 0.5px;
 }
-
 
 /*显示文字*/
 
@@ -460,7 +440,6 @@ ol {
 .el-loading-spinner .el-loading-text {
     color: #fff;
 }
-
 
 /* 头部进度条 */
 
@@ -571,17 +550,57 @@ ol {
     border: 1px solid #DCDFE6;
 }
 
-.sidebar-el-menu,
-.el-menu {
+.sidebar-el-menu, .el-menu {
     z-index: 999;
 }
 
-input:-internal-autofill-previewed,
-input:-internal-autofill-selected {
+input:-internal-autofill-previewed, input:-internal-autofill-selected {
     -webkit-text-fill-color: #333;
     transition: background-color 5000s ease-out 0.5s;
 }
 
 .el-submenu__icon-arrow {
     right: 60px!important;
+}
+
+.selectd>input {
+    border: 1px solid #5d81f4 !important;
+}
+
+.el-form-item__error {
+    color: orange!important;
+}
+
+.is-error input {
+    border: 1px solid orange!important;
+}
+
+.el-form-item.is-required:not(.is-no-asterisk) .el-form-item__label-wrap>.el-form-item__label:before, .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
+    color: orange!important;
+}
+
+.is-success input {
+    border: 1px solid #67c23a!important;
+    position: relative;
+}
+
+.is-success .el-form-item__content .el-input::before {
+    content: ""!important;
+    width: 20px;
+    height: 20px;
+    color: #67c23a;
+    z-index: 999;
+    position: absolute;
+    right: 10px;
+}
+
+.el-form-item--small .el-form-item__content, .el-form-item--small .el-form-item__label {
+    position: relative;
+}
+
+.el-form-item.is-required:not(.is-no-asterisk) .el-form-item__label-wrap>.el-form-item__label:before, .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
+    position: absolute;
+    top: 56%;
+    left: 0;
+    transform: translateY(-50%);
 }
