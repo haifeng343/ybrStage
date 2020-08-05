@@ -81,25 +81,31 @@ const router = new Router({
                     component: () => import(/* webpackChunkName: "permission" */ '../components/page/Permission.vue'),
                     meta: { title: '权限测试', permission: true }
                 },
+                {
+                    path: '/404',
+                    name:'404',
+                    component: () => import(/* webpackChunkName: "404" */ '../components/page/404.vue'),
+                    meta: { title: '404' }
+                },
+                {
+                    path: '/403',
+                    name:'403',
+                    component: () => import(/* webpackChunkName: "403" */ '../components/page/403.vue'),
+                    meta: { title: '403' }
+                },
                 
             ]
         },
         {
             path: '/login',
-            component: () => import(/* webpackChunkName: "login" */ '../components/page/Login.vue'),
+            component: () => import('../components/page/Login.vue'),
             meta: { title: '登录' }
         },
         {
-            path: '/404',
-            name:'404',
-            component: () => import(/* webpackChunkName: "404" */ '../components/page/404.vue'),
-            meta: { title: '404' }
-        },
-        {
-            path: '/403',
-            name:'403',
-            component: () => import(/* webpackChunkName: "403" */ '../components/page/403.vue'),
-            meta: { title: '403' }
+            path: '/forget',
+            name:'forget',
+            component: () => import('../components/page/forget.vue'),
+            meta: { title: '忘记密码' }
         },
         {
             path: '*',

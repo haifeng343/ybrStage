@@ -1,11 +1,13 @@
 <template>
     <div class="header">
+        <div class="logo">
+            <img class="logo1" src="../../assets/img/logo1.png" alt="">
+        </div>
         <!-- 折叠按钮 -->
-        <div class="collapse-btn" @click="collapseChage">
+        <!-- <div class="collapse-btn" @click="collapseChage">
             <i v-if="!collapse" class="el-icon-s-fold"></i>
             <i v-else class="el-icon-s-unfold"></i>
-        </div>
-        <div class="logo">后台管理系统</div>
+        </div> -->
         <div class="header-right">
             <div class="header-user-con">
                 <!-- 全屏显示 -->
@@ -35,7 +37,7 @@
                 <el-dropdown class="user-name" trigger="click" @command="handleCommand">
                     <span class="el-dropdown-link">
                         {{username}}
-                        <i class="el-icon-caret-bottom"></i>
+                        <i class="el-icon-arrow-down"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
                         <a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
@@ -56,7 +58,8 @@ export default {
             collapse: false,
             fullscreen: false,
             name: 'linxin',
-            message: 2
+            message: 2,
+            toggle:false
         };
     },
     computed: {
@@ -72,6 +75,7 @@ export default {
                 localStorage.removeItem('ms_username');
                 this.$router.push('/login');
             }
+            this.toggle = !this.toggle;
         },
         // 侧边栏折叠
         collapseChage() {
@@ -120,7 +124,6 @@ export default {
     width: 100%;
     height: 70px;
     font-size: 22px;
-    color: #fff;
 }
 .collapse-btn {
     float: left;
@@ -166,9 +169,6 @@ export default {
     background: #f56c6c;
     color: #fff;
 }
-.btn-bell .el-icon-bell {
-    color: #fff;
-}
 .user-name {
     margin-left: 10px;
 }
@@ -181,10 +181,7 @@ export default {
     height: 40px;
     border-radius: 50%;
 }
-.el-dropdown-link {
-    color: #fff;
-    cursor: pointer;
-}
+
 .el-dropdown-menu__item {
     text-align: center;
 }

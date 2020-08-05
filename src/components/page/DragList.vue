@@ -111,6 +111,9 @@
                 console.log(event);
                 this.$message.success(`从 ${event.from.id} 移动到 ${event.to.id} `);
             }
+        },
+        destroyed(){
+            console.log(this.todo,this.doing,this.done)
         }
     }
 

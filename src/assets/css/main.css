@@ -10,6 +10,7 @@ body,
     width: 100%;
     height: 100%;
     overflow: hidden;
+    font-family: PingFangSC-Regular, PingFang SC;
 }
 
 body {
@@ -19,16 +20,112 @@ body {
 a {
     text-decoration: none
 }
-  /* 头部进度条 */
-  #nprogress .bar {
-    background: green!important; 
-  }
+
+
+/* 头部导航栏 */
+
+.header {
+    background: rgba(248, 249, 253, 1);
+    box-shadow: 0px 2px 20px 0px rgba(204, 211, 239, 1);
+    color: #5A6978;
+}
+
+.btn-bell .el-icon-bell {
+    color: #5A6978;
+}
+
+.el-dropdown-link {
+    color: #5A6978;
+    cursor: pointer;
+}
+
+.header .logo1 {
+    width: 145px;
+    height: 54px;
+}
+
+.header .logo {
+    display: flex;
+    height: 70px;
+    align-items: center;
+    justify-content: center;
+}
+
+.collapse-btn {
+    color: #5A6978;
+}
+
+.collapse-btn:hover {
+    background: transparent;
+}
+
+
+/* 侧边导航栏 */
+
+.sidebar-el-menu {
+    background: #323961;
+    color: #8094BF;
+}
+
+.el-submenu__title {
+    color: #8094BF;
+}
+
+.el-menu-item.is-active {
+    background: #FA483A;
+    color: #fff!important;
+}
+
+.is-active {
+    color: #fff!important;
+}
+
+.el-menu-item {
+    color: #8094BF;
+}
+
+
+/* .el-menu-item:hover {
+    background: red;
+}
+
+.is-opened {
+    background: green;
+}
+
+.el-submenu:hover {
+    background: orange;
+} */
+
+.el-menu {
+    background: #38406A;
+}
+
+.el-submenu__title i,
+.el-menu-item i {
+    color: #8094BF;
+}
+
+.is-active {
+    color: #fff;
+}
+
+
+/* 头部进度条 */
+
+#nprogress .bar {
+    background: green!important;
+}
+
+.el-menu--inline li.el-menu-item {
+    padding-left: 0px!important;
+}
 
 .content-box {
     position: absolute;
-    left: 250px;
+    left: 200px;
     right: 0;
-    top: 70px;
+    top: 80px;
     bottom: 0;
     padding-bottom: 30px;
     -webkit-transition: left .3s ease-in-out;
@@ -95,6 +192,7 @@ a {
     opacity: 0;
 }
 
+
 /*BaseForm*/
 
 .form-box {
@@ -113,6 +211,7 @@ a {
 .el-time-spinner__wrapper .el-scrollbar__wrap:not(.el-scrollbar__wrap--hidden-default) {
     padding-bottom: 0;
 }
+
 
 /*Upload*/
 
@@ -159,6 +258,7 @@ a {
     font-style: normal;
 }
 
+
 /*VueEditor*/
 
 .ql-container {
@@ -173,116 +273,216 @@ a {
     margin-top: 20px;
 }
 
+
 /*markdown*/
+
 html,
 body,
-#app{
+#app {
     margin: 0;
     padding: 0;
     height: 100%;
     min-width: 1200px;
-    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
 
-.el-breadcrumb{
+.el-breadcrumb {
     margin-bottom: 15px;
     font-size: 12px;
 }
 
-.el-card{
+.el-card {
     height: 80%;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15)!important;
 }
-.el-table{
+
+.el-table {
     font-size: 14px;
     margin-top: 15px;
 }
-.el-pagination{
+
+.el-pagination {
     margin-top: 15px;
 }
 
-.el-table td,.el-table th{
+.el-table td,
+.el-table th {
     text-align: center;
 }
-.el-table .cell{
-  white-space: nowrap!important;
-}
-.el-table td,.el-table td{
-  white-space: nowrap!important;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.el-submenu .el-menu-item{
-    padding: 0;
+
+.el-table .cell {
+    white-space: nowrap!important;
 }
 
-.el-submenu__title{
+.el-table td,
+.el-table td {
+    white-space: nowrap!important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.el-submenu__title {
+    height: 38px;
+    margin: 4px 0;
+    line-height: 38px;
+}
+
+.el-submenu .el-menu-item {
+    padding: 0;
+    height: 38px;
+    line-height: 38px;
+}
+
+.el-menu-item .is-active {
+    margin: 4px 0;
+}
+
+.el-menu--inline {
+    background: #293057;
+    padding: 10px 0;
+}
+.is-active .el-submenu__title{
+    color: #fff;
+}
+
+.ybr-submenu .is-active .is-opened>.el-submenu__title {
+    color: #fff;
+}
+
+.el-submenu__title:hover {
+    background-color: transparent !important;
+    color: #fff;
+}
+
+.el-menu-item:hover {
+    background-color: transparent !important;
+    color: #fff;
+}
+
+.el-menu-item.is-active:hover {
+    background-color: #FA483A !important;
+}
+/* .el-submenu {
+    margin: 4px 0;
+} */
+.sidebar .el-menu li.is-active .el-menu--inline .el-menu-item{
+    text-align: center;
+}
+.el-menu .el-menu-item:first-child {
+    margin-top: 24px;
+    height: 38px;
+    line-height: 38px;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+.ybr-submenu .el-menu-item:first-child {
+    margin: 4px 0!important;
+}
+
+
+.ybr-submenu .el-menu--inline .el-menu-item .is-active {
+    margin: 0!important;
+}
+
+.el-menu .el-menu-item {
+    height: 38px;
+    line-height: 38px;
+    margin: 4px 0;
+}
+
+.sidebar .el-menu li.is-active .el-menu--inline .el-menu-item {
+    margin: 4px 0;
+}
+
+.el-submenu__title {
     padding-left: 10px;
 }
-ul,ol{
-  list-style-type: none;
+
+ul,
+ol {
+    list-style-type: none;
 }
-.el-menu--horizontal>.el-submenu.is-active .el-submenu__title{
+
+.el-menu--horizontal>.el-submenu.is-active .el-submenu__title {
     border-bottom: transparent;
-  }
+}
+
 .el-switch__label {
     position: absolute;
     display: none;
     font-size: 11px !important;
     color: #fff!important;
-  }
-  .el-switch__label *{
+}
+
+.el-switch__label * {
     font-size: 11px !important;
     width: 30px;
-  }
-  /*打开时文字位置设置*/
-  .el-switch__label--right {
+}
+
+
+/*打开时文字位置设置*/
+
+.el-switch__label--right {
     z-index: 1;
     right: 12px;
     top: 0.5px;
-  }
-  /*关闭时文字位置设置*/
-  .el-switch__label--left {
+}
+
+
+/*关闭时文字位置设置*/
+
+.el-switch__label--left {
     z-index: 1;
-    left: 12px; 
+    left: 12px;
     top: 0.5px;
-  }
-  /*显示文字*/
-  .el-switch__label.is-active {
+}
+
+
+/*显示文字*/
+
+.el-switch__label.is-active {
     display: block;
-  }
-  .el-switch__core {
+}
+
+.el-switch__core {
     width: 45px;
     height: 22px;
     border: 2px solid #DCDFE6;
     border-radius: 13px;
-  }
+}
 
-  .el-loading-spinner i{
-      color: #fff;
-  }
-  .el-loading-spinner .el-loading-text{
-      color: #fff;
-  }
-  /* 头部进度条 */
-  #nprogress .bar {
-    background: green; 
-  }
-  .el-tag{
+.el-loading-spinner i {
+    color: #fff;
+}
+
+.el-loading-spinner .el-loading-text {
+    color: #fff;
+}
+
+
+/* 头部进度条 */
+
+#nprogress .bar {
+    background: green;
+}
+
+.el-tag {
     margin: 10px 0;
     height: 28px;
     line-height: 28px;
     font-size: 12px;
     margin-left: 10px;
-  }
+}
 
-  .el-table .warning-row {
+.el-table .warning-row {
     background: oldlace;
 }
 
 .el-table .success-row {
     background: #f0f9eb;
 }
+
 .handle-box {
     margin-bottom: 20px;
 }
@@ -295,16 +495,20 @@ ul,ol{
     width: 300px;
     display: inline-block;
 }
+
 .table {
     width: 100%;
     font-size: 14px;
 }
+
 .red {
     color: #ff0000;
 }
+
 .mr10 {
     margin-right: 10px;
 }
+
 .table-td-thumb {
     display: block;
     margin: auto;
@@ -317,8 +521,9 @@ ul,ol{
     background-color: #42b983!important;
     border-radius: 0!important;
     position: relative;
-  }
-  .tags-li.active::after{
+}
+
+.tags-li.active::after {
     position: absolute;
     content: '';
     width: 6px;
@@ -328,35 +533,54 @@ ul,ol{
     left: 3px;
     top: 50%;
     transform: translateY(-50%);
-  }
-  .tags-li{
+}
+
+.tags-li {
     border-radius: 0!important;
-  }
-  .tags-li-title{
+}
+
+.tags-li-title {
     max-width: 1000px!important;
-  }
-  .el-button--primary{
+}
+
+.el-button--primary {
     background: #fff!important;
     color: #666!important;
     border-color: #e9eaec!important;
-  }
-  .tags-close-box{
+}
+
+.tags-close-box {
     width: 96px!important;
-  }
-  .el-table .warning-row {
+}
+
+.el-table .warning-row {
     background: oldlace;
-  }
-  
-  .el-table .success-row {
+}
+
+.el-table .success-row {
     background: #f0f9eb;
-  }
-  .el-pagination{
+}
+
+.el-pagination {
     display: flex;
     justify-content: center;
-  }
-  .el-input-group__append button.el-button{
-      border: 1px solid #DCDFE6 ;
-  }
-  .sidebar-el-menu,.el-menu{
+}
+
+.el-input-group__append button.el-button {
+    border: 1px solid #DCDFE6;
+}
+
+.sidebar-el-menu,
+.el-menu {
     z-index: 999;
-  }
+}
+
+input:-internal-autofill-previewed,
+input:-internal-autofill-selected {
+    -webkit-text-fill-color: #333;
+    transition: background-color 5000s ease-out 0.5s;
+}
+
+.el-submenu__icon-arrow {
+    right: 60px!important;
+}

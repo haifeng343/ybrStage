@@ -11,7 +11,6 @@
                 >{{item.name}}</p>
             </div>
             <img :src="img1" class="code" @click="setActive" alt />
-            <transition name="el-fade-in">
                 <el-form
                     :model="param"
                     :rules="rules"
@@ -43,26 +42,16 @@
                         <el-button type="primary" @click="submitForm()">登录</el-button>
                     </div>
                     <div class="noHas">
-                        <!-- <p @click="goForget">忘记密码？</p>
-                        <p>还没有账号</p>-->
+                        <p>返回登录</p>
                     </div>
                 </el-form>
-                <div class="saoCode" v-if="showId == 1">
-                    <img
-                        class="img2"
-                        src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596537032864&di=19df71a3bc3c00a0f64fff0e0c5aa6e3&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F01%2F37%2F17%2F96573c3f71ecd2f.jpg"
-                        alt
-                    />
-                    <p class="tips">请使用钉钉扫描二维码登录</p>
-                    <p class="tips">“SAAS样本库追溯平台”</p>
-                </div>
-            </transition>
         </div>
     </div>
 </template>
 
 <script>
 export default {
+  name:'forget',
     data: function () {
         return {
             showId: 2, //1扫码登录 2账户登录
@@ -116,7 +105,6 @@ export default {
                 this.img1 = require('../../assets/img/code.png');
             } else {
                 this.img1 = require('../../assets/img/pc.png');
-                this.confirmSuccess = false;
             }
         },
         // 设置当前选中的扫码/账号登录
@@ -124,7 +112,6 @@ export default {
             if (this.showId == 1) {
                 this.showId = 2;
                 this.img1 = require('../../assets/img/pc.png');
-                this.confirmSuccess = false;
             } else {
                 this.showId = 1;
                 this.img1 = require('../../assets/img/code.png');
@@ -137,10 +124,6 @@ export default {
                     item.active = false;
                 }
             });
-        },
-        // 忘记密码
-        goForget() {
-            this.$router.push({ name: 'forget' });
         },
         submitForm() {
             this.$refs.login.validate((valid) => {
@@ -199,6 +182,7 @@ export default {
         }
     },
     mounted() {
+      console.log(22222222222)
         $('body').on('mousemove', (e) => {
             //拖动，这里需要用箭头函数，不然this的指向不会是vue对象
             if (this.mouseMoveStata) {
@@ -232,13 +216,13 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style scoped>
 .el-input--small {
     height: 40px !important;
 }
-// div >>> .el-input > input {
-//     height: 40px;
-// }
+div >>> .el-input > input {
+    height: 40px;
+}
 .login-wrap {
     position: relative;
     width: 100%;
@@ -358,9 +342,6 @@ export default {
     justify-content: space-between;
     font-size: 14px;
     color: #353845;
-}
-.noHas p {
-    cursor: pointer;
 }
 .handler {
     position: absolute;

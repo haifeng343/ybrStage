@@ -1,5 +1,5 @@
 <template>
-    <div class="div1">
+    <div class="error-page">
         <!-- <div class="error-code">4<span>0</span>4</div>
       <div class="error-desc">啊哦~ 你所访问的页面不存在</div>
       <div class="error-handle">
@@ -8,15 +8,15 @@
           </router-link>
           <el-button class="error-btn" type="primary" size="large" @click="goBack">返回上一页</el-button>
         </div>-->
-        <!-- <img src="../../assets/img/404.gif" class="img1" alt="">
+        <img src="../../assets/img/404.gif" class="img1" alt="">
        <div class="error-handle">
           <router-link to="/">
             <el-button type="primary" size="large">返回首页</el-button>
           </router-link>
           <el-button class="error-btn" type="primary" size="large" @click="goBack">返回上一页</el-button>
-        </div>-->
+        </div>
 
-        <div class="rail">
+        <!-- <div class="rail">
             <div class="stamp four">4</div>
             <div class="stamp zero">0</div>
             <div class="stamp four">4</div>
@@ -49,7 +49,7 @@
                     <div class="wall"></div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
