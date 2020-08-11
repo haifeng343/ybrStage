@@ -93,6 +93,7 @@
         },
         created(){
             this.cropImg = this.defaultSrc;
+            console.log(this.$store.state)
         }
     }
 </script>

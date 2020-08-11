@@ -27,15 +27,45 @@ const i18n = new VueI18n({
 });
 
 // 指定请求地址
-axios.defaults.baseURL = 'https://api.ybrshop.com';
+axios.defaults.baseURL = 'https://sapi.ybrshop.com';
 // 拦截器,保证拥有获取数据的权限
-axios.interceptors.request.use(config=>{
-  config.headers.Authorization = window.localStorage.getItem('token');
-  return config
+axios.interceptors.request.use(config => {
+    config.headers.Authorization = window.localStorage.getItem('token');
+    return config
 })
 // 封装全局axios
 Vue.prototype.$http = axios;
 
+
+// http response 拦截器
+axios.interceptors.response.use(response => {
+    if (response.status === 200) {
+        return Promise.resolve(response);
+    } else {
+        return Promise.reject(response);
+    }
+}, error => {
+    if (error.response.status) {
+        switch (error.response.status) {
+            case 403:
+                router.replace({
+                    path: '/403',
+                    query: {
+                        redirect: router.currentRoute.fullPath
+                    }
+                });
+                break;
+            case 404:
+                router.replace({
+                    path: '/404',
+                    query: {
+                        redirect: router.currentRoute.fullPath
+                    }
+                });
+                break;
+        }
+    }
+})
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {

@@ -88,8 +88,8 @@ export default {
                 }
             ],
             param: {
-                username: 'admin',
-                password: '000000'
+                username: 'test',
+                password: '123456'
             },
             rules: {
                 username: [{ required: true, message: '请输入用户名', trigger: 'change' }],
@@ -158,14 +158,16 @@ export default {
                 if (valid) {
                     if (this.confirmSuccess == true) {
                         this.$http
-                            .post('/api/xkspc/login', {
+                            .post('/api/saas_pc/login', {
                                 user: this.param.username,
-                                pwd: this.param.password
+                                pazz: this.param.password
                             })
                             .then((res) => {
                                 if (res.data.success == true) {
                                     this.$message.success('登录成功');
-                                    localStorage.setItem('ms_username', this.param.username);
+                                    this.$store.state.userInfo = res.data.result;
+                                    localStorage.setItem('userInfo', JSON.stringify(res.data.result));
+                                    localStorage.setItem('ms_username', res.data.result.username);
                                     this.$router.push('/');
                                 } else {
                                     this.$message.error(res.data.message);
@@ -212,7 +214,6 @@ export default {
             //拖动，这里需要用箭头函数，不然this的指向不会是vue对象
             if (this.mouseMoveStata) {
                 var width = e.clientX - this.beginClientX;
-                console.log(width);
                 if (width > 0 && width <= this.maxwidth) {
                     $('.handler').css({
                         left: width

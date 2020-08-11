@@ -166,7 +166,30 @@ export default {
                             title: '404页面'
                         }
                     ]
-                }
+                },
+                {
+                    icon: 'el-icon-setting',
+                    index: '8',
+                    title: '系统管理',
+                    subs: [
+                        {
+                            index: 'userInfo',
+                            title: '用户管理'
+                        },
+                        {
+                            index: 'role',
+                            title: '角色管理'
+                        },
+                        {
+                            index: 'department',
+                            title: '部门管理'
+                        },
+                        {
+                            index: 'power',
+                            title: '权限管理'
+                        }
+                    ]
+                },
             ]
         };
     },
