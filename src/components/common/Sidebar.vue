@@ -9,40 +9,37 @@
         >
             <template v-for="item in items">
                 <template v-if="item.subs">
-                    <el-submenu :index="item.index" :key="item.index" class="ybr-submenu">
+                    <el-submenu :index="item.url" :key="item.num" class="ybr-submenu">
                         <template slot="title">
                             <i :class="item.icon"></i>
                             <span slot="title">{{ item.title }}</span>
                         </template>
                         <template v-for="subItem in item.subs">
-                            <el-submenu
-                                v-if="subItem.subs"
-                                :index="subItem.index"
-                                :key="subItem.index"
-                            >
+                            <el-submenu v-if="subItem.subs" :index="subItem.url" :key="subItem.num">
                                 <template slot="title">{{ subItem.title }}</template>
                                 <el-menu-item
                                     v-for="(threeItem,i) in subItem.subs"
                                     :key="i"
-                                    :index="threeItem.index"
+                                    :index="threeItem.url"
                                 >{{ threeItem.title }}</el-menu-item>
                             </el-submenu>
                             <el-menu-item
                                 v-else
-                                :index="subItem.index"
-                                :key="subItem.index"
+                                :index="subItem.url"
+                                :key="subItem.num"
                             >{{ subItem.title }}</el-menu-item>
                         </template>
                     </el-submenu>
                 </template>
                 <template v-else>
-                    <el-menu-item :index="item.index" :key="item.index">
+                    <el-menu-item :index="item.url" :key="item.num">
                         <i :class="item.icon"></i>
                         <span slot="title">{{ item.title }}</span>
                     </el-menu-item>
                 </template>
             </template>
         </el-menu>
+
         <!-- <div class="sidebar">
             <ul class="ybr-menu">
                 <li class="ybr-menu-item active">
@@ -67,7 +64,7 @@
                     </div>
                 </li>
             </ul>
-        </div> -->
+        </div>-->
     </div>
 </template>
 
@@ -80,116 +77,43 @@ export default {
             items: [
                 {
                     icon: 'el-icon-lx-home',
-                    index: 'dashboard',
+                    url: 'dashboard',
                     title: '系统首页'
                 },
                 {
-                    icon: 'el-icon-lx-cascades',
-                    index: 'table',
-                    title: '基础表格'
-                },
-                // {
-                //     icon: 'el-icon-lx-copy',
-                //     index: 'tabs',
-                //     title: 'tab选项卡'
-                // },
-                {
-                    icon: 'el-icon-lx-calendar',
-                    index: '3',
-                    title: '表单相关',
-                    subs: [
-                        // {
-                        //     index: 'form',
-                        //     title: '基本表单'
-                        // },
-                        // {
-                        //     index: '3-2',
-                        //     title: '三级菜单',
-                        //     subs: [
-                        //         {
-                        //             index: 'editor',
-                        //             title: '富文本编辑器'
-                        //         },
-                        //         {
-                        //             index: 'markdown',
-                        //             title: 'markdown编辑器'
-                        //         }
-                        //     ]
-                        // },
-                        {
-                            index: 'upload',
-                            title: '文件上传'
-                        }
-                    ]
-                },
-                // {
-                //     icon: 'el-icon-lx-emoji',
-                //     index: 'icon',
-                //     title: '自定义图标'
-                // },
-                // {
-                //     icon: 'el-icon-pie-chart',
-                //     index: 'charts',
-                //     title: 'schart图表'
-                // },
-                {
-                    icon: 'el-icon-rank',
-                    index: '6',
-                    title: '拖拽组件',
-                    subs: [
-                        {
-                            index: 'drag',
-                            title: '拖拽列表'
-                        },
-                        {
-                            index: 'dialog',
-                            title: '拖拽弹框'
-                        }
-                    ]
-                },
-                // {
-                //     icon: 'el-icon-lx-global',
-                //     index: 'i18n',
-                //     title: '国际化功能'
-                // },
-                {
-                    icon: 'el-icon-lx-warn',
-                    index: '7',
-                    title: '错误处理',
-                    subs: [
-                        {
-                            index: 'permission',
-                            title: '权限测试'
-                        },
-                        {
-                            index: '404',
-                            title: '404页面'
-                        }
-                    ]
-                },
-                {
                     icon: 'el-icon-setting',
-                    index: '8',
+                    url: '8',
                     title: '系统管理',
                     subs: [
                         {
-                            index: 'userInfo',
+                            url: 'userInfo',
                             title: '用户管理'
                         },
                         {
-                            index: 'role',
+                            url: 'role',
                             title: '角色管理'
                         },
                         {
-                            index: 'department',
-                            title: '部门管理'
+                            url: 'department',
+                            title: '组织管理'
                         },
                         {
-                            index: 'power',
+                            url: 'power',
                             title: '权限管理'
                         }
                     ]
                 },
+                {
+                    icon: 'el-icon-receiving',
+                    url: '9',
+                    title: '病人管理',
+                    subs: [
+                        {
+                            url: 'patient',
+                            title: '病人列表'
+                        }
+                    ]
+                }
             ]
         };
     },
@@ -198,7 +122,25 @@ export default {
             return this.$route.path.replace('/', '');
         }
     },
+    methods: {
+        getMenu() {
+            this.$http
+                .post('/api/menu/getmenulist', {
+                    name: '',
+                    fldSort: '',
+                    fldName: ''
+                })
+                .then((res) => {
+                    if (res.data.success) {
+                        let tempArr = res.data.result;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                });
+        }
+    },
     created() {
+        // this.getMenu();
         // 通过 Event Bus 进行组件间通信，来折叠侧边栏
         bus.$on('collapse', (msg) => {
             this.collapse = msg;
@@ -254,18 +196,18 @@ export default {
             flex-direction: row;
             font-size: 14px;
             position: relative;
-            .ybr-menu-tab{
+            .ybr-menu-tab {
                 width: 100%;
                 height: 100%;
                 display: flex;
                 align-items: center;
                 justify-content: flex-start;
                 flex-direction: row;
-                .ybr-menu-icon1{
+                .ybr-menu-icon1 {
                     margin-left: 24px;
                     margin-right: 12px;
                 }
-                .ybr-menu-down{
+                .ybr-menu-down {
                     position: absolute;
                     right: 16px;
                     top: 50%;
@@ -273,11 +215,11 @@ export default {
                 }
             }
         }
-        .ybr-menu-item.active{
+        .ybr-menu-item.active {
             background: #fa493d;
             color: #fff;
         }
-        .ybr-menu-item:first-child{
+        .ybr-menu-item:first-child {
             margin-top: 24px;
         }
     }

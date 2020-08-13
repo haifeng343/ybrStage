@@ -4,7 +4,16 @@
         <el-card>
             <!-- 搜索添加区域 -->
             <el-row :gutter="20">
-                <el-col :span="5">
+                <el-col :span="2">
+                    <el-button type="primary">信息导入</el-button>
+                </el-col>
+                <el-col :span="2">
+                    <el-button type="primary">信息导入</el-button>
+                </el-col>
+                <el-col :span="2">
+                    <el-button type="primary">录入病人信息</el-button>
+                </el-col>
+                <el-col :span="5" offset="13">
                     <el-input
                         placeholder="请输入内容"
                         v-model="keyword"
@@ -22,9 +31,6 @@
                         ></el-button>
                     </el-input>
                 </el-col>
-                <el-col :span="4">
-                    <el-button type="primary" @click="add">添加用户</el-button>
-                </el-col>
             </el-row>
 
             <!-- 数据表格 -->
@@ -37,29 +43,38 @@
                 :row-class-name="tableRowClassName"
                 @selection-change="handleSelectionChange"
             >
-                <el-table-column prop="userid" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="username" label="用户名" align="center"></el-table-column>
-                <el-table-column prop="account" label="账号名称" align="center"></el-table-column>
-                <el-table-column label="手机号" prop="phone" align="center"></el-table-column>
-                <!-- <el-table-column label="头像(查看大图)" align="center">
+                <el-table-column prop="id" fixed label="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="cardno" fixed label="项目编码" align="center"></el-table-column>
+                <el-table-column prop="cardno" fixed label="项目名称" align="center"></el-table-column>
+                <el-table-column prop="cardno" fixed label="样本类型" align="center"></el-table-column>
+                <el-table-column prop="cardno" fixed label="样本类型" align="center"></el-table-column>
+                <el-table-column prop="cardno" fixed label="所属人" align="center"></el-table-column>
+                <el-table-column prop="cardno" fixed label="身份证号" align="center"></el-table-column>
+                <el-table-column prop="cardno" fixed label="字段" align="center"></el-table-column>
+                <el-table-column prop="cardno" fixed label="创建日期" align="center"></el-table-column>
+                <!-- <el-table-column prop="age" fixed label="年龄" align="center"></el-table-column>
+                <el-table-column label="性别" width="100" align="center">
                     <template slot-scope="scope">
-                        <el-image
-                            class="table-td-thumb"
-                            :src="scope.row.thumb"
-                            :preview-src-list="[scope.row.thumb]"
-                        ></el-image>
-                    </template>
-                </el-table-column>-->
-                <el-table-column label="锁定" width="180" align="center">
-                    <template slot-scope="scope">
-                        <el-switch
-                            v-model="scope.row.islocked"
-                            @change="changelocker(scope.row)"
-                            active-text="是"
-                            inactive-text="否"
-                        ></el-switch>
+                        <span v-if="scope.row.sex==0">未知</span>
+                        <span v-if="scope.row.sex==1">男</span>
+                        <span v-if="scope.row.sex==2">女</span>
                     </template>
                 </el-table-column>
+                <el-table-column prop="address" label="样本数量" width="200" align="center"></el-table-column>
+                <el-table-column prop="address" label="肿瘤类型" width="200" align="center"></el-table-column>
+                <el-table-column prop="address" label="病人家属联系方式" width="200" align="center"></el-table-column>
+                <el-table-column prop="address" label="联系地址" width="400" align="center"></el-table-column>
+                <el-table-column prop="address" label="生存状态" width="100" align="center"></el-table-column>
+
+                <el-table-column prop="address" label="使用药物" width="400" align="center"></el-table-column>
+                <el-table-column prop="address" label="修改时间" width="300" align="center"></el-table-column>
+                <el-table-column prop="address" label="修改人" width="200" align="center"></el-table-column>
+                <el-table-column label="回访记录" width="100" align="center">
+                    <template slot-scope="scope">
+                        <el-button type="text" @click="handleLog(scope.row)">记录</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column label="手机号" prop="phone" width="200" align="center"></el-table-column> -->
                 <el-table-column label="操作" width="280" align="center" fixed="right">
                     <template slot-scope="scope">
                         <el-button
@@ -243,8 +258,6 @@ export default {
     },
     created() {
         this.getData(1);
-        this.getRoleList(); //获取角色列表
-        this.getDropList(); //获取组织列表
     },
     methods: {
         handleSelectionChange(e) {
@@ -443,8 +456,8 @@ export default {
         // 获取数据
         getData(pageIndex) {
             this.$http
-                .post('/api/user/getuserinfo', {
-                    search: this.keyword,
+                .post('/api/patient/getpatientlist', {
+                    name: this.keyword,
                     pageIndex: pageIndex,
                     pageSize: this.pageSize,
                     fldSort: '',

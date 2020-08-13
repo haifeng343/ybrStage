@@ -44,8 +44,9 @@
                         <span v-if="scope.row.type == 1">菜单</span>
                         <span v-if="scope.row.type == 0">按钮</span>
                     </template>
-                </el-table-column> -->
-                <!-- <el-table-column prop="url" label="路径" width="200"></el-table-column> -->
+                </el-table-column>-->
+                <el-table-column prop="sort" label="排序" width="100"></el-table-column>
+                <el-table-column prop="url" label="路径" width="200"></el-table-column>
                 <!-- <el-table-column prop="name" label="需要权限" width="120"></el-table-column> -->
                 <!-- <el-table-column prop="name" label="页面权限" width="400"></el-table-column> -->
                 <el-table-column prop="name" label="图标" width="120">
@@ -104,61 +105,61 @@
                 </el-form-item>
 
                 <!-- 按钮权限 -->
-                    <div class="yemian">
-                        <p class="title">按钮权限</p>
-                        <el-button icon="el-icon-plus" type="primary" plain @click="addPower">添加权限</el-button>
-                        <el-table :data="tableData1" border style="width: 100%">
-                            <el-table-column label="权限名" width="180">
-                                <template slot-scope="scope">
-                                    <el-input
-                                        v-model="scope.row.title"
-                                        placeholder="请输入权限名"
-                                        v-if="scope.row.checkbox"
-                                    ></el-input>
-                                    <span v-else>{{scope.row.title}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="权限值(唯一)" width="180">
-                                <template slot-scope="scope">
-                                    <el-input
-                                        v-model="scope.row.num"
-                                        placeholder="请输入权限值"
-                                        v-if="scope.row.checkbox"
-                                    ></el-input>
-                                    <span v-else>{{scope.row.num}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="操作">
-                                <template slot-scope="scope">
-                                    <el-button
-                                        size="mini"
-                                        type="success"
-                                        icon="el-icon-edit"
-                                        v-if="!scope.row.checkbox"
-                                        @click="handleEditBtn(scope.$index, scope.row)"
-                                    ></el-button>
-                                    <el-button
-                                        size="mini"
-                                        type="danger"
-                                        icon="el-icon-delete"
-                                        v-if="!scope.row.checkbox"
-                                        @click="handleDeleteBtn(scope.$index,scope.row)"
-                                    ></el-button>
+                <div class="yemian">
+                    <p class="title">按钮权限</p>
+                    <el-button icon="el-icon-plus" type="primary" plain @click="addPower">添加权限</el-button>
+                    <el-table :data="tableData1" border style="width: 100%">
+                        <el-table-column label="权限名" width="180">
+                            <template slot-scope="scope">
+                                <el-input
+                                    v-model="scope.row.title"
+                                    placeholder="请输入权限名"
+                                    v-if="scope.row.checkbox"
+                                ></el-input>
+                                <span v-else>{{scope.row.title}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="权限值(唯一)" width="180">
+                            <template slot-scope="scope">
+                                <el-input
+                                    v-model="scope.row.value"
+                                    placeholder="请输入权限值"
+                                    v-if="scope.row.checkbox"
+                                ></el-input>
+                                <span v-else>{{scope.row.value}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                                <el-button
+                                    size="mini"
+                                    type="success"
+                                    icon="el-icon-edit"
+                                    v-if="!scope.row.checkbox"
+                                    @click="handleEditBtn(scope.$index, scope.row)"
+                                ></el-button>
+                                <el-button
+                                    size="mini"
+                                    type="danger"
+                                    icon="el-icon-delete"
+                                    v-if="!scope.row.checkbox"
+                                    @click="handleDeleteBtn(scope.$index,scope.row)"
+                                ></el-button>
 
-                                    <el-button
-                                        size="mini"
-                                        v-if="scope.row.checkbox"
-                                        @click="saveEditBtn(scope.$index, scope.row)"
-                                    >保存</el-button>
-                                    <el-button
-                                        size="mini"
-                                        v-if="scope.row.checkbox"
-                                        @click="cancelBtn(scope.$index,scope.row)"
-                                    >取消</el-button>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                    </div>
+                                <el-button
+                                    size="mini"
+                                    v-if="scope.row.checkbox"
+                                    @click="saveEditBtn(scope.$index, scope.row)"
+                                >保存</el-button>
+                                <el-button
+                                    size="mini"
+                                    v-if="scope.row.checkbox"
+                                    @click="cancelBtn(scope.$index,scope.row)"
+                                >取消</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addDialogClosed">取 消</el-button>
@@ -173,7 +174,7 @@ export default {
         return {
             keyword: '', //关键字
             tableData: [], //数据
-            tableData1:[],//按钮权限
+            tableData1: [], //按钮权限
             addDialogVisible: false,
             form: {
                 id: '', //id
@@ -182,8 +183,10 @@ export default {
                 url: '', //路径
                 icon: '', //图标
                 sort: '', //排序值
-                btns:[],//按钮权限
+                btns: [], //按钮权限
+                delbtns: [] //删除的按钮
             },
+            arr1:[],
             formRules: {
                 name: [{ required: true, trigger: 'blur', message: '请输入部门名称' }]
             }
@@ -203,9 +206,9 @@ export default {
             console.log(item);
             this.addDialogVisible = true;
             this.form = {
-                id: item.id, //id
+                id: item.num, //id
                 name: item.title, //菜单名称
-                parentid: item.parentid, //上级菜单
+                parentid: item.pnum, //上级菜单
                 url: item.url, //路径
                 icon: item.icon, //图标
                 sort: item.sort //排序值
@@ -214,13 +217,13 @@ export default {
         },
         // 删除
         handleDelete(item) {
-            this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+            this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             })
                 .then(() => {
-                    this.$http.post('/api/menu/deletemenu', { id: item.id }).then((res) => {
+                    this.$http.post('/api/menu/deletemenu', { id: item.num }).then((res) => {
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
@@ -258,47 +261,72 @@ export default {
         addPower() {
             let tempArr = this.tableData1;
             tempArr.push({
-                num: '权限值',
-                title: '权限名',
                 checkbox: false,
+                num:0,
+                title: '权限名',
+                value: '权限值'
             });
             this.tableData1 = tempArr;
+            console.log(this.tableData1)
         },
         // 编辑按钮权限
         handleEditBtn(index, item) {
             console.log(index, item);
-           let tempArr = this.tableData1;
-           tempArr.forEach(item1=>{
-             if(item1.num == item.num){
-               item1.checkbox = true
-             }
-           })
-           this.tableData1 = tempArr;
-           console.log(this.tableData1);
-          
+            let tempArr = this.tableData1;
+            tempArr.forEach((item1,index1) => {
+                if (index==index1) {
+                    item1.checkbox = true;
+                }
+            });
+            this.tableData1 = tempArr;
+            console.log(this.tableData1);
         },
         // 删除按钮
         handleDeleteBtn(index, item) {
             let tempArr = this.tableData1;
             tempArr.splice(index, 1);
+            this.arr1.push(item.num);
             this.tableData1 = tempArr;
+            this.form.delbtns = this.arr1;
+
+            console.log(this.form.delbtns)
         },
 
         // 保存按钮
         saveEditBtn(index, item) {
             let tempArr = this.tableData1;
-            tempArr[index].title = item.title;
-            tempArr[index].num = item.num;
+            tempArr[index].title = item.title ? item.title : '权限名';
+            tempArr[index].num = item.num ? item.num : 0;
             tempArr[index].checkbox = false;
             this.tableData1 = tempArr;
         },
 
         // 取消保存按钮
-        cancelBtn(index, item) {},
+        cancelBtn(index, item) {
+            let tempArr = this.tableData1;
+            console.log(tempArr);
+            tempArr[index].checkbox = false;
+            this.tableData1 = tempArr;
+        },
         // 提交
         sendForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
+                    let tempArr = this.tableData1;
+                    console.log(tempArr);
+                    let arr = [];
+                    tempArr
+                        .filter((item) => {
+                            return item;
+                        })
+                        .map((item) => {
+                            arr.push({
+                                id: item.num,
+                                name: item.title,
+                                value: item.value,
+                            });
+                        });
+                        // console.log(this.form.delbtns);return false;
                     if (this.form.id) {
                         this.$http
                             .post('/api/menu/savemenu', {
@@ -307,12 +335,18 @@ export default {
                                 name: this.form.name,
                                 icon: this.form.icon,
                                 url: this.form.url,
-                                sort: parseInt(this.form.sort)
+                                sort: parseInt(this.form.sort),
+                                btns: arr,
+                                delbtns: this.form.delbtns?this.form.delbtns:[]
                             })
                             .then((res) => {
-                                this.$message.success('编辑成功!');
-                                this.addDialogVisible = false;
-                                this.getData(1);
+                                if (res.data.success) {
+                                    this.$message.success(res.data.message);
+                                    this.addDialogVisible = false;
+                                    this.getData(this.pageIndex);
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
                             });
                     } else {
                         this.$http
@@ -321,12 +355,18 @@ export default {
                                 name: this.form.name,
                                 icon: this.form.icon,
                                 url: this.form.url,
-                                sort: parseInt(this.form.sort)
+                                sort: parseInt(this.form.sort),
+                                btns: arr,
+                                delbtns: this.form.delbtns?this.form.delbtns:[]
                             })
                             .then((res) => {
-                                this.$message.success('添加成功!');
-                                this.addDialogVisible = false;
-                                this.getData(1);
+                                if (res.data.success) {
+                                    this.$message.success(res.data.message);
+                                    this.addDialogVisible = false;
+                                    this.getData(this.pageIndex);
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
                             });
                     }
                     this.addDialogVisible = false;
@@ -347,7 +387,6 @@ export default {
                 })
                 .then((res) => {
                     this.tableData = res.data.result;
-                    this.totalCount = res.data.result.totalItemCount;
                 });
         }
     },

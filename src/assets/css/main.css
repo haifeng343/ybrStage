@@ -398,10 +398,14 @@ ul, ol {
     font-size: 11px !important;
     color: #fff!important;
 }
-
+.el-radio__label{
+    padding-left: 0;
+}
 .el-switch__label * {
     font-size: 11px !important;
     width: 30px;
+    position: relative;
+    bottom: 1.5px;
 }
 
 /*打开时文字位置设置*/
@@ -606,4 +610,7 @@ input:-internal-autofill-previewed, input:-internal-autofill-selected {
 }
 .el-select{
     width: 100%;
+}
+.el-menu-item-group__title{
+    padding: 0;
 }

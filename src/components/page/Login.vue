@@ -153,6 +153,23 @@ export default {
         goForget() {
             this.$router.push({ name: 'forget' });
         },
+        // 获取菜单列表
+        getMenu() {
+            this.$http
+                .post('/api/menu/getmenulist', {
+                    name: '',
+                    fldSort: '',
+                    fldName: ''
+                })
+                .then((res) => {
+                    if (res.data.success) {
+                        localStorage.setItem('menu', JSON.stringify(res.data.result));
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                });
+        },
+        // 登录
         submitForm() {
             this.$refs.login.validate((valid) => {
                 if (valid) {
@@ -268,12 +285,11 @@ export default {
 // }
 .login-wrap {
     position: relative;
-
     -moz-user-select: none;
     -khtml-user-select: none;
     user-select: none;
     width: 100%;
-    height: 890px;
+    height: 100%;
     background-image: url(../../assets/img/login_bg.png);
     background-size: 100%;
 }
@@ -444,6 +460,6 @@ export default {
     padding-left: 35px !important;
 }
 .selectd > input {
-    border: 1px solid #5d81f4  !important;
+    border: 1px solid #5d81f4 !important;
 }
 </style>

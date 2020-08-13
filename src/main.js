@@ -27,7 +27,10 @@ const i18n = new VueI18n({
 });
 
 // 指定请求地址
-axios.defaults.baseURL = 'https://sapi.ybrshop.com';
+axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+axios.defaults.headers.post['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.responseType = 'json';
+axios.defaults.baseURL = 'https://api.mfetv.top';
 // 拦截器,保证拥有获取数据的权限
 axios.interceptors.request.use(config => {
     config.headers.Authorization = window.localStorage.getItem('token');

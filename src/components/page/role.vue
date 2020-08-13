@@ -10,10 +10,16 @@
                         v-model="keyword"
                         clearable
                         ref="mark"
-                        @clear="getData"
+                        @clear="getData(1)"
+                        @keydown.native.enter="getData(1)"
                         class="input-with-select"
                     >
-                        <el-button slot="append" type="primary" icon="el-icon-search"></el-button>
+                        <el-button
+                            slot="append"
+                            type="primary"
+                            @click="getData(1)"
+                            icon="el-icon-search"
+                        ></el-button>
                     </el-input>
                 </el-col>
                 <el-col :span="4">
@@ -75,10 +81,13 @@
                 <el-form-item label="权限" prop="prev">
                     <el-tree
                         :data="data"
-                        show-checkbox
-                        node-key="id"
+                        :show-checkbox="true"
+                        ref="tree"
+                        node-key="num"
+                        @check-change="changeTree"
+                        :getCheckedKeys="currentList"
                         :default-expand-all="true"
-                        :default-checked-keys="defaultList"
+                        :default-checked-keys="addForm.checkmenus"
                         :props="defaultProps"
                     ></el-tree>
                 </el-form-item>
@@ -96,64 +105,16 @@ export default {
         return {
             keyword: '', //关键字
             //树形数据
-            data: [
-                {
-                    id: 1,
-                    label: '一级 1',
-                    children: [
-                        {
-                            id: 4,
-                            label: '二级 1-1',
-                            children: [
-                                {
-                                    id: 9,
-                                    label: '三级 1-1-1'
-                                },
-                                {
-                                    id: 10,
-                                    label: '三级 1-1-2'
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    id: 2,
-                    label: '一级 2',
-                    children: [
-                        {
-                            id: 5,
-                            label: '二级 2-1'
-                        },
-                        {
-                            id: 6,
-                            label: '二级 2-2'
-                        }
-                    ]
-                },
-                {
-                    id: 3,
-                    label: '一级 3',
-                    children: [
-                        {
-                            id: 7,
-                            label: '二级 3-1'
-                        },
-                        {
-                            id: 8,
-                            label: '二级 3-2'
-                        }
-                    ]
-                }
-            ],
+            data: [],
+            currentList: [],
             pageIndex: 1,
             pageSize: 10,
             totalCount: 0,
-            defaultList: [2, 3], //默认选中的数组
+            defaultList: [], //默认选中的数组
             defaultProps: {
                 //树形格式
-                children: 'children',
-                label: 'label'
+                children: 'subs',
+                label: 'title'
             },
             //表格数据
             tableData: [],
@@ -161,7 +122,8 @@ export default {
             addForm: {
                 id: '', //Id
                 name: '', //部门名称
-                prev: '' //上级部门
+                prev: '', //上级部门
+                checkmenus: [] //已选菜单数组
             },
             addFormRules: {
                 name: [{ required: true, trigger: 'blur', message: '请输入部门名称' }]
@@ -177,13 +139,51 @@ export default {
             }
             return '';
         },
+        // 节点发生变化
+        changeTree() {
+            let res = this.$refs.tree.getCheckedNodes();
+            let arr = [];
+            res.forEach((item) => {
+                arr.push(item.num);
+            });
+            console.log(arr);
+            this.addForm.checkmenus = arr;
+        },
         // 编辑
         handleEdit(item) {
+            // this.getCheckRole(item.roleid, item.organizationid);
+            this.getMenuList(); //权限列表
             this.addDialogVisible = true;
-            console.log(item);
+
+            let role;
+            if (item.menuids) {
+                role = item.menuids.split(',');
+                for (let i = 0; i < role.length; i++) {
+                    role[i] = Number(role[i]);
+                }
+            }
+            console.log(role)
+
+            this.addForm.checkmenus = role;
             this.addForm.id = item.roleid;
             this.addForm.name = item.rolename;
         },
+        // 获取用户权限
+        // getCheckRole(roleid, organizationid) {
+        //     this.$http
+        //         .post('/api/role/getcheckrole', {
+        //             roleid: roleid,
+        //             organizationid: organizationid
+        //         })
+        //         .then((res) => {
+        //             let tempArr = res.data.result.menus;
+        //             let arr = [];
+        //             tempArr.forEach((item) => {
+        //                 arr.push(item.num);
+        //             });
+        //             this.addForm.checkmenus = arr;
+        //         });
+        // },
         // 监听 pagesize 改变事件
         handleSizeChange(val) {
             this.pageSize = val;
@@ -196,28 +196,76 @@ export default {
         },
         // 删除
         handleDelete(item) {
-            this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+            this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             })
                 .then(() => {
                     this.$http.post('/api/role/deleterole', { id: item.roleid }).then((res) => {
-                        this.getData(this.pageIndex);
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
+                        if (res.data.success) {
+                            this.getData(this.pageIndex);
+                            this.$message.success(res.data.message);
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
                     });
                 })
                 .catch(() => {});
         },
+        // 提交
+        addSubmitForm() {
+            this.$refs.addFormRef.validate((valid) => {
+                if (valid) {
+                    if (this.addForm.id) {
+                        this.$http
+                            .post('/api/role/savecheckrole', {
+                                roleid: this.addForm.id,
+                                rolename: this.addForm.name,
+                                checkmenus: this.addForm.checkmenus,
+                                issystem: true,
+                                organizationid: 0
+                            })
+                            .then((res) => {
+                                if (res.data.success) {
+                                    this.$message.success(res.data.message);
+                                    this.addDialogVisible = false;
+                                    this.getData(this.pageIndex);
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            });
+                    } else {
+                        this.$http
+                            .post('/api/role/savecheckrole', {
+                                rolename: this.addForm.name,
+                                checkmenus: this.addForm.checkmenus,
+                                issystem: true,
+                                organizationid: 0
+                            })
+                            .then((res) => {
+                                if (res.data.success) {
+                                    this.$message.success(res.data.message);
+                                    this.addDialogVisible = false;
+                                    this.getData(this.pageIndex);
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            });
+                    }
+                    this.addDialogVisible = false;
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+        },
         // 数据
-        getData() {
+        getData(pageIndex) {
             this.$http
                 .post('/api/role/getrolelist', {
                     organizationid: 0,
-                    pageIndex: this.pageIndex,
+                    pageIndex: pageIndex,
                     pageSize: this.pageSize,
                     fldSort: '',
                     fldName: ''
@@ -231,7 +279,14 @@ export default {
         },
         // 新增
         add() {
+            this.addForm = {
+                id: '', //Id
+                name: '', //部门名称
+                prev: '', //上级部门
+                checkmenus: [] //已选菜单数组
+            };
             this.addDialogVisible = true;
+            this.getMenuList(); //权限列表
         },
         //  this.$http.post('/api/organization/getdropdowntype',{}).then(res=>{
         //     console.log('typeList'+res)
@@ -240,10 +295,22 @@ export default {
         addDialogClosed() {
             this.$refs.addFormRef.resetFields();
             this.addDialogVisible = false;
+        },
+        // 权限列表
+        getMenuList() {
+            this.$http
+                .post('/api/menu/getmenulist', {
+                    name: '',
+                    fldSort: '',
+                    fldName: ''
+                })
+                .then((res) => {
+                    this.data = res.data.result;
+                });
         }
     },
     created() {
-        this.getData();
+        this.getData(1);
     }
 };
 </script>

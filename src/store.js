@@ -11,13 +11,21 @@ const state = {   //要设置的全局访问的state对象
   // }
 };
 
+// 异步
+const actions = {
+  setName(context,str){
+    context.commit("name", str);
+  }
+}
 const mutations = {   //实时监听state值的变化(最新状态)
-  getUserInfo (state) {  //方法名随意,主要是来承载变化的userInfo的值
-    return state.userInfo
+  setUserInfo (state,userInfo) {  //方法名随意,主要是来承载变化的userInfo的值
+    localStorage.setItem("userInfo", userInfo);
+    state.userInfo = userInfo
   },
 };
 const store = new Vuex.Store({
   state,
-  mutations
+  mutations,
+  actions
 });
 export default store;

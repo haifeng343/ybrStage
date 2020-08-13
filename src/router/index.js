@@ -100,7 +100,7 @@ const router = new Router({
                     path: '/department',
                     name: 'department',
                     component: () => import('../components/page/department.vue'),
-                    meta: { title: '部门管理', permission: false }
+                    meta: { title: '组织管理', permission: false }
                 },
                 {
                     // 权限管理页面
@@ -108,6 +108,13 @@ const router = new Router({
                     name: 'power',
                     component: () => import('../components/page/power.vue'),
                     meta: { title: '权限管理', permission: false }
+                },
+                {
+                    // 病人列表页面
+                    path: '/patient',
+                    name: 'patient',
+                    component: () => import('../components/page/patient.vue'),
+                    meta: { title: '病人列表', permission: false }
                 },
                 {
                     path: '/404',

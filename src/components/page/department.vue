@@ -14,7 +14,12 @@
                         @keydown.native.enter="getData(1)"
                         class="input-with-select"
                     >
-                        <el-button slot="append" type="primary" icon="el-icon-search" @click="getData(1)"></el-button>
+                        <el-button
+                            slot="append"
+                            type="primary"
+                            icon="el-icon-search"
+                            @click="getData(1)"
+                        ></el-button>
                     </el-input>
                 </el-col>
                 <el-col :span="4">
@@ -54,17 +59,34 @@
         </el-card>
         <!-- 添加 -->
         <el-dialog
-            title="新建部门"
+            :title="addForm.id?'编辑组织':'新建组织'"
             :visible.sync="addDialogVisible"
             width="50%"
             @close="addDialogClosed"
         >
             <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="90px">
-                <el-form-item label="部门名称" prop="name">
+                <el-form-item label="组织名称" prop="name">
                     <el-input v-model="addForm.name"></el-input>
                 </el-form-item>
-             <el-form-item label="上级部门" prop="prev">
-                    <el-select v-model="addForm.prev"></el-select>
+                <el-form-item label="组织类型" prop="type">
+                    <el-radio-group v-model="addForm.type">
+                        <el-radio
+                            v-for="(item,index) in typeList"
+                            :key="index"
+                            :label="item.id"
+                            :value="item.id"
+                        >{{item.label}}</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="上级组织" prop="prev">
+                    <el-select v-model="addForm.prev">
+                        <el-option
+                            v-for="item in dropList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id"
+                        ></el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -79,18 +101,36 @@ export default {
     data() {
         return {
             keyword: '', //关键字
-             pageIndex: 1,
+            pageIndex: 1,
             pageSize: 10,
             totalCount: 0,
             tableData: [],
-            addDialogVisible:false,
-            addForm:{
-              name:'',//部门名称
-              prev:'',//上级部门
+            addDialogVisible: false,
+            addForm: {
+                id: '',
+                name: '', //部门名称
+                prev: '', //上级部门
+                type: '' //类型
             },
-            addFormRules:{
-              name: [{ required: true, trigger: 'blur', message: '请输入部门名称' }],
+            dropList: [], //组织列表
+            addFormRules: {
+                name: [{ required: true, trigger: 'blur', message: '请输入部门名称' }],
+                type: [{ required: true, trigger: 'blur', message: '请选择类型' }]
             },
+            typeList: [
+                {
+                    id: 1,
+                    label: '内部组织'
+                },
+                {
+                    id: 2,
+                    label: '医院'
+                },
+                {
+                    id: 3,
+                    label: '课题组'
+                }
+            ]
         };
     },
     methods: {
@@ -104,30 +144,89 @@ export default {
         },
         // 编辑
         handleEdit(item) {
-          this.addDialogVisible = true;
-          console.log(item)
-          this.addForm.name = item.name;
-          },
+            console.log(item);
+            this.addDialogVisible = true;
+            this.addForm.name = item.name;
+            this.addForm.id = item.id;
+            this.addForm.type = item.type;
+            this.addForm.prev = item.parentid;
+        },
+        typeChange(e) {
+            console.log(e);
+        },
         // 数据
         getData(pageIndex) {
             this.$http
                 .post('/api/organization/getorganizationlist', {
                     search: this.keyword,
-                    pageIndex:pageIndex,
-                    pageSize:this.pageSize,
+                    pageIndex: pageIndex,
+                    pageSize: this.pageSize,
                     fldSort: '',
                     fldName: ''
                 })
                 .then((res) => {
+                    this.tableData = res.data.result.pageData;
                     this.pageIndex = res.data.result.pageIndex;
                     this.pageSize = res.data.result.pageSize;
-                    this.tableData = res.data.result.pageData;
                     this.totalCount = res.data.result.totalItemCount;
                 });
         },
         // 新增
         add() {
-          this.addDialogVisible = true;
+            this.addForm = {
+                name: '', //部门名称
+                prev: '', //上级部门
+                type: '' //1内部组织 2医院 3课题组   课题组可选医院可不选
+            };
+            this.addDialogVisible = true;
+        },
+        // 提交
+        addSubmitForm() {
+            this.$refs.addFormRef.validate((valid) => {
+                if (valid) {
+                    if (this.addForm.id) {
+                        //编辑
+                        this.$http
+                            .post('/api/organization/saveorganization', {
+                                id: this.addForm.id,
+                                parentid: this.addForm.prev ? this.addForm.prev : 0,
+                                name: this.addForm.name,
+                                type: this.addForm.type
+                            })
+                            .then((res) => {
+                                if (res.data.success) {
+                                    this.$message.success(res.data.message);
+                                    this.addDialogVisible = false;
+                                    this.getData(this.pageIndex);
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            })
+                            .catch((error) => {
+                                this.$message.fail(error.message);
+                            });
+                    } else {
+                        this.$http
+                            .post('/api/organization/saveorganization', {
+                                parentid: this.addForm.prev ? this.addForm.prev : 0,
+                                name: this.addForm.name,
+                                type: this.addForm.type
+                            })
+                            .then((res) => {
+                                if (res.data.success) {
+                                    this.$message.success(res.data.message);
+                                    this.addDialogVisible = false;
+                                    this.getData(this.pageIndex);
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            })
+                            .catch((error) => {
+                                this.$message.fail(error.message);
+                            });
+                    }
+                }
+            });
         },
         //  this.$http.post('/api/organization/getdropdowntype',{}).then(res=>{
         //     console.log('typeList'+res)
@@ -139,7 +238,7 @@ export default {
         },
         // 删除
         handleDelete(item) {
-            this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+            this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
@@ -155,9 +254,16 @@ export default {
                 })
                 .catch(() => {});
         },
+        // 获取部门列表
+        getDropList() {
+            this.$http.post('/api/user/getdropdownorg').then((res) => {
+                this.dropList = res.data.result;
+            });
+        }
     },
-    created(){
-        this.getData(1);
+    created() {
+        this.getData(1); //获取数据
+        this.getDropList(); //获取组织列表
     }
 };
 </script>
