@@ -186,7 +186,7 @@ export default {
                 btns: [], //按钮权限
                 delbtns: [] //删除的按钮
             },
-            arr1:[],
+            arr1: [],
             formRules: {
                 name: [{ required: true, trigger: 'blur', message: '请输入部门名称' }]
             }
@@ -262,24 +262,21 @@ export default {
             let tempArr = this.tableData1;
             tempArr.push({
                 checkbox: false,
-                num:0,
+                num: 0,
                 title: '权限名',
                 value: '权限值'
             });
             this.tableData1 = tempArr;
-            console.log(this.tableData1)
         },
         // 编辑按钮权限
         handleEditBtn(index, item) {
             console.log(index, item);
             let tempArr = this.tableData1;
-            tempArr.forEach((item1,index1) => {
-                if (index==index1) {
+            tempArr.forEach((item1, index1) => {
+                if (index == index1) {
                     item1.checkbox = true;
                 }
             });
-            this.tableData1 = tempArr;
-            console.log(this.tableData1);
         },
         // 删除按钮
         handleDeleteBtn(index, item) {
@@ -288,8 +285,6 @@ export default {
             this.arr1.push(item.num);
             this.tableData1 = tempArr;
             this.form.delbtns = this.arr1;
-
-            console.log(this.form.delbtns)
         },
 
         // 保存按钮
@@ -304,9 +299,11 @@ export default {
         // 取消保存按钮
         cancelBtn(index, item) {
             let tempArr = this.tableData1;
-            console.log(tempArr);
-            tempArr[index].checkbox = false;
-            this.tableData1 = tempArr;
+            tempArr.forEach((item,index1)=>{
+                if(index==index1){
+            this.form.btns=this.tableData1;
+                }
+            })
         },
         // 提交
         sendForm(formName) {
@@ -323,10 +320,10 @@ export default {
                             arr.push({
                                 id: item.num,
                                 name: item.title,
-                                value: item.value,
+                                value: item.value
                             });
                         });
-                        // console.log(this.form.delbtns);return false;
+                    // console.log(this.form.delbtns);return false;
                     if (this.form.id) {
                         this.$http
                             .post('/api/menu/savemenu', {
@@ -337,7 +334,7 @@ export default {
                                 url: this.form.url,
                                 sort: parseInt(this.form.sort),
                                 btns: arr,
-                                delbtns: this.form.delbtns?this.form.delbtns:[]
+                                delbtns: this.form.delbtns ? this.form.delbtns : []
                             })
                             .then((res) => {
                                 if (res.data.success) {
@@ -357,7 +354,7 @@ export default {
                                 url: this.form.url,
                                 sort: parseInt(this.form.sort),
                                 btns: arr,
-                                delbtns: this.form.delbtns?this.form.delbtns:[]
+                                delbtns: this.form.delbtns ? this.form.delbtns : []
                             })
                             .then((res) => {
                                 if (res.data.success) {
