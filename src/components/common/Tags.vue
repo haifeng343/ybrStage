@@ -115,7 +115,7 @@
 <style>
     .tags {
         position: relative;
-        height: 30px;
+        height: 36px;
         overflow: hidden;
         background: #fff;
         padding-right: 120px;
@@ -130,7 +130,7 @@
 
     .tags-li {
         float: left;
-        margin: 3px 5px 2px 3px;
+        margin: 12.5px 5px 2px 3px;
         border-radius: 3px;
         font-size: 12px;
         overflow: hidden;

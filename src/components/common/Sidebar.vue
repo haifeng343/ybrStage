@@ -76,12 +76,12 @@ export default {
             collapse: false,
             items: [
                 {
-                    icon: 'el-icon-lx-home',
+                    icon: 'iconfont iconshouye',
                     url: 'dashboard',
                     title: '系统首页'
                 },
                 {
-                    icon: 'el-icon-setting',
+                    icon: 'iconfont iconxitongshezhi',
                     url: '8',
                     title: '系统管理',
                     subs: [
@@ -104,7 +104,7 @@ export default {
                     ]
                 },
                 {
-                    icon: 'el-icon-receiving',
+                    icon: 'iconfont iconguanli',
                     url: '9',
                     title: '病人管理',
                     subs: [
@@ -113,7 +113,18 @@ export default {
                             title: '病人列表'
                         }
                     ]
-                }
+                },
+                {
+                    icon: 'iconfont iconshituxianshiquanbujiedian',
+                    url: '10',
+                    title: '仓库管理',
+                    subs: [
+                        {
+                            url: 'patient',
+                            title: '材料视图'
+                        }
+                    ]
+                },
             ]
         };
     },

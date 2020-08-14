@@ -13,7 +13,7 @@
                 <el-col :span="2">
                     <el-button type="primary">录入病人信息</el-button>
                 </el-col>
-                <el-col :span="5" offset="13">
+                <el-col :span="5" :offset="13">
                     <el-input
                         placeholder="请输入内容"
                         v-model="keyword"
