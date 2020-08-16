@@ -107,12 +107,12 @@
                 <!-- 按钮权限 -->
                 <div class="yemian">
                     <p class="title">按钮权限</p>
-                    <el-button icon="el-icon-plus" type="primary" plain @click="addPower">添加权限</el-button>
+                    <el-button icon="el-icon-plus" plain @click="addPower">添加权限</el-button>
                     <el-table :data="tableData1" border style="width: 100%">
                         <el-table-column label="权限名" width="180">
                             <template slot-scope="scope">
                                 <el-input
-                                    v-model="scope.row.title"
+                                    v-model="tdarr[scope.$index].title1"
                                     placeholder="请输入权限名"
                                     v-if="scope.row.checkbox"
                                 ></el-input>
@@ -122,7 +122,7 @@
                         <el-table-column label="权限值(唯一)" width="180">
                             <template slot-scope="scope">
                                 <el-input
-                                    v-model="scope.row.value"
+                                    v-model="tdarr[scope.$index].value1"
                                     placeholder="请输入权限值"
                                     v-if="scope.row.checkbox"
                                 ></el-input>
@@ -189,7 +189,8 @@ export default {
             arr1: [],
             formRules: {
                 name: [{ required: true, trigger: 'blur', message: '请输入部门名称' }]
-            }
+            },
+            tdarr: [],
         };
     },
     methods: {
@@ -266,17 +267,26 @@ export default {
                 title: '权限名',
                 value: '权限值'
             });
+            this.tdarr.push({title1: '权限名', value1: '权限值'});
             this.tableData1 = tempArr;
         },
         // 编辑按钮权限
         handleEditBtn(index, item) {
             console.log(index, item);
-            let tempArr = this.tableData1;
-            tempArr.forEach((item1, index1) => {
-                if (index == index1) {
-                    item1.checkbox = true;
-                }
-            });
+            // let tempArr = this.tableData1;
+            // tempArr.forEach((item1, index1) => {
+            //     // item1.title1 = item1.title;
+            //     // item1.value1 = item1.value;
+            //     if (index == index1) {
+            //         item1.checkbox = true;
+            //     }
+            // });
+            this.tdarr = [];
+            for (let v of this.tableData1) {
+                this.tdarr.push({ title1: v.title, value1: v.value });
+            }
+            this.tableData1[index].checkbox = true;
+            this.tableData1 =[...this.tableData1];
         },
         // 删除按钮
         handleDeleteBtn(index, item) {
@@ -290,8 +300,8 @@ export default {
         // 保存按钮
         saveEditBtn(index, item) {
             let tempArr = this.tableData1;
-            tempArr[index].title = item.title ? item.title : '权限名';
-            tempArr[index].num = item.num ? item.num : 0;
+            tempArr[index].title = this.tdarr[index].title1 ? this.tdarr[index].title1 : '权限名';
+            tempArr[index].value = this.tdarr[index].value1 ? this.tdarr[index].value1 : 0;
             tempArr[index].checkbox = false;
             this.tableData1 = tempArr;
         },
@@ -304,6 +314,8 @@ export default {
             this.form.btns=this.tableData1;
                 }
             })
+            tempArr[index].checkbox = false;
+            this.tableData1 = [...tempArr];
         },
         // 提交
         sendForm(formName) {

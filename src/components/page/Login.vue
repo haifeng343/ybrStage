@@ -47,7 +47,7 @@
                         </div>
                     </div>
                     <div class="login-btn">
-                        <el-button type="primary" @click="submitForm()">登录</el-button>
+                        <el-button @click="submitForm()">登录</el-button>
                     </div>
                     <div class="noHas">
                         <!-- <p @click="goForget">忘记密码？</p>

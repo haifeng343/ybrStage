@@ -4,18 +4,18 @@
             class="sidebar-el-menu ybr-menu"
             :default-active="onRoutes"
             :collapse="collapse"
-            unique-opened
+            :unique-opened="true"
             router
         >
-            <template v-for="item in items">
-                <template v-if="item.subs">
-                    <el-submenu :index="item.url" :key="item.num" class="ybr-submenu">
+            <template v-for="(item,index) in items">
+                <template v-if="item.subs && item.subs.length > 0">
+                    <el-submenu :index="item.url || index+''" :key="item.num" class="ybr-submenu">
                         <template slot="title">
                             <i :class="item.icon"></i>
                             <span slot="title">{{ item.title }}</span>
                         </template>
                         <template v-for="subItem in item.subs">
-                            <el-submenu v-if="subItem.subs" :index="subItem.url" :key="subItem.num">
+                            <el-submenu v-if="subItem.subs && subItem.subs.length > 0" :index="subItem.url" :key="subItem.num">
                                 <template slot="title">{{ subItem.title }}</template>
                                 <el-menu-item
                                     v-for="(threeItem,i) in subItem.subs"
@@ -82,7 +82,7 @@ export default {
                 },
                 {
                     icon: 'iconfont iconxitongshezhi',
-                    url: '8',
+                    url: '',
                     title: '系统管理',
                     subs: [
                         {
@@ -144,6 +144,7 @@ export default {
                 .then((res) => {
                     if (res.data.success) {
                         let tempArr = res.data.result;
+                        this.items = tempArr;
                     } else {
                         this.$message.error(res.data.message);
                     }
@@ -151,7 +152,7 @@ export default {
         }
     },
     created() {
-        // this.getMenu();
+        this.getMenu();
         // 通过 Event Bus 进行组件间通信，来折叠侧边栏
         bus.$on('collapse', (msg) => {
             this.collapse = msg;
