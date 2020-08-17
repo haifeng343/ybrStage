@@ -5,15 +5,15 @@
             <!-- 搜索添加区域 -->
             <el-row :gutter="20">
                 <el-col :span="2">
-                    <el-button type="primary">信息导入</el-button>
+                    <el-button plain>信息导入</el-button>
                 </el-col>
                 <el-col :span="2">
-                    <el-button type="primary">信息导入</el-button>
+                    <el-button plain>信息导入</el-button>
                 </el-col>
                 <el-col :span="2">
-                    <el-button type="primary">录入病人信息</el-button>
+                    <el-button plain>录入病人信息</el-button>
                 </el-col>
-                <el-col :span="5" :offset="13">
+                <el-col :span="5" ::offset="13">
                     <el-input
                         placeholder="请输入内容"
                         v-model="keyword"
@@ -52,29 +52,6 @@
                 <el-table-column prop="cardno" fixed label="身份证号" align="center"></el-table-column>
                 <el-table-column prop="cardno" fixed label="字段" align="center"></el-table-column>
                 <el-table-column prop="cardno" fixed label="创建日期" align="center"></el-table-column>
-                <!-- <el-table-column prop="age" fixed label="年龄" align="center"></el-table-column>
-                <el-table-column label="性别" width="100" align="center">
-                    <template slot-scope="scope">
-                        <span v-if="scope.row.sex==0">未知</span>
-                        <span v-if="scope.row.sex==1">男</span>
-                        <span v-if="scope.row.sex==2">女</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="address" label="样本数量" width="200" align="center"></el-table-column>
-                <el-table-column prop="address" label="肿瘤类型" width="200" align="center"></el-table-column>
-                <el-table-column prop="address" label="病人家属联系方式" width="200" align="center"></el-table-column>
-                <el-table-column prop="address" label="联系地址" width="400" align="center"></el-table-column>
-                <el-table-column prop="address" label="生存状态" width="100" align="center"></el-table-column>
-
-                <el-table-column prop="address" label="使用药物" width="400" align="center"></el-table-column>
-                <el-table-column prop="address" label="修改时间" width="300" align="center"></el-table-column>
-                <el-table-column prop="address" label="修改人" width="200" align="center"></el-table-column>
-                <el-table-column label="回访记录" width="100" align="center">
-                    <template slot-scope="scope">
-                        <el-button type="text" @click="handleLog(scope.row)">记录</el-button>
-                    </template>
-                </el-table-column>
-                <el-table-column label="手机号" prop="phone" width="200" align="center"></el-table-column> -->
                 <el-table-column label="操作" width="280" align="center" fixed="right">
                     <template slot-scope="scope">
                         <el-button
@@ -122,74 +99,153 @@
 
             <!-- 添加用户 -->
             <el-dialog
-                :title="addForm.id?'编辑用户':'新增用户'"
+                :title="addForm.id?'编辑病人信息:':'病人信息录入:'"
                 :visible.sync="addDialogVisible"
-                width="40%"
+                width="50%"
                 @close="addDialogClosed"
             >
                 <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="90px">
-                    <el-form-item label="用户名" prop="username">
-                        <el-input v-model="addForm.username"></el-input>
-                    </el-form-item>
-                    <el-form-item label="账号" prop="account">
-                        <el-input v-model="addForm.account"></el-input>
-                    </el-form-item>
-                    <el-form-item label="密码" prop="pazzword">
-                        <el-input type="password" v-model="addForm.pazzword"></el-input>
-                    </el-form-item>
-                    <!-- <el-form-item label="邮箱" prop="email" :status-icon="true">
-                        <el-input v-model="addForm.email"></el-input>
-                    </el-form-item>-->
-                    <el-form-item label="手机号" prop="phone" :status-icon="true">
-                        <el-input type="number" v-model="addForm.phone"></el-input>
-                    </el-form-item>
-                    <el-form-item label="所属组织">
-                        <el-select v-model="addForm.organizationid" placeholder="请选择组织">
-                            <el-option
-                                v-for="item in dropList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="拥有角色">
-                        <el-select
-                            v-model="addForm.roleids"
-                            multiple
-                            placeholder="请选择角色"
-                            @change="roleChange"
-                        >
-                            <el-option
-                                v-for="item in roleList"
-                                :key="item.roleid"
-                                :label="item.rolename"
-                                :value="item.roleid"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
+                    <el-row>
+                        <el-col :span="7" :offset="1">
+                            <el-form-item label="病人名字" prop="name">
+                                <el-input type="text" v-model="addForm.name" placeholder="请输入病人名字"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="7" :offset="1">
+                            <el-form-item label="身份证号" prop="cardno">
+                                <el-input
+                                    type="number"
+                                    v-model="addForm.cardno"
+                                    placeholder="请输入身份证号"
+                                ></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="7" :offset="1">
+                            <el-form-item label="联系方式" prop="phone">
+                                <el-input
+                                    type="number"
+                                    v-model="addForm.phone"
+                                    placeholder="请输入联系方式"
+                                ></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="7" :offset="1">
+                            <el-form-item label="年龄" prop="age">
+                                <el-input type="text" v-model="addForm.age" placeholder="请输入病人年龄"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="7" :offset="1">
+                            <el-form-item label="治疗方法" prop="fangfa">
+                                <el-input
+                                    type="number"
+                                    v-model="addForm.fangfa"
+                                    placeholder="请输入治疗方法"
+                                ></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="7" :offset="1">
+                            <el-form-item label="治疗评价" prop="dic">
+                                <el-input type="text" v-model="addForm.dic" placeholder="请输入治疗评价"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="7" :offset="1">
+                            <el-form-item label="性别" prop="age">
+                                <el-radio-group v-model="addForm.sex">
+                                    <el-radio
+                                        v-for="item in sexList"
+                                        :key="item.id"
+                                        :label="item.id"
+                                    >{{item.name}}</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="7" :offset="1">
+                            <el-form-item label="肿瘤类型" prop="fangfa">
+                                <el-select v-model="addForm.db" placeholder="请选择肿瘤类型"></el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="7" :offset="1">
+                            <el-form-item label="检查项" prop="dic">
+                                <el-select v-model="addForm.db" placeholder="请选择检查项"></el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="描述" prop="dicTxt">
+                                <el-input
+                                    type="textarea"
+                                    :rows="5"
+                                    placeholder="请输入内容"
+                                    v-model="addForm.dicTxt"
+                                ></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <template>
+                        <el-row>
+                            <table class="table1" cellspacing="0" cellpadding="0">
+                                <tbody>
+                                    <tr>
+                                        <el-col :span="8">
+                                            <td>检查项</td>
+                                        </el-col>
+                                        <el-col :span="16">
+                                            <td>检查结果</td>
+                                        </el-col>
+                                    </tr>
+                                    <tr>
+                                        <el-col :span="8">
+                                            <td>肿瘤亚型分类</td>
+                                        </el-col>
+                                        <el-col :span="16">
+                                            <td>
+                                                <el-select
+                                                    class="borderNone"
+                                                    v-model="addForm.db"
+                                                    placeholder="请选择检查项"
+                                                ></el-select>
+                                            </td>
+                                        </el-col>
+                                    </tr>
+                                    <tr>
+                                        <el-col :span="8">
+                                            <td>组织学分类</td>
+                                        </el-col>
+                                        <el-col :span="16">
+                                            <td>
+                                                <el-select
+                                                    class="borderNone"
+                                                    v-model="addForm.db"
+                                                    placeholder="请选择检查项"
+                                                ></el-select>
+                                            </td>
+                                        </el-col>
+                                    </tr>
+                                    <tr>
+                                        <el-col :span="8">
+                                            <td>附件</td>
+                                        </el-col>
+                                        <el-col :span="16">
+                                            <td></td>
+                                        </el-col>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </el-row>
+                    </template>
                 </el-form>
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="addDialogClosed">取 消</el-button>
-                    <el-button type="primary" @click="addSubmitForm('addForm')">确 定</el-button>
+                <span slot="footer" class="dialog-footer1">
+                    <div class="btn1">取消</div>
+                    <div class="btn1">保存并继续录入</div>
+                    <div class="btn1">保存</div>
+                    <!-- <el-button @click="addDialogClosed">取 消</el-button>
+                    <el-button @click="addSubmitForm('addForm')">确 定</el-button>-->
                 </span>
-            </el-dialog>
-            <!-- 修改密码 -->
-            <el-dialog
-                title="修改密码"
-                width="40%"
-                @close="clearForm"
-                :visible.sync="dialogFormVisible"
-            >
-                <el-form :model="form" :rules="formRules" ref="formRef">
-                    <el-form-item label="密码" prop="pazzword" label-width="60px">
-                        <el-input v-model="form.pazzword" autocomplete="off"></el-input>
-                    </el-form-item>
-                </el-form>
-                <div slot="footer" class="dialog-footer">
-                    <el-button @click="clearForm">取 消</el-button>
-                    <el-button type="primary" @click="editPwdForm('form')">确 定</el-button>
-                </div>
             </el-dialog>
         </el-card>
     </div>
@@ -214,7 +270,6 @@ export default {
             cb(new Error('请输入正确的手机号'));
         };
         return {
-            dialogFormVisible: false, //密码修改弹出窗
             formRules: {
                 pazzword: [{ required: true, trigger: 'blur', message: '请输入密码' }]
             },
@@ -227,6 +282,7 @@ export default {
             keyword: '',
             addForm: {
                 id: '',
+                sex: 1,
                 username: '', //用户
                 account: '', //账号
                 phone: '', //手机号
@@ -235,6 +291,28 @@ export default {
                 roleids: [], //权限
                 rolenames: [] //权限名称
             },
+            tableData1: [
+                {
+                    date: '2016-05-02',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                },
+                {
+                    date: '2016-05-04',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1517 弄'
+                },
+                {
+                    date: '2016-05-01',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1519 弄'
+                },
+                {
+                    date: '2016-05-03',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1516 弄'
+                }
+            ],
             addFormRules: {
                 username: [
                     { required: true, trigger: 'blur', message: '请输入用户名' },
@@ -247,13 +325,24 @@ export default {
                     { validator: checkMobile, trigger: 'blur' }
                 ]
             },
-            addDialogVisible: false, //添加对话框的显示隐藏
+            addDialogVisible: true, //添加对话框的显示隐藏
             pageIndex: 1, //页码数
             pageSize: 10, //条数
             totalCount: 0, //总条数
             tableData: [], //表格数据
             roleList: [], //角色列表
-            dropList: [] //组织列表
+            dropList: [], //组织列表
+
+            sexList: [
+                {
+                    id: 1,
+                    name: '男'
+                },
+                {
+                    id: 2,
+                    name: '女'
+                }
+            ]
         };
     },
     created() {
@@ -527,5 +616,53 @@ export default {
     }
 };
 </script>
-<style scoped>
+<style lang="less" scoped>
+.table1 {
+    width: 100%;
+    height: auto;
+    tr {
+        width: 100%;
+        text-align: center;
+        td {
+            width: 100%;
+            height: 40px;
+            border: 1px solid #e1e1e1;
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+    }
+}
+.dialog-footer1 {
+    width: 470px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    margin: 0 auto 30px;
+}
+.btn1 {
+    width: 130px;
+    height: 40px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 2px;
+    border: 1px solid rgba(250, 72, 58, 1);
+    font-size: 14px;
+    color: rgba(250, 72, 58, 1);
+    line-height: 19px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn1:last-child {
+    background: rgba(250, 72, 58, 1);
+    border-radius: 2px;
+    color: #fff;
+}
+.table1 .el-select {
+    width: 98% !important;
+}
+.table1 .el-select .el-input .el-input__inner {
+    border: none !important;
+}
 </style>

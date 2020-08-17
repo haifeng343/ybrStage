@@ -23,7 +23,7 @@
                     </el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-button type="primary" @click="add">新建菜单</el-button>
+                    <el-button v-has="'add'" @click="add">新建菜单</el-button>
                 </el-col>
             </el-row>
             <el-table
@@ -61,12 +61,14 @@
                             size="mini"
                             type="success"
                             icon="el-icon-edit"
+                             v-has="'edit'"
                             @click="handleEdit( scope.row)"
                         ></el-button>
                         <el-button
                             size="mini"
                             type="danger"
                             icon="el-icon-delete"
+                             v-has="'delete'"
                             @click="handleDelete(scope.row)"
                         ></el-button>
                     </template>
@@ -163,7 +165,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addDialogClosed">取 消</el-button>
-                <el-button type="primary" @click="sendForm('formRef')">确 定</el-button>
+                <el-button @click="sendForm('formRef')">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -396,6 +398,7 @@ export default {
                 })
                 .then((res) => {
                     this.tableData = res.data.result;
+                    window.localStorage.setItem('sidebar',JSON.stringify(res.data.result))
                 });
         }
     },

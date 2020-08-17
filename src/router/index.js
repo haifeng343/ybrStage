@@ -114,7 +114,14 @@ const router = new Router({
                     path: '/patient',
                     name: 'patient',
                     component: () => import('../components/page/patient.vue'),
-                    meta: { title: '病人列表', permission: false }
+                    meta: { title: '病人管理', permission: false }
+                },
+                {
+                    // 冰箱管理页面
+                    path: '/containerList',
+                    name: 'containerList',
+                    component: () => import('../components/page/containerList.vue'),
+                    meta: { title: '冰箱管理', permission: false }
                 },
                 {
                     path: '/404',

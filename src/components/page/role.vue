@@ -23,7 +23,7 @@
                     </el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-button type="primary" @click="add">新建角色</el-button>
+                    <el-button v-has="'add'" @click="add">新建角色</el-button>
                 </el-col>
             </el-row>
             <el-table
@@ -45,12 +45,14 @@
                             size="mini"
                             type="success"
                             icon="el-icon-edit"
+                            v-has="'edit'"
                             @click="handleEdit( scope.row)"
                         ></el-button>
                         <el-button
                             size="mini"
                             type="danger"
                             icon="el-icon-delete"
+                            v-has="'delete'"
                             @click="handleDelete(scope.row)"
                         ></el-button>
                     </template>

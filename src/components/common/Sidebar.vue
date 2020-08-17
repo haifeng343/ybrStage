@@ -74,85 +74,72 @@ export default {
     data() {
         return {
             collapse: false,
-            items: [
-                {
-                    icon: 'iconfont iconshouye',
-                    url: 'dashboard',
-                    title: '系统首页'
-                },
-                {
-                    icon: 'iconfont iconxitongshezhi',
-                    url: '',
-                    title: '系统管理',
-                    subs: [
-                        {
-                            url: 'userInfo',
-                            title: '用户管理'
-                        },
-                        {
-                            url: 'role',
-                            title: '角色管理'
-                        },
-                        {
-                            url: 'department',
-                            title: '组织管理'
-                        },
-                        {
-                            url: 'power',
-                            title: '权限管理'
-                        }
-                    ]
-                },
-                {
-                    icon: 'iconfont iconguanli',
-                    url: '9',
-                    title: '病人管理',
-                    subs: [
-                        {
-                            url: 'patient',
-                            title: '病人列表'
-                        }
-                    ]
-                },
-                {
-                    icon: 'iconfont iconshituxianshiquanbujiedian',
-                    url: '10',
-                    title: '仓库管理',
-                    subs: [
-                        {
-                            url: 'patient',
-                            title: '材料视图'
-                        }
-                    ]
-                },
-            ]
+            items:[],
+            // items: [
+            //     {
+            //         icon: 'iconfont iconshouye',
+            //         url: 'dashboard',
+            //         title: '系统首页'
+            //     },
+            //     {
+            //         icon: 'iconfont iconxitongshezhi',
+            //         url: '',
+            //         title: '系统管理',
+            //         subs: [
+            //             {
+            //                 url: 'userInfo',
+            //                 title: '用户管理'
+            //             },
+            //             {
+            //                 url: 'role',
+            //                 title: '角色管理'
+            //             },
+            //             {
+            //                 url: 'department',
+            //                 title: '组织管理'
+            //             },
+            //             {
+            //                 url: 'power',
+            //                 title: '权限管理'
+            //             }
+            //         ]
+            //     },
+            //     {
+            //         icon: 'iconfont iconguanli',
+            //         url: '9',
+            //         title: '病人管理',
+            //         subs: [
+            //             {
+            //                 url: 'patient',
+            //                 title: '病人列表'
+            //             }
+            //         ]
+            //     },
+            //     {
+            //         icon: 'iconfont iconshituxianshiquanbujiedian',
+            //         url: '10',
+            //         title: '仓库管理',
+            //         subs: [
+            //             {
+            //                 url: 'patient',
+            //                 title: '材料视图'
+            //             }
+            //         ]
+            //     },
+            // ]
         };
     },
     computed: {
         onRoutes() {
+            window.localStorage.setItem('menuActive',this.$route.path.replace('/', ''))
             return this.$route.path.replace('/', '');
         }
     },
     methods: {
-        getMenu() {
-            this.$http
-                .post('/api/menu/getmenulist', {
-                    name: '',
-                    fldSort: '',
-                    fldName: ''
-                })
-                .then((res) => {
-                    if (res.data.success) {
-                        let tempArr = res.data.result;
-                        this.items = tempArr;
-                    } else {
-                        this.$message.error(res.data.message);
-                    }
-                });
-        }
+
     },
     created() {
-        this.getMenu();
+        this.items = JSON.parse(window.localStorage.getItem('sidebar'));
         // 通过 Event Bus 进行组件间通信，来折叠侧边栏
         bus.$on('collapse', (msg) => {
             this.collapse = msg;

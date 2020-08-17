@@ -23,7 +23,7 @@
                     </el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-button type="primary" @click="add">添加用户</el-button>
+                    <el-button v-has="'add'" @click="add">添加用户</el-button>
                 </el-col>
             </el-row>
 
@@ -66,6 +66,7 @@
                             size="mini"
                             type="success"
                             icon="el-icon-edit"
+                             v-has="'edit'"
                             @click="handleEdit(scope.$index, scope.row)"
                         ></el-button>
                         <el-tooltip content="修改密码" :enterable="false" placement="top">
@@ -73,6 +74,7 @@
                                 size="mini"
                                 type="warning"
                                 icon="el-icon-edit-outline"
+                                 v-has="'editPwd'"
                                 @click="changePwd(scope.$index, scope.row)"
                             ></el-button>
                         </el-tooltip>
@@ -88,6 +90,7 @@
                             size="mini"
                             type="danger"
                             icon="el-icon-delete"
+                             v-has="'delete'"
                             @click="handleDelete(scope.row)"
                         ></el-button>
                     </template>
@@ -156,7 +159,7 @@
                 </el-form>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="addDialogClosed">取 消</el-button>
-                    <el-button type="primary" @click="addSubmitForm('addForm')">确 定</el-button>
+                    <el-button @click="addSubmitForm('addForm')">确 定</el-button>
                 </span>
             </el-dialog>
             <!-- 修改密码 -->
@@ -173,7 +176,7 @@
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                     <el-button @click="clearForm">取 消</el-button>
-                    <el-button type="primary" @click="editPwdForm('form')">确 定</el-button>
+                    <el-button @click="editPwdForm('form')">确 定</el-button>
                 </div>
             </el-dialog>
         </el-card>

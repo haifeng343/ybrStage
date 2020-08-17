@@ -29,7 +29,7 @@
                     </el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-button type="primary" @click="add">添加权限</el-button>
+                    <el-button @click="add">添加权限</el-button>
                 </el-col>
             </el-row>
 
@@ -129,7 +129,7 @@
                 </el-form>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="addDialogClosed">取 消</el-button>
-                    <el-button type="primary" @click="addSubmitForm('addForm')">确 定</el-button>
+                    <el-button @click="addSubmitForm('addForm')">确 定</el-button>
                 </span>
             </el-dialog>
 
@@ -152,7 +152,7 @@
                 </el-form>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="editDialogClosed">取 消</el-button>
-                    <el-button type="primary" @click="editSubmitForm('editForm')">确 定</el-button>
+                    <el-button @click="editSubmitForm('editForm')">确 定</el-button>
                 </span>
             </el-dialog>
         </el-card>

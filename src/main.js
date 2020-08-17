@@ -14,11 +14,126 @@ import 'nprogress/nprogress.css'
 import axios from 'axios'
 import '../src/assets/css/main.css'
 import 'babel-polyfill';
-import store from '../src/store.js'
+import store from './store/store.js'
 import $ from 'jquery'
+
+// Vue.directive('has', {
+//     inserted: function (el, binding) {
+//         if (!permissionJudge(binding.value)) {
+//             el.parentNode.removeChild(el);
+//         }
+
+//         function permissionJudge (value1) {
+//             // 此处store.getters.getMenuBtnList代表vuex中储存的按钮菜单数据
+//             let list = JSON.parse(window.localStorage.getItem('sidebar'));
+//             let menuActive = window.localStorage.getItem('menuActive');
+//             for (let item of list) {
+//                 // if (item.permission === value1) {
+//                 //     return true;
+//                 // }
+//                 if (item.subs.length > 0) {
+//                     item.subs.forEach(item1 => {
+//                         if (item1.url == menuActive) {
+//                             if (item1.btns.length > 0) {
+//                                 item1.btns.forEach(item2 => {
+//                                     if (item2.value == value1) {
+//                                         return true;
+//                                     } else {
+//                                         return false
+//                                     }
+//                                 })
+//                             }
+//                         }
+//                     })
+//                 }
+//             }
+//             return false;
+//         }
+//     }
+// });
+
+
+// Vue.directive('has', {
+//     inserted: function (el, binding) {
+//         if (!Vue.prototype.$_has(binding.value)) {
+//             el.parentNode.removeChild(el)
+//         }
+//     }
+// })
+// //// 权限检查方法（且把该方法添加到vue原型中）
+// Vue.prototype.$_has = function (value1) {
+//     let isExist = false;
+//     let list = JSON.parse(window.localStorage.getItem('sidebar'));
+//     let menuActive = window.localStorage.getItem('menuActive');
+//     if (list === undefined || list === null) {
+//         return false;
+//     }
+//     for (let item of list) {
+//         if (item.subs.length > 0) {
+//             item.subs.forEach(item1 => {
+//                 if (item1.url == menuActive) {
+//                     if (item1.btns.length > 0) {
+//                         item1.btns.forEach(item2 => {
+//                             if (item2.value == value1) {
+//                                 isExist = true;
+//                             } else {
+//                                 isExist = false
+//                             }
+//                         })
+//                     }
+//                 }
+//             })
+//         }
+//     }
+//     return isExist;
+// };
+
+Vue.directive('has', {
+    inserted: function (el, binding) {
+        if (!Vue.prototype.$_has(binding.value)) {
+            el.parentNode.removeChild(el)
+        }
+    }
+})
+// 权限检查方法（且把该方法添加到vue原型中）
+Vue.prototype.$_has = function (value) {
+    let isExist = false
+    // 从浏览器缓存中获取权限数组（该数组在登入成功后拉取用户的权限信息时保存在浏览器的缓存中）
+    let list = JSON.parse(window.localStorage.getItem('sidebar'));
+        let menuActive = window.localStorage.getItem('menuActive');
+    let arr = [];
+    for (let item of list) {
+        if (item.subs.length > 0) {
+            item.subs.filter(item1 => {
+                if (item1.url == menuActive) {
+                    if (item1.btns.length > 0) {
+                        item1.btns.filter(item2 => {
+                           return item2
+                        }).map(item2=>{
+                            arr.push(item2.value)
+                        })
+                    }
+                }
+            })
+        }
+    }
+
+    var buttonpermsStr = arr;
+
+    if (buttonpermsStr === undefined || buttonpermsStr == null) {
+        return false
+    }
+    if (buttonpermsStr.indexOf(value) >= 0) {
+        // 若在按钮中定义的权限字段能在后端返回的权限数组中能找到，则该按钮可显示
+        isExist = true
+    }
+    return isExist
+}
+
 
 Vue.config.productionTip = false;
 Vue.use(VueI18n);
+
 Vue.use(ElementUI, {
     size: 'small'
 });

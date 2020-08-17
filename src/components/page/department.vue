@@ -23,7 +23,7 @@
                     </el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-button type="primary" @click="add">新建部门</el-button>
+                    <el-button v-has="'add'" @click="add">新建部门</el-button>
                 </el-col>
             </el-row>
             <el-table
@@ -45,6 +45,7 @@
                             size="mini"
                             type="success"
                             icon="el-icon-edit"
+                            v-has="'edit'"
                             @click="handleEdit( scope.row)"
                         ></el-button>
                         <el-button
@@ -91,7 +92,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addDialogClosed">取 消</el-button>
-                <el-button type="primary" @click="addSubmitForm('addForm')">确 定</el-button>
+                <el-button @click="addSubmitForm('addForm')">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -259,11 +260,21 @@ export default {
             this.$http.post('/api/user/getdropdownorg').then((res) => {
                 this.dropList = res.data.result;
             });
+        },
+        // 存储按钮权限
+        getPermission() {
+            // 模拟接口 获取 权限数据集合
+            // 模拟获取的数据 有以下几个权限
+            let perms = ['search', 'view', 'edit', 'delete'];
+            // 用于把权限集合提交到 actions 中的 SET_PERMISSION 函数
+            // 第一个为函数名，后面的参数为 我们需要提交的参数，可以是多个
+            this.$store.dispatch('SET_PERMISSION', perms);
         }
     },
     created() {
         this.getData(1); //获取数据
         this.getDropList(); //获取组织列表
+        this.getPermission();
     }
 };
 </script>
