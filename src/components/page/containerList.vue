@@ -149,11 +149,11 @@ export default {
             display: flex;
             flex-direction: column;
             position: absolute;
-        background: rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 1);
             top: 0;
             left: 0;
             transform-style: preserve-3d;
-            transition: all .5s ease-in;
+            transition: all .4s ease-in-out;
             .itemTop {
                 width: 100%;
                 height: 242px;
@@ -194,7 +194,6 @@ export default {
         }
         .item2 {
             opacity: 0;
-            transform: rotateY(180deg);
             .itemTop2 {
                 position: relative;
                 box-sizing: border-box;
@@ -299,11 +298,10 @@ export default {
         }
     }
     .item:hover .item1 {
-        transform: rotateY(180deg);
         opacity: 0;
     }
     .item:hover .item2 {
-        transform: rotateY(0);
+        z-index: 2;
         opacity: 1;
     }
 }
