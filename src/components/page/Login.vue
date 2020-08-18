@@ -38,14 +38,6 @@
                         ></el-input>
                         <img src="../../assets/img/suo.png" class="imgBg" alt />
                     </el-form-item>
-                    <div class="drag">
-                        <div class="drag_bg"></div>
-                        <div class="drag_text">{{confirmWords}}</div>
-                        <div @mousedown="mousedownFn($event)" class="handler handler_bg">
-                            <i class="el-icon-d-arrow-right" v-if="!confirmSuccess"></i>
-                            <i class="el-icon-circle-check kpl" v-else></i>
-                        </div>
-                    </div>
                     <div class="login-btn">
                         <el-button @click="submitForm()">登录</el-button>
                     </div>
@@ -64,6 +56,24 @@
                     <p class="tips">“SAAS样本库追溯平台”</p>
                 </div>
             </transition>
+        </div>
+        <!-- 验证 -->
+        <div class="widgets__img_check_box" id="select" style="width:600px;margin:0 auto;top:2px;">
+            <div class="widgets__img_display">
+                <div class="widgets__img_cnt">
+                    <img src1="a.jpg" class="widgets__img_src" />
+                    <canvas class="widgets__img_fragment_hollow"></canvas>
+                    <div class="widgets__img_fragment_cnt">
+                        <canvas class="widgets__img_fragment widgets__img_fragment_shadow"></canvas>
+                        <canvas class="widgets__img_fragment widgets__img_fragment_content"></canvas>
+                    </div>
+                    <div class="widgets__icon_refresh"></div>
+                </div>
+            </div>
+            <div class="widgets__smooth_cnt">
+                <div class="widgets__smooth_bar"></div>
+                <div class="widgets__smooth_circle"></div>
+            </div>
         </div>
     </div>
 </template>
@@ -95,16 +105,7 @@ export default {
                 username: [{ required: true, message: '请输入用户名', trigger: 'change' }],
                 password: [{ required: true, message: '请输入密码', trigger: 'change' }]
             },
-            beginClientX: 0,
-            /*距离屏幕左端距离*/
-            mouseMoveStata: false,
-            /*触发拖动状态 判断*/
-            maxwidth: 204,
-            /*拖动最大宽度，依据滑块宽度算出来的*/
-            confirmWords: '向右滑动验证',
-            /*滑块文字*/
-            confirmSuccess: false
-            /*验证成功判断*/
+            confirmSuccess: true
         };
     },
     methods: {
@@ -125,7 +126,6 @@ export default {
                 this.img1 = require('../../assets/img/code.png');
             } else {
                 this.img1 = require('../../assets/img/pc.png');
-                this.confirmSuccess = false;
             }
         },
         // 设置当前选中的扫码/账号登录
@@ -135,7 +135,6 @@ export default {
             if (this.showId == 1) {
                 this.showId = 2;
                 this.img1 = require('../../assets/img/pc.png');
-                this.confirmSuccess = false;
             } else {
                 this.showId = 1;
                 this.img1 = require('../../assets/img/code.png');
@@ -204,63 +203,39 @@ export default {
                 }
             });
         },
-        mousedownFn: function (e) {
-            this.mouseMoveStata = true;
-            this.beginClientX = e.clientX;
-        }, //按下滑块函数
-        successFunction() {
-            $('.handler').removeClass('handler_bg').addClass('handler_ok_bg').css({
-                left: this.maxwidth
+        setPintu() {
+            let s = WIDGETS.imgSmoothCheck({
+                selector: '#select',
+                data: [
+                    'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3984473917,238095211&fm=26&gp=0.jpg',
+                    'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2020089733,86807406&fm=26&gp=0.jpg',
+                    'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1032775318,1475043169&fm=26&gp=0.jpg'
+                ],
+                imgHeight: 100,
+                imgWidth: 200,
+                allowableErrorValue: 3,
+                success: function () {
+                    alert('成功');
+                },
+                error: function (res) {
+                    alert('重新再试');
+                }
             });
-            this.confirmWords = '验证通过';
-            $('.drag').css({
-                'background-color': '#fff ',
-                color: '#333'
+            $('.refresh').on('click', function () {
+                s.refresh();
             });
-            $('.drag_text').css({ color: '#fff' });
-            $('.handler_ok_bg').css({ 'background-color': '#fff ', color: '#5d81f4 ' });
-            $('.drag_bg').css({
-                width: this.maxwidth
-            });
-            $('body').unbind('mousemove').unbind('mouseup');
-            this.confirmSuccess = true;
         }
     },
     mounted() {
-        $('body').on('mousemove', (e) => {
-            //拖动，这里需要用箭头函数，不然this的指向不会是vue对象
-            if (this.mouseMoveStata) {
-                var width = e.clientX - this.beginClientX;
-                if (width > 0 && width <= this.maxwidth) {
-                    $('.handler').css({
-                        left: width
-                    });
-                    $('.drag_bg').css({
-                        width: width
-                    });
-                } else if (width > this.maxwidth) {
-                    this.successFunction();
-                }
-            }
-        });
-        $('body').on('mouseup', (e) => {
-            //鼠标放开
-            this.mouseMoveStata = false;
-            var width = e.clientX - this.beginClientX;
-            if (width < this.maxwidth) {
-                $('.handler').css({
-                    left: 0
-                });
-                $('.drag_bg').css({
-                    width: 0
-                });
-            }
-        });
+        this.setPintu();
     }
 };
 </script>
 
+
+
 <style lang="less" scoped>
+@import '../../assets/css/img_smooth_check.css';
 .el-input--small .el-input__inner {
     padding-left: 35px !important;
 }
