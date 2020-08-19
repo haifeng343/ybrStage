@@ -206,6 +206,7 @@ export default {
                         })
                         .then((res) => {
                             if (res.data.success == true) {
+                                _self.getMenu();
                                 _self.$store.state.userInfo = res.data.result;
                                 localStorage.setItem('userInfo', JSON.stringify(res.data.result));
                                 localStorage.setItem('ms_username', res.data.result.username);

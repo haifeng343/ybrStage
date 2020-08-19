@@ -138,8 +138,11 @@ export default {
     methods: {
 
     },
+    mounted(){
+
+    },
     created() {
-        this.items = JSON.parse(window.localStorage.getItem('sidebar'));
+        this.items = JSON.parse(window.localStorage.getItem('menu'));
         // 通过 Event Bus 进行组件间通信，来折叠侧边栏
         bus.$on('collapse', (msg) => {
             this.collapse = msg;
