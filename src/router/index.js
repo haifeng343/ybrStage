@@ -124,6 +124,27 @@ const router = new Router({
                     meta: { title: '冰箱管理', permission: false }
                 },
                 {
+                    // 房间管理页面
+                    path: '/room',
+                    name: 'room',
+                    component: () => import('../components/page/room.vue'),
+                    meta: { title: '房间管理', permission: false }
+                },
+                {
+                    // 冰箱详情页面
+                    path: '/iceboxDetail',
+                    name: 'iceboxDetail',
+                    component: () => import('../components/page/iceboxDetail.vue'),
+                    meta: { title: '冰箱详情', permission: false }
+                },
+                {
+                    // 样本列表页面
+                    path: '/sample',
+                    name: 'sample',
+                    component: () => import('../components/page/sample.vue'),
+                    meta: { title: '样本列表', permission: false }
+                },
+                {
                     path: '/404',
                     name: '404',
                     component: () => import('../components/page/404.vue'),

@@ -1,17 +1,30 @@
 <template>
     <div>
+        <div class="headerTop">
+            <div class="headerTop_title">样本源管理</div>
+            <i class="el-icon-d-arrow-right"></i>
+            <div class="headerTop_text">病人管理</div>
+        </div>
         <!-- 卡片视图 -->
+        <div class="btnsRight">
+            <div
+                :class="['btnsItem',item.id==showId?'btnActive':'']"
+                v-for="item in saasList"
+                :key="item.id"
+                @click="setActive(item.id)"
+            >{{item.name}}</div>
+        </div>
         <el-card>
             <!-- 搜索添加区域 -->
-            <el-row :gutter="20">
+            <el-row :gutter="20" v-if="showId==1">
                 <el-col :span="2">
                     <el-button plain>信息导入</el-button>
                 </el-col>
                 <el-col :span="2">
-                    <el-button plain>信息导入</el-button>
+                    <el-button plain>信息导出</el-button>
                 </el-col>
                 <el-col :span="2">
-                    <el-button plain>录入病人信息</el-button>
+                    <el-button plain @click="add">录入病人信息</el-button>
                 </el-col>
                 <el-col :span="5" ::offset="13">
                     <el-input
@@ -35,23 +48,48 @@
 
             <!-- 数据表格 -->
             <el-table
-                :data="tableData"
+                :data="moreTypeList"
                 border
                 class="table"
                 height="700"
+                v-if="showId==2"
+                :header-cell-style="{background:'#fff',color:'#606266'}"
+                :row-class-name="tableRowClassName"
+            >
+                <el-table-column prop="name" fixed label="疾病分类" align="center"></el-table-column>
+            </el-table>
+
+            <!-- 数据表格 -->
+            <el-table
+                :data="tableData"
+                border
+                class="table"
+                height="600"
+                v-if="showId==1"
                 :header-cell-style="{background:'#fff',color:'#606266'}"
                 :row-class-name="tableRowClassName"
                 @selection-change="handleSelectionChange"
             >
-                <el-table-column prop="id" fixed label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="cardno" fixed label="项目编码" align="center"></el-table-column>
-                <el-table-column prop="cardno" fixed label="项目名称" align="center"></el-table-column>
-                <el-table-column prop="cardno" fixed label="样本类型" align="center"></el-table-column>
-                <el-table-column prop="cardno" fixed label="样本类型" align="center"></el-table-column>
-                <el-table-column prop="cardno" fixed label="所属人" align="center"></el-table-column>
-                <el-table-column prop="cardno" fixed label="身份证号" align="center"></el-table-column>
-                <el-table-column prop="cardno" fixed label="字段" align="center"></el-table-column>
-                <el-table-column prop="cardno" fixed label="创建日期" align="center"></el-table-column>
+                <el-table-column type="selection" width="55"></el-table-column>
+                <el-table-column prop="cardno" label="身份证号" width="200" align="center"></el-table-column>
+                <el-table-column prop="name" label="病人名称" width="160" align="center"></el-table-column>
+                <el-table-column prop="sex" label="性别" width="160" align="center">
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.sex==0">未知</span>
+                        <span v-if="scope.row.sex==1">男</span>
+                        <span v-if="scope.row.sex==2">女</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="age" label="年龄" width="80" align="center"></el-table-column>
+                <el-table-column prop="tumortype" label="肿瘤类型" width="160" align="center"></el-table-column>
+                <el-table-column prop="therapy" label="治疗方法" width="200" align="center"></el-table-column>
+                <el-table-column prop="cardno" label="生存状态" width="100" align="center"></el-table-column>
+                <el-table-column prop="cardno" label="回访记录" width="100" align="center">
+                    <template slot-scope="scope">
+                        <el-button type="text">查看记录</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="updatetime" label="修改日期" width="200" align="center"></el-table-column>
                 <el-table-column label="操作" width="280" align="center" fixed="right">
                     <template slot-scope="scope">
                         <el-button
@@ -60,7 +98,7 @@
                             icon="el-icon-edit"
                             @click="handleEdit(scope.$index, scope.row)"
                         ></el-button>
-                        <el-tooltip content="修改密码" :enterable="false" placement="top">
+                        <el-tooltip content="所有样本" :enterable="false" placement="top">
                             <el-button
                                 size="mini"
                                 type="warning"
@@ -93,6 +131,7 @@
                 :current-page="pageIndex"
                 :page-sizes="[10, 20, 30, 40,50]"
                 :page-size="pageSize"
+                v-if="showId==1"
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="totalCount"
             ></el-pagination>
@@ -101,12 +140,20 @@
             <el-dialog
                 :title="addForm.id?'编辑病人信息:':'病人信息录入:'"
                 :visible.sync="addDialogVisible"
-                width="50%"
+                width="60%"
                 @close="addDialogClosed"
             >
-                <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="90px">
+                <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="80px">
                     <el-row>
-                        <el-col :span="7" :offset="1">
+                        <el-col :span="7">
+                            <el-form-item label="编号" prop="no">
+                                <el-input type="text" v-model="addForm.no" placeholder="请输入编号"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="7"></el-col>
+                        <el-col :span="7">
                             <el-form-item label="病人名字" prop="name">
                                 <el-input type="text" v-model="addForm.name" placeholder="请输入病人名字"></el-input>
                             </el-form-item>
@@ -120,73 +167,98 @@
                                 ></el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="7" :offset="1">
-                            <el-form-item label="联系方式" prop="phone">
-                                <el-input
-                                    type="number"
-                                    v-model="addForm.phone"
-                                    placeholder="请输入联系方式"
-                                ></el-input>
+                        <el-col :span="8" :offset="1">
+                            <el-form-item label="联系方式" prop="tel">
+                                <el-input type="number" v-model="addForm.tel" placeholder="请输入联系方式"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="7" :offset="1">
+                        <el-col :span="7">
                             <el-form-item label="年龄" prop="age">
                                 <el-input type="text" v-model="addForm.age" placeholder="请输入病人年龄"></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="7" :offset="1">
-                            <el-form-item label="治疗方法" prop="fangfa">
-                                <el-input
-                                    type="number"
-                                    v-model="addForm.fangfa"
-                                    placeholder="请输入治疗方法"
-                                ></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="7" :offset="1">
-                            <el-form-item label="治疗评价" prop="dic">
-                                <el-input type="text" v-model="addForm.dic" placeholder="请输入治疗评价"></el-input>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :span="7" :offset="1">
-                            <el-form-item label="性别" prop="age">
-                                <el-radio-group v-model="addForm.sex">
-                                    <el-radio
-                                        v-for="item in sexList"
-                                        :key="item.id"
-                                        :label="item.id"
-                                    >{{item.name}}</el-radio>
+                            <el-form-item label="性别" prop="sex">
+                                <el-radio-group v-model="addForm.sex" @change="changeSex">
+                                    <el-radio :label="1">男</el-radio>
+                                    <el-radio :label="2">女</el-radio>
                                 </el-radio-group>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="7" :offset="1">
-                            <el-form-item label="肿瘤类型" prop="fangfa">
-                                <el-select v-model="addForm.db" placeholder="请选择肿瘤类型"></el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="7" :offset="1">
-                            <el-form-item label="检查项" prop="dic">
-                                <el-select v-model="addForm.db" placeholder="请选择检查项"></el-select>
+                        <el-col :span="8" :offset="1">
+                            <el-form-item label="肿瘤类型" prop="tumortypeid">
+                                <el-select
+                                    v-model="addForm.tumortypeid"
+                                    @change="changeTumorType"
+                                    placeholder="请选择肿瘤类型"
+                                >
+                                    <el-option
+                                        :label="item.name"
+                                        :value="item.key"
+                                        v-for="item in moreTypeList"
+                                        :key="item.key"
+                                    >{{item.name}}</el-option>
+                                </el-select>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row>
+                        <el-col :span="7">
+                            <el-form-item label="地址" prop="address">
+                                <el-input type="text" v-model="addForm.address" placeholder="请输入地址"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="7" :offset="1">
+                            <el-form-item label="家属电话" prop="familycontact">
+                                <el-input
+                                    type="text"
+                                    v-model="addForm.familycontact"
+                                    placeholder="请输入家属联系方式"
+                                ></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8" :offset="1">
+                            <el-form-item label="生日" prop="birthdatestr">
+                                <el-date-picker
+                                    v-model="addForm.birthdatestr"
+                                    type="date"
+                                    format="yyyy-MM-dd"
+                                    placeholder="选择日期"
+                                ></el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-form-item label="治疗方法" prop="therapy">
+                        <el-input
+                            type="textarea"
+                            :rows="5"
+                            v-model="addForm.therapy"
+                            placeholder="请输入治疗方法"
+                        ></el-input>
+                    </el-form-item>
+                    <el-form-item label="使用药物" prop="medicine">
+                        <el-input
+                            type="textarea"
+                            :rows="5"
+                            v-model="addForm.medicine"
+                            placeholder="请输入使用药物"
+                        ></el-input>
+                    </el-form-item>
+                    <el-row>
                         <el-col :span="24">
-                            <el-form-item label="描述" prop="dicTxt">
+                            <el-form-item label="描述" prop="remark">
                                 <el-input
                                     type="textarea"
                                     :rows="5"
                                     placeholder="请输入内容"
-                                    v-model="addForm.dicTxt"
+                                    v-model="addForm.remark"
                                 ></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
-                    <template>
+                    <template v-if="tableData1.length > 0">
                         <el-row>
                             <table class="table1" cellspacing="0" cellpadding="0">
                                 <tbody>
@@ -198,59 +270,53 @@
                                             <td>检查结果</td>
                                         </el-col>
                                     </tr>
-                                    <tr>
-                                        <el-col :span="8">
-                                            <td>肿瘤亚型分类</td>
-                                        </el-col>
-                                        <el-col :span="16">
-                                            <td>
-                                                <el-select
-                                                    class="borderNone"
-                                                    v-model="addForm.db"
-                                                    placeholder="请选择检查项"
-                                                ></el-select>
-                                            </td>
-                                        </el-col>
-                                    </tr>
-                                    <tr>
-                                        <el-col :span="8">
-                                            <td>组织学分类</td>
-                                        </el-col>
-                                        <el-col :span="16">
-                                            <td>
-                                                <el-select
-                                                    class="borderNone"
-                                                    v-model="addForm.db"
-                                                    placeholder="请选择检查项"
-                                                ></el-select>
-                                            </td>
-                                        </el-col>
-                                    </tr>
-                                    <tr>
-                                        <el-col :span="8">
-                                            <td>附件</td>
-                                        </el-col>
-                                        <el-col :span="16">
-                                            <td></td>
-                                        </el-col>
+                                    <tr v-for="(item,index) in tableData1" :key="index">
+                                        <div v-if="item.type==1">
+                                            <el-col :span="8">
+                                                <td>{{item.colname}}</td>
+                                            </el-col>
+                                            <el-col :span="16">
+                                                <td>
+                                                    <el-select
+                                                        class="borderNone"
+                                                        v-model="item.key"
+                                                        @change="changeValue(item)"
+                                                        placeholder="请选择检查项"
+                                                    >
+                                                        <el-option
+                                                            v-for="(item1,index1) in item.values"
+                                                            :key="index1"
+                                                            :value="item1"
+                                                        >{{item1}}</el-option>
+                                                    </el-select>
+                                                </td>
+                                            </el-col>
+                                        </div>
+                                        <div v-if="item.type==2">
+                                            <el-col :span="8">
+                                                <td>附件</td>
+                                            </el-col>
+                                            <el-col :span="16">
+                                                <td></td>
+                                            </el-col>
+                                        </div>
                                     </tr>
                                 </tbody>
                             </table>
                         </el-row>
                     </template>
                 </el-form>
-                <span slot="footer" class="dialog-footer1">
-                    <div class="btn1">取消</div>
-                    <div class="btn1">保存并继续录入</div>
-                    <div class="btn1">保存</div>
-                    <!-- <el-button @click="addDialogClosed">取 消</el-button>
-                    <el-button @click="addSubmitForm('addForm')">确 定</el-button>-->
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogClosed">取 消</el-button>
+                    <el-button v-if="!addForm.id" @click="addDialogClosed">保存并继续录入</el-button>
+                    <el-button @click="addSubmitForm('addForm')">确 定</el-button>
                 </span>
             </el-dialog>
         </el-card>
     </div>
 </template>
 <script>
+import moment from 'moment';
 export default {
     data() {
         // 校验邮箱
@@ -270,69 +336,17 @@ export default {
             cb(new Error('请输入正确的手机号'));
         };
         return {
-            formRules: {
-                pazzword: [{ required: true, trigger: 'blur', message: '请输入密码' }]
-            },
-            form: {
-                id: '',
-                pazzword: ''
-            },
-            loading: true,
-            name: '2',
-            keyword: '',
-            addForm: {
-                id: '',
-                sex: 1,
-                username: '', //用户
-                account: '', //账号
-                phone: '', //手机号
-                organizationid: '', //组织
-                pazzword: '', //密码
-                roleids: [], //权限
-                rolenames: [] //权限名称
-            },
-            tableData1: [
+            showId: 1, //1病人信息列表 2疾病分类
+            saasList: [
                 {
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
+                    id: 1,
+                    name: '疾病信息列表'
                 },
                 {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                },
-                {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                },
-                {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
+                    id: 2,
+                    name: '疾病分类'
                 }
             ],
-            addFormRules: {
-                username: [
-                    { required: true, trigger: 'blur', message: '请输入用户名' },
-                    { min: 3, max: 10, message: '用户名长度在3到10个字符之间' }
-                ],
-                pazzword: [{ required: true, trigger: 'blur', message: '请输入密码' }],
-                account: [{ required: true, trigger: 'blur', message: '请输入账号昵称' }],
-                phone: [
-                    { required: true, trigger: 'blur', message: '请输入手机号' },
-                    { validator: checkMobile, trigger: 'blur' }
-                ]
-            },
-            addDialogVisible: true, //添加对话框的显示隐藏
-            pageIndex: 1, //页码数
-            pageSize: 10, //条数
-            totalCount: 0, //总条数
-            tableData: [], //表格数据
-            roleList: [], //角色列表
-            dropList: [], //组织列表
-
             sexList: [
                 {
                     id: 1,
@@ -342,13 +356,124 @@ export default {
                     id: 2,
                     name: '女'
                 }
-            ]
+            ],
+            value: 1,
+            loading: true,
+            name: '2',
+            keyword: '',
+            addForm: {
+                id: '',
+                no: '', //编号
+                name: '', //名字
+                cardno: '', //身份证号码
+                birthdatestr: '', //出生年月
+                tel: '', //联系电话
+                address: '', //联系地址
+                sex: 1, //性别
+                age: '', //年龄
+                tumortypeid: '', //肿瘤类型id
+                tumortype: '', //肿瘤类型
+                therapy: '', //治疗方式
+                remark: '', //描述
+                medicine: '', //使用药物
+                familycontact: '', //家属联系方式
+                attachedformdata: {}, //病人癌症明细数据  key value
+                attachedform: '' //附属表单（存储表名）
+            },
+            addFormRules: {
+                // no: [{ required: true, trigger: 'blur', message: '请输入编号' }],
+                // name: [{ required: true, trigger: 'blur', message: '请输入姓名' }],
+                // cardno: [{ required: true, trigger: 'blur', message: '请输入身份证号' }],
+                // tel: [{ required: true, trigger: 'blur', message: '请输入手机号' }],
+                // age: [{ required: true, trigger: 'blur', message: '请输入年龄' }],
+                // tumortypeid: [{ required: true, trigger: 'change', message: '请选择肿瘤类型' }],
+                // address: [{ required: true, trigger: 'blur', message: '请输入地址' }],
+                // familycontact: [{ required: true, trigger: 'blur', message: '请输入家属电话' }],
+                // birthdatestr: [{ required: true, trigger: 'blur', message: '请选择生日' }],
+                // therapy: [{ required: true, trigger: 'blur', message: '请输入治疗方法' }],
+                // medicine: [{ required: true, trigger: 'blur', message: '请输入使用药物' }],
+                // remark: [{ required: true, trigger: 'blur', message: '请输入描述' }]
+            },
+            addDialogVisible: false, //添加对话框的显示隐藏
+            pageIndex: 1, //页码数
+            pageSize: 10, //条数
+            totalCount: 0, //总条数
+            tableData: [], //表格数据
+            roleList: [], //角色列表
+            dropList: [], //组织列表
+
+            moreTypeList: [], //疾病类型
+            tableData1: [], // 检查项 检查结果列表
+            attachedformvalue: {} //检查结果下拉选择数据
         };
     },
     created() {
         this.getData(1);
+        this.getMoreType();
     },
     methods: {
+        // 肿瘤类型切换
+        changeTumorType(e) {
+            this.$http
+                .post('/api/patient/patientform', {
+                    tumorType: e
+                    // patientrmationid: this.addForm.id
+                })
+                .then((res) => {
+                    if (res.data.success) {
+                        let tempArr = [];
+                        tempArr = res.data.result.config;
+                        tempArr.forEach((item) => {
+                            item.key = '';
+                        });
+                        this.tableData1 = tempArr;
+                    }
+                });
+        },
+        // 检查项 检查结果勾选
+        changeValue(item1) {
+            let tempArr = this.tableData1;
+            let arr = [];
+            if (!tempArr.length) return;
+            tempArr.forEach((item, index) => {
+                tempArr[index][tempArr[index]['col']] = tempArr[index]['key'];
+                if (item.col == item1.col) {
+                    item.key = item1.key;
+                }
+                arr.push({
+                    value: item.key ? item.key : '',
+                    key: item.col
+                });
+            });
+            this.addForm.attachedformdata = arr.filter((item) => {
+                return item.key !== '';
+            });
+            // this.tableData1 = tempArr;
+        },
+        // 性别切换
+        changeSex(e) {
+            this.addForm.sex = e;
+        },
+        // 获取疾病类型
+        getMoreType() {
+            let arr = [];
+            this.$http.post('/api/patient/getpatienttumortype', {}).then((res) => {
+                if (res.data.success) {
+                    arr = res.data.result;
+                    arr.filter((item) => {
+                        if (item.name !== '全部') {
+                            return item;
+                        }
+                    }).map((item) => {
+                        this.moreTypeList.push(item);
+                    });
+                }
+            });
+        },
+        //更改信息
+        setActive(e) {
+            this.showId = e;
+        },
         handleSelectionChange(e) {
             console.log(e);
         },
@@ -432,33 +557,6 @@ export default {
             this.$refs.formRef.resetFields();
             this.dialogFormVisible = false;
         },
-        // 密码提交
-        editPwdForm() {
-            this.$refs.formRef.validate((valid) => {
-                if (valid) {
-                    this.$http
-                        .post('/api/user/resetpazzword', { id: this.form.id })
-                        .then((res) => {
-                            if (res.data.success) {
-                                this.$message.success('密码修改成功!');
-                                this.dialogFormVisible = false;
-                                this.getData(this.pageIndex);
-                            } else {
-                                this.$message.error(res.data.message);
-                            }
-                        })
-                        .catch((error) => {
-                            this.$message.fail(error.message);
-                        });
-                }
-            });
-        },
-        // 修改密码
-        changePwd(index, item) {
-            this.form.pazzword = item.pazzword;
-            this.form.id = item.userid;
-            this.dialogFormVisible = true;
-        },
 
         // 监听 pagesize 改变事件
         handleSizeChange(val) {
@@ -511,7 +609,7 @@ export default {
             });
             this.addForm.rolenames = arr;
             this.addForm = {
-                id: item.userid,
+                id: item.id,
                 username: item.username,
                 organizationid: item.organizationid,
                 phone: item.phone,
@@ -563,17 +661,33 @@ export default {
         addSubmitForm(formName) {
             this.$refs.addFormRef.validate((valid) => {
                 if (valid) {
+                    let tempArr = this.moreTypeList;
+                    tempArr.forEach((item) => {
+                        if (item.key == this.addForm.tumortypeid) {
+                            this.addForm.tumorType = item.name;
+                        }
+                    });
+                    console.log(this.addForm.tumorType)
                     if (this.addForm.id) {
                         this.$http
-                            .post('/api/user/saveuserinfo', {
-                                userid: this.addForm.id,
-                                username: this.addForm.username,
-                                account: this.addForm.account,
-                                pazzword: this.addForm.pazzword,
-                                organizationid: this.addForm.organizationid,
-                                phone: this.addForm.phone,
-                                roleids: this.addForm.roleids ? this.addForm.roleids : [],
-                                rolenames: this.addForm.rolenames ? this.addForm.rolenames : []
+                            .post('/api/patient/savepatient', {
+                                id: this.addForm.id,
+                                no: this.addForm.no,
+                                name: this.addForm.name,
+                                cardno: this.addForm.cardno,
+                                birthdatestr: moment(this.addForm.birthdatestr).format('YYYY-MM-DD'),
+                                tel: this.addForm.tel,
+                                address: this.addForm.address,
+                                sex: this.addForm.sex,
+                                age: parseInt(this.addForm.age),
+                                tumortypeid: this.addForm.tumortypeid,
+                                tumortype: this.addForm.tumortype,
+                                attachedform: this.addForm.attachedform ? this.addForm.attachedform : '',
+                                attachedformdata: this.addForm.attachedformdata,
+                                therapy: this.addForm.therapy,
+                                remark: this.addForm.remark,
+                                medicine: this.addForm.medicine,
+                                familycontact: this.addForm.familycontact
                             })
                             .then((res) => {
                                 if (res.data.success == true) {
@@ -586,14 +700,23 @@ export default {
                             });
                     } else {
                         this.$http
-                            .post('/api/user/saveuserinfo', {
-                                username: this.addForm.username,
-                                account: this.addForm.account,
-                                pazzword: this.addForm.pazzword,
-                                organizationid: this.addForm.organizationid,
-                                phone: this.addForm.phone,
-                                roleids: this.addForm.roleids ? this.addForm.roleids : [],
-                                rolenames: this.addForm.rolenames ? this.addForm.rolenames : []
+                            .post('/api/patient/savepatient', {
+                                no: this.addForm.no,
+                                name: this.addForm.name,
+                                cardno: this.addForm.cardno,
+                                birthdatestr: moment(this.addForm.birthdatestr).format('YYYY-MM-DD'),
+                                tel: this.addForm.tel,
+                                address: this.addForm.address,
+                                sex: this.addForm.sex,
+                                age: parseInt(this.addForm.age),
+                                tumortypeid: this.addForm.tumortypeid,
+                                tumortype: this.addForm.tumortype,
+                                attachedform: this.addForm.attachedform ? this.addForm.attachedform : '',
+                                attachedformdata: this.addForm.attachedformdata,
+                                therapy: this.addForm.therapy,
+                                remark: this.addForm.remark,
+                                medicine: this.addForm.medicine,
+                                familycontact: this.addForm.familycontact
                             })
                             .then((res) => {
                                 if (res.data.success == true) {
@@ -634,35 +757,16 @@ export default {
         }
     }
 }
-.dialog-footer1 {
-    width: 470px;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    margin: 0 auto 30px;
-}
-.btn1 {
-    width: 130px;
-    height: 40px;
-    background: rgba(255, 255, 255, 1);
-    border-radius: 2px;
-    border: 1px solid rgba(250, 72, 58, 1);
-    font-size: 14px;
-    color: rgba(250, 72, 58, 1);
-    line-height: 19px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.btn1:last-child {
-    background: rgba(250, 72, 58, 1);
-    border-radius: 2px;
-    color: #fff;
-}
+
 .table1 .el-select {
     width: 98% !important;
 }
 .table1 .el-select .el-input .el-input__inner {
+    border: none !important;
+}
+</style>
+<style>
+.borderNone .el-input__inner {
     border: none !important;
 }
 </style>

@@ -1,31 +1,44 @@
 <template>
     <div>
         <!-- 卡片视图 -->
+        <div class="headerTop">
+            <div class="headerTop_title">系统管理</div>
+            <i class="el-icon-d-arrow-right"></i>
+            <div class="headerTop_text">权限管理</div>
+        </div>
         <el-card>
             <!-- 搜索添加区域 -->
-            <el-row :gutter="20">
-                <el-col :span="5">
-                    <el-input
-                        placeholder="请输入内容"
-                        v-model="keyword"
-                        clearable
-                        ref="mark"
-                        @clear="getData(1)"
-                        @keyup.enter.native="search"
-                        class="input-with-select"
-                    >
-                        <el-button
-                            slot="append"
-                            type="primary"
-                            icon="el-icon-search"
-                            @click="search"
-                        ></el-button>
-                    </el-input>
-                </el-col>
-                <el-col :span="4">
-                    <el-button v-has="'add'" @click="add">新建菜单</el-button>
-                </el-col>
-            </el-row>
+             <div class="btnContent">
+                <div class="btnContentTop">
+                    <div class="start">
+                        <div class="searchForm">
+                            <el-input
+                                class="searchFormInput"
+                                placeholder="输入搜索条件"
+                                v-model="keyword"
+                                clearable
+                                @clear="getData(1)"
+                                @keydown.native.enter="getData(1)"
+                            ></el-input>
+                            <div class="searchFormBtn" @click="getData(1)">搜索</div>
+                        </div>
+                        <!-- <div class="content_btn">
+                            <img src="../../assets/img/loading.png" alt />
+                            <p>重置</p>
+                        </div>-->
+                    </div>
+                    <div class="btnContentRight">
+                        <div class="content_btn success" v-has="'add'" @click="add">
+                            <img src="../../assets/img/add1.png" alt />
+                            <p>新增菜单</p>
+                        </div>
+                        <div class="content_btn error" v-has="'delete'" @click="deleteAll">
+                            <img src="../../assets/img/delete1.png" alt />
+                            <p>删除</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <el-table
                 :data="tableData"
                 style="width: 100%;margin-bottom: 20px;"
@@ -37,7 +50,9 @@
                 :row-class-name="tableRowClassName"
                 default-expand-all
                 :tree-props="{children: 'subs', hasChildren: 'hasChildren'}"
+                @selection-change="handleSelectionChange"
             >
+                <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="title" label="菜单名称" width="500"></el-table-column>
                 <!-- <el-table-column label="类型" width="120">
                     <template slot-scope="scope">
@@ -61,14 +76,14 @@
                             size="mini"
                             type="success"
                             icon="el-icon-edit"
-                             v-has="'edit'"
+                            v-has="'edit'"
                             @click="handleEdit( scope.row)"
                         ></el-button>
                         <el-button
                             size="mini"
                             type="danger"
                             icon="el-icon-delete"
-                             v-has="'delete'"
+                            v-has="'delete'"
                             @click="handleDelete(scope.row)"
                         ></el-button>
                     </template>
@@ -165,7 +180,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addDialogClosed">取 消</el-button>
-                <el-button @click="sendForm('formRef')">确 定</el-button>
+                <el-button @click="sendForm('formRef')" plain>确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -189,13 +204,26 @@ export default {
                 delbtns: [] //删除的按钮
             },
             arr1: [],
+            deleteList:[],//批量删除
             formRules: {
                 name: [{ required: true, trigger: 'blur', message: '请输入部门名称' }]
             },
-            tdarr: [],
+            tdarr: []
         };
     },
     methods: {
+        // 批量勾选
+        handleSelectionChange(e) {
+            let arr = [];
+            if (e.length > 0) {
+                e.filter((item) => {
+                    return item;
+                }).map((item) => {
+                    arr.push(item.num);
+                });
+            }
+            this.deleteList = arr;
+        },
         tableRowClassName({ row }) {
             if (row.state === '失败') {
                 return 'warning-row';
@@ -220,10 +248,9 @@ export default {
         },
         // 删除
         handleDelete(item) {
-            this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+            this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
                 confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
+                cancelButtonText: '取消'
             })
                 .then(() => {
                     this.$http.post('/api/menu/deletemenu', { id: item.num }).then((res) => {
@@ -232,6 +259,27 @@ export default {
                             message: '删除成功!'
                         });
                         this.getData();
+                    });
+                })
+                .catch(() => {});
+        },
+         // 批量删除
+        deleteAll() {
+            this.$confirm('此操作将永久删除勾选的菜单, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消'
+            })
+                .then(() => {
+                    this.$http.post('/api/menu/deletemenus', { id: this.deleteList }).then((res) => {
+                        if (res.data.success) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData(this.pageIndex);
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
                     });
                 })
                 .catch(() => {});
@@ -269,7 +317,7 @@ export default {
                 title: '权限名',
                 value: '权限值'
             });
-            this.tdarr.push({title1: '权限名', value1: '权限值'});
+            this.tdarr.push({ title1: '权限名', value1: '权限值' });
             this.tableData1 = tempArr;
         },
         // 编辑按钮权限
@@ -288,7 +336,7 @@ export default {
                 this.tdarr.push({ title1: v.title, value1: v.value });
             }
             this.tableData1[index].checkbox = true;
-            this.tableData1 =[...this.tableData1];
+            this.tableData1 = [...this.tableData1];
         },
         // 删除按钮
         handleDeleteBtn(index, item) {
@@ -311,11 +359,11 @@ export default {
         // 取消保存按钮
         cancelBtn(index, item) {
             let tempArr = this.tableData1;
-            tempArr.forEach((item,index1)=>{
-                if(index==index1){
-            this.form.btns=this.tableData1;
+            tempArr.forEach((item, index1) => {
+                if (index == index1) {
+                    this.form.btns = this.tableData1;
                 }
-            })
+            });
             tempArr[index].checkbox = false;
             this.tableData1 = [...tempArr];
         },
@@ -398,7 +446,7 @@ export default {
                 })
                 .then((res) => {
                     this.tableData = res.data.result;
-                    window.localStorage.setItem('sidebar',JSON.stringify(res.data.result))
+                    window.localStorage.setItem('sidebar', JSON.stringify(res.data.result));
                 });
         }
     },

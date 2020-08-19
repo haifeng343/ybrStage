@@ -1,31 +1,44 @@
 <template>
     <div>
         <!-- 卡片视图 -->
+        <div class="headerTop">
+            <div class="headerTop_title">系统管理</div>
+            <i class="el-icon-d-arrow-right"></i>
+            <div class="headerTop_text">用户管理</div>
+        </div>
         <el-card>
-            <!-- 搜索添加区域 -->
-            <el-row :gutter="20">
-                <el-col :span="5">
-                    <el-input
-                        placeholder="请输入内容"
-                        v-model="keyword"
-                        clearable
-                        ref="mark"
-                        @clear="getData(1)"
-                        @keydown.native.enter="search"
-                        class="input-with-select"
-                    >
-                        <el-button
-                            slot="append"
-                            type="primary"
-                            icon="el-icon-search"
-                            @click="search"
-                        ></el-button>
-                    </el-input>
-                </el-col>
-                <el-col :span="4">
-                    <el-button v-has="'add'" @click="add">添加用户</el-button>
-                </el-col>
-            </el-row>
+            <!-- 头部搜索条件 -->
+            <div class="btnContent">
+                <div class="btnContentTop">
+                    <div class="start">
+                        <div class="searchForm">
+                            <el-input
+                                class="searchFormInput"
+                                placeholder="输入搜索条件"
+                                v-model="keyword"
+                                clearable
+                                @clear="getData(1)"
+                                @keydown.native.enter="getData(1)"
+                            ></el-input>
+                            <div class="searchFormBtn" @click="getData(1)">搜索</div>
+                        </div>
+                        <!-- <div class="content_btn">
+                            <img src="../../assets/img/loading.png" alt />
+                            <p>重置</p>
+                        </div>-->
+                    </div>
+                    <div class="btnContentRight">
+                        <div class="content_btn success" v-has="'add'" @click="add">
+                            <img src="../../assets/img/add1.png" alt />
+                            <p>新增用户</p>
+                        </div>
+                        <div class="content_btn error" v-has="'delete'" @click="deleteAll">
+                            <img src="../../assets/img/delete1.png" alt />
+                            <p>删除</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- 数据表格 -->
             <el-table
@@ -37,6 +50,7 @@
                 :row-class-name="tableRowClassName"
                 @selection-change="handleSelectionChange"
             >
+                <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="userid" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="username" label="用户名" align="center"></el-table-column>
                 <el-table-column prop="account" label="账号名称" align="center"></el-table-column>
@@ -66,7 +80,7 @@
                             size="mini"
                             type="success"
                             icon="el-icon-edit"
-                             v-has="'edit'"
+                            v-has="'edit'"
                             @click="handleEdit(scope.$index, scope.row)"
                         ></el-button>
                         <el-tooltip content="修改密码" :enterable="false" placement="top">
@@ -74,7 +88,7 @@
                                 size="mini"
                                 type="warning"
                                 icon="el-icon-edit-outline"
-                                 v-has="'editPwd'"
+                                v-has="'editPwd'"
                                 @click="changePwd(scope.$index, scope.row)"
                             ></el-button>
                         </el-tooltip>
@@ -90,7 +104,7 @@
                             size="mini"
                             type="danger"
                             icon="el-icon-delete"
-                             v-has="'delete'"
+                            v-has="'delete'"
                             @click="handleDelete(scope.row)"
                         ></el-button>
                     </template>
@@ -241,7 +255,8 @@ export default {
             totalCount: 0, //总条数
             tableData: [], //表格数据
             roleList: [], //角色列表
-            dropList: [] //组织列表
+            dropList: [], //组织列表
+            deleteList: [] //批量删除
         };
     },
     created() {
@@ -250,8 +265,17 @@ export default {
         this.getDropList(); //获取组织列表
     },
     methods: {
+        // 批量勾选
         handleSelectionChange(e) {
-            console.log(e);
+            let arr = [];
+            if (e.length > 0) {
+                e.filter((item) => {
+                    return item;
+                }).map((item) => {
+                    arr.push(item.userid);
+                });
+            }
+            this.deleteList = arr;
         },
         handleDrag(item) {
             // 参数会在头部拼接
@@ -394,7 +418,7 @@ export default {
         handleEdit(index, item) {
             console.log(item);
             // 格式转化
-            let role;
+            let role = [];
             if (item.roleids) {
                 role = item.roleids.split(',');
                 for (let i = 0; i < role.length; i++) {
@@ -427,16 +451,40 @@ export default {
         handleDelete(item) {
             this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
                 confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
+                cancelButtonText: '取消'
             })
                 .then(() => {
                     this.$http.post('/api/user/deleteuser', { id: item.userid }).then((res) => {
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
-                        this.getData(this.pageIndex);
+                        if (res.data.success) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData(this.pageIndex);
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+                })
+                .catch(() => {});
+        },
+        // 批量删除
+        deleteAll() {
+            this.$confirm('此操作将永久删除勾选的用户, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消'
+            })
+                .then(() => {
+                    this.$http.post('/api/user/deleteusers', { id: this.deleteList }).then((res) => {
+                        if (res.data.success) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData(this.pageIndex);
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
                     });
                 })
                 .catch(() => {});
@@ -454,10 +502,14 @@ export default {
                     fldName: ''
                 })
                 .then((res) => {
-                    this.tableData = res.data.result.pageData;
-                    this.totalCount = res.data.result.totalItemCount;
-                    this.pageIndex = res.data.result.pageIndex;
-                    this.pageSize = res.data.result.pageSize;
+                    if (res.data.success) {
+                        this.tableData = res.data.result.pageData;
+                        this.totalCount = res.data.result.totalItemCount;
+                        this.pageIndex = res.data.result.pageIndex;
+                        this.pageSize = res.data.result.pageSize;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
                 });
         },
         // 提交校验
@@ -477,7 +529,7 @@ export default {
                                 rolenames: this.addForm.rolenames ? this.addForm.rolenames : []
                             })
                             .then((res) => {
-                                if (res.data.success == true) {
+                                if (res.data.success) {
                                     this.addDialogVisible = false;
                                     this.getData(this.pageIndex);
                                     this.$message.success(res.data.message);
@@ -497,7 +549,7 @@ export default {
                                 rolenames: this.addForm.rolenames ? this.addForm.rolenames : []
                             })
                             .then((res) => {
-                                if (res.data.success == true) {
+                                if (res.data.success) {
                                     this.addDialogVisible = false;
                                     this.getData(this.pageIndex);
                                     this.$message.success(res.data.message);

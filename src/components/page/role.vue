@@ -1,31 +1,46 @@
 <template>
     <div>
         <!-- 卡片视图 -->
+        <div class="headerTop">
+            <div class="headerTop_title">系统管理</div>
+            <i class="el-icon-d-arrow-right"></i>
+            <div class="headerTop_text">角色管理</div>
+        </div>
+
         <el-card>
-            <!-- 搜索添加区域 -->
-            <el-row :gutter="20">
-                <el-col :span="5">
-                    <el-input
-                        placeholder="请输入内容"
-                        v-model="keyword"
-                        clearable
-                        ref="mark"
-                        @clear="getData(1)"
-                        @keydown.native.enter="getData(1)"
-                        class="input-with-select"
-                    >
-                        <el-button
-                            slot="append"
-                            type="primary"
-                            @click="getData(1)"
-                            icon="el-icon-search"
-                        ></el-button>
-                    </el-input>
-                </el-col>
-                <el-col :span="4">
-                    <el-button v-has="'add'" @click="add">新建角色</el-button>
-                </el-col>
-            </el-row>
+           <!-- 头部搜索条件 -->
+            <div class="btnContent">
+                <div class="btnContentTop">
+                    <div class="start">
+                        <div class="searchForm">
+                            <el-input
+                                class="searchFormInput"
+                                placeholder="输入搜索条件"
+                                v-model="keyword"
+                                clearable
+                                @clear="getData(1)"
+                                @keydown.native.enter="getData(1)"
+                            ></el-input>
+                            <div class="searchFormBtn" @click="getData(1)">搜索</div>
+                        </div>
+                        <!-- <div class="content_btn">
+                            <img src="../../assets/img/loading.png" alt />
+                            <p>重置</p>
+                        </div>-->
+                    </div>
+                    <div class="btnContentRight">
+                        <div class="content_btn success" v-has="'add'" @click="add">
+                            <img src="../../assets/img/add1.png" alt />
+                            <p>新增角色</p>
+                        </div>
+                        <div class="content_btn error" v-has="'delete'" @click="deleteAll">
+                            <img src="../../assets/img/delete1.png" alt />
+                            <p>删除</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <el-table
                 :data="tableData"
                 style="width: 100%;margin-bottom: 20px;"
@@ -37,7 +52,9 @@
                 :row-class-name="tableRowClassName"
                 default-expand-all
                 :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+                @selection-change="handleSelectionChange"
             >
+                <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="rolename" label="角色名称" width="400"></el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
@@ -127,12 +144,28 @@ export default {
                 prev: '', //上级部门
                 checkmenus: [] //已选菜单数组
             },
+            deleteList:[],//批量删除
             addFormRules: {
                 name: [{ required: true, trigger: 'blur', message: '请输入部门名称' }]
             }
         };
     },
+    mounted() {
+        this.getData(1);
+    },
     methods: {
+        // 批量勾选
+        handleSelectionChange(e) {
+            let arr = [];
+            if (e.length > 0) {
+                e.filter((item) => {
+                    return item;
+                }).map((item) => {
+                    arr.push(item.roleid);
+                });
+            }
+            this.deleteList = arr;
+        },
         tableRowClassName({ row }) {
             if (row.state === '失败') {
                 return 'warning-row';
@@ -198,16 +231,36 @@ export default {
         },
         // 删除
         handleDelete(item) {
-            this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+            this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
-                type: 'warning'
             })
                 .then(() => {
                     this.$http.post('/api/role/deleterole', { id: item.roleid }).then((res) => {
                         if (res.data.success) {
                             this.getData(this.pageIndex);
                             this.$message.success(res.data.message);
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+                })
+                .catch(() => {});
+        },
+        // 批量删除
+        deleteAll() {
+            this.$confirm('此操作将永久删除勾选的角色, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消'
+            })
+                .then(() => {
+                    this.$http.post('/api/role/deleteroles', { id: this.deleteList }).then((res) => {
+                        if (res.data.success) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData(this.pageIndex);
                         } else {
                             this.$message.error(res.data.message);
                         }
@@ -267,6 +320,7 @@ export default {
             this.$http
                 .post('/api/role/getrolelist', {
                     organizationid: 0,
+                    rolename:this.keyword,
                     pageIndex: pageIndex,
                     pageSize: this.pageSize,
                     fldSort: '',
@@ -311,9 +365,6 @@ export default {
                 });
         }
     },
-    created() {
-        this.getData(1);
-    }
 };
 </script>
 <style scoped>

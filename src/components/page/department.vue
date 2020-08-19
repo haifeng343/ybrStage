@@ -1,31 +1,44 @@
 <template>
     <div>
         <!-- 卡片视图 -->
+        <div class="headerTop">
+            <div class="headerTop_title">系统管理</div>
+            <i class="el-icon-d-arrow-right"></i>
+            <div class="headerTop_text">组织管理</div>
+        </div>
         <el-card>
             <!-- 搜索添加区域 -->
-            <el-row :gutter="20">
-                <el-col :span="5">
-                    <el-input
-                        placeholder="请输入内容"
-                        v-model="keyword"
-                        clearable
-                        ref="mark"
-                        @clear="getData"
-                        @keydown.native.enter="getData(1)"
-                        class="input-with-select"
-                    >
-                        <el-button
-                            slot="append"
-                            type="primary"
-                            icon="el-icon-search"
-                            @click="getData(1)"
-                        ></el-button>
-                    </el-input>
-                </el-col>
-                <el-col :span="4">
-                    <el-button v-has="'add'" @click="add">新建部门</el-button>
-                </el-col>
-            </el-row>
+            <div class="btnContent">
+                <div class="btnContentTop">
+                    <div class="start">
+                        <div class="searchForm">
+                            <el-input
+                                class="searchFormInput"
+                                placeholder="输入搜索条件"
+                                v-model="keyword"
+                                clearable
+                                @clear="getData(1)"
+                                @keydown.native.enter="getData(1)"
+                            ></el-input>
+                            <div class="searchFormBtn" @click="getData(1)">搜索</div>
+                        </div>
+                        <!-- <div class="content_btn">
+                            <img src="../../assets/img/loading.png" alt />
+                            <p>重置</p>
+                        </div>-->
+                    </div>
+                    <div class="btnContentRight">
+                        <div class="content_btn success" v-has="'add'" @click="add">
+                            <img src="../../assets/img/add1.png" alt />
+                            <p>新增组织</p>
+                        </div>
+                        <div class="content_btn error" v-has="'delete'" @click="deleteAll">
+                            <img src="../../assets/img/delete1.png" alt />
+                            <p>删除</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <el-table
                 :data="tableData"
                 style="width: 100%;margin-bottom: 20px;"
@@ -37,8 +50,10 @@
                 :row-class-name="tableRowClassName"
                 default-expand-all
                 :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+                @selection-change="handleSelectionChange"
             >
-                <el-table-column prop="name" label="部门名称" width="400"></el-table-column>
+                <el-table-column type="selection" width="55"></el-table-column>
+                <el-table-column prop="name" label="组织名称" width="400"></el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button
@@ -131,10 +146,23 @@ export default {
                     id: 3,
                     label: '课题组'
                 }
-            ]
+            ],
+            deleteList:[],//批量删除
         };
     },
     methods: {
+        // 批量勾选
+        handleSelectionChange(e) {
+            let arr = [];
+            if (e.length > 0) {
+                e.filter((item) => {
+                    return item;
+                }).map((item) => {
+                    arr.push(item.num);
+                });
+            }
+            this.deleteList = arr;
+        },
         tableRowClassName({ row }) {
             if (row.state === '失败') {
                 return 'warning-row';
@@ -239,10 +267,9 @@ export default {
         },
         // 删除
         handleDelete(item) {
-            this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+            this.$confirm('此操作将永久删除该组织, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
-                type: 'warning'
             })
                 .then(() => {
                     this.$http.post('/api/organization/deleteorganization', { id: item.id }).then((res) => {
@@ -255,26 +282,37 @@ export default {
                 })
                 .catch(() => {});
         },
+        // 批量删除
+        deleteAll() {
+            this.$confirm('此操作将永久删除勾选的菜单, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消'
+            })
+                .then(() => {
+                    this.$http.post('/api/menu/deletemenus', { id: this.deleteList }).then((res) => {
+                        if (res.data.success) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData(this.pageIndex);
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+                })
+                .catch(() => {});
+        },
         // 获取部门列表
         getDropList() {
             this.$http.post('/api/user/getdropdownorg').then((res) => {
                 this.dropList = res.data.result;
             });
         },
-        // 存储按钮权限
-        getPermission() {
-            // 模拟接口 获取 权限数据集合
-            // 模拟获取的数据 有以下几个权限
-            let perms = ['search', 'view', 'edit', 'delete'];
-            // 用于把权限集合提交到 actions 中的 SET_PERMISSION 函数
-            // 第一个为函数名，后面的参数为 我们需要提交的参数，可以是多个
-            this.$store.dispatch('SET_PERMISSION', perms);
-        }
     },
     created() {
         this.getData(1); //获取数据
         this.getDropList(); //获取组织列表
-        this.getPermission();
     }
 };
 </script>

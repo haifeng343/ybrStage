@@ -58,7 +58,12 @@
             </transition>
         </div>
         <!-- 验证 -->
-        <div class="widgets__img_check_box" id="select" style="width:600px;margin:0 auto;top:2px;">
+        <div class="mask" v-if="confirmSuccess"></div>
+        <div
+            :class="['widgets__img_check_box',confirmSuccess?'show':'']"
+            id="select"
+            style="width:600px;margin:0 auto;top:2px;"
+        >
             <div class="widgets__img_display">
                 <div class="widgets__img_cnt">
                     <img src1="a.jpg" class="widgets__img_src" />
@@ -105,7 +110,7 @@ export default {
                 username: [{ required: true, message: '请输入用户名', trigger: 'change' }],
                 password: [{ required: true, message: '请输入密码', trigger: 'change' }]
             },
-            confirmSuccess: true
+            confirmSuccess: false //验证是否成功
         };
     },
     methods: {
@@ -172,30 +177,7 @@ export default {
         submitForm() {
             this.$refs.login.validate((valid) => {
                 if (valid) {
-                    if (this.confirmSuccess == true) {
-                        this.$http
-                            .post('/api/saas_pc/login', {
-                                user: this.param.username,
-                                pazz: this.param.password
-                            })
-                            .then((res) => {
-                                if (res.data.success == true) {
-                                    this.$message.success('登录成功');
-                                    this.$store.state.userInfo = res.data.result;
-                                    localStorage.setItem('userInfo', JSON.stringify(res.data.result));
-                                    localStorage.setItem('ms_username', res.data.result.username);
-                                    this.$router.push('/');
-                                } else {
-                                    this.$message.error(res.data.message);
-                                }
-                            });
-                    } else {
-                        this.$message({
-                            showClose: true,
-                            message: '请先进行登录验证',
-                            type: 'warning'
-                        });
-                    }
+                    this.confirmSuccess = true;
                 } else {
                     this.$message.error('请输入账号和密码');
                     console.log('error submit!!');
@@ -204,6 +186,7 @@ export default {
             });
         },
         setPintu() {
+            let _self = this;
             let s = WIDGETS.imgSmoothCheck({
                 selector: '#select',
                 data: [
@@ -215,10 +198,25 @@ export default {
                 imgWidth: 200,
                 allowableErrorValue: 3,
                 success: function () {
-                    alert('成功');
+                    _self.$message.success('验证通过，马上登录');
+                    _self.$http
+                        .post('/api/saas_pc/login', {
+                            user: _self.param.username,
+                            pazz: _self.param.password
+                        })
+                        .then((res) => {
+                            if (res.data.success == true) {
+                                _self.$store.state.userInfo = res.data.result;
+                                localStorage.setItem('userInfo', JSON.stringify(res.data.result));
+                                localStorage.setItem('ms_username', res.data.result.username);
+                                _self.$router.push('/');
+                            } else {
+                                _self.$message.error(res.data.message);
+                            }
+                        });
                 },
                 error: function (res) {
-                    alert('重新再试');
+                    _self.$message.error('重新再试');
                 }
             });
             $('.refresh').on('click', function () {
@@ -321,7 +319,7 @@ export default {
     top: 10px;
     right: 10px;
     cursor: pointer;
-    z-index: 999;
+    z-index: 1;
 }
 .ms-content {
     padding: 33px;
@@ -436,5 +434,8 @@ export default {
 }
 .selectd > input {
     border: 1px solid #5d81f4 !important;
+}
+.show {
+    opacity: 1;
 }
 </style>
