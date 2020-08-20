@@ -86,7 +86,7 @@
                 <el-table-column prop="cardno" label="生存状态" width="100" align="center"></el-table-column>
                 <el-table-column prop="cardno" label="回访记录" width="100" align="center">
                     <template slot-scope="scope">
-                        <el-button type="text">查看记录</el-button>
+                        <el-button type="text" v-if="scope">查看记录</el-button>
                     </template>
                 </el-table-column>
                 <el-table-column prop="updatetime" label="修改日期" width="200" align="center"></el-table-column>
@@ -181,7 +181,7 @@
                         </el-col>
                         <el-col :span="7" :offset="1">
                             <el-form-item label="性别" prop="sex">
-                                <el-radio-group v-model="addForm.sex" @change="changeSex">
+                                <el-radio-group v-model="sex" @change="changeSex">
                                     <el-radio :label="1">男</el-radio>
                                     <el-radio :label="2">女</el-radio>
                                 </el-radio-group>
@@ -353,6 +353,7 @@ export default {
             loading: true,
             name: '2',
             keyword: '',
+            sex: 1,
             addForm: {
                 id: '',
                 no: '', //编号
@@ -369,7 +370,7 @@ export default {
                 remark: '', //描述
                 medicine: '', //使用药物
                 familycontact: '', //家属联系方式
-                attachedformdata: {}, //病人癌症明细数据  key value
+                attachedformdata: [], //病人癌症明细数据  key value
                 attachedform: '' //附属表单（存储表名）
             },
             addFormRules: {
@@ -413,6 +414,7 @@ export default {
                 })
                 .then((res) => {
                     if (res.data.success) {
+                        this.addForm.attachedformdata = [];
                         let tempArr = [];
                         tempArr = res.data.result.config;
                         tempArr.forEach((item) => {
@@ -429,9 +431,6 @@ export default {
             if (!tempArr.length) return;
             tempArr.forEach((item, index) => {
                 tempArr[index][tempArr[index]['col']] = tempArr[index]['key'];
-                if (item.col == item1.col) {
-                    item.key = item1.key;
-                }
                 arr.push({
                     value: item.key ? item.key : '',
                     key: item.col
@@ -440,6 +439,7 @@ export default {
             this.addForm.attachedformdata = arr.filter((item) => {
                 return item.key !== '';
             });
+
             // this.tableData1 = tempArr;
         },
         // 性别切换
@@ -582,50 +582,80 @@ export default {
         // 编辑
         handleEdit(index, item) {
             console.log(item);
-            // 格式转化
-            let role;
-            if (item.roleids) {
-                role = item.roleids.split(',');
-                for (let i = 0; i < role.length; i++) {
-                    role[i] = Number(role[i]);
-                }
-            }
-            let tempArr = this.roleList;
-            let arr = [];
-            tempArr.forEach((item) => {
-                role.forEach((item1) => {
-                    if (item.roleid == item1) {
-                        arr.push(item.rolename);
-                    }
-                });
-            });
-            this.addForm.rolenames = arr;
+            this.sex = item.sex;
             this.addForm = {
                 id: item.id,
-                username: item.username,
-                organizationid: item.organizationid,
-                phone: item.phone,
-                account: item.account,
-                pazzword: item.pazzword,
-                roleids: role ? role : [],
-                rolenames: arr ? arr : []
+                no: item.no, //编号
+                name: item.name, //名字
+                cardno: item.cardno, //身份证号码
+                birthdatestr: item.birthdate, //出生年月
+                tel: item.tel, //联系电话
+                address: item.address, //联系地址
+                age: item.age, //年龄
+                tumortypeid: item.tumortypeid, //肿瘤类型id
+                tumortype: item.tumortype, //肿瘤类型
+                therapy: item.therapy, //治疗方式
+                remark: item.remark, //描述
+                medicine: item.medicine, //使用药物
+                familycontact: item.familycontact, //家属联系方式
+                attachedformdata: [], //病人癌症明细数据  key value
+                attachedform: item.attachedform //附属表单（存储表名）
             };
             this.addDialogVisible = true;
+            this.$http
+                .post('/api/patient/patientform', {
+                    tumorType: item.tumortypeid,
+                    patientrmationid: item.id //病理id
+                })
+                .then((res) => {
+                    if (res.data.success) {
+                        this.addForm.attachedformdata = [];
+                        let tempArr = [];
+                        tempArr = res.data.result.config;
+                        let tempArr1 = res.data.result.data;
+                        tempArr.forEach((item) => {
+                            tempArr1.forEach((item1) => {
+                                if (item.col == item1.Key) {
+                                    item.key = item1.Value;
+                                }
+                            });
+                        });
+                        this.tableData1 = tempArr;
+
+                        let arr = [];
+                        if (!tempArr.length) return;
+                        tempArr.forEach((item, index) => {
+                            tempArr[index][tempArr[index]['col']] = tempArr[index]['key'];
+                            arr.push({
+                                value: item.key ? item.key : '',
+                                key: item.col
+                            });
+                        });
+                        this.addForm.attachedformdata = arr.filter((item) => {
+                            return item.key !== '';
+                        });
+
+                        console.log(this.addForm.attachedformdata);
+                    }
+                });
         },
         // 删除
         handleDelete(item) {
-            this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+            this.$confirm('此操作将永久删除该病人, 是否继续?', '提示', {
                 confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
+                cancelButtonText: '取消'
             })
                 .then(() => {
-                    this.$http.post('/api/user/deleteuser', { id: item.userid }).then((res) => {
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
-                        this.getData(this.pageIndex);
+                    this.$http.post('/api/patient/deletepatient', { id: item.patientid }).then((res) => {
+                        if (res.data.success) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData(this.pageIndex);
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
                     });
                 })
                 .catch(() => {});
@@ -651,15 +681,18 @@ export default {
         },
         // 提交校验
         addSubmitForm(formName) {
+            const a = this.moreTypeList
+                .filter((item) => {
+                    if (item.key == this.addForm.tumortypeid) {
+                        return item;
+                    }
+                })
+                .map((item) => {
+                    return item.name;
+                });
+            console.log(a[0]);
             this.$refs.addFormRef.validate((valid) => {
                 if (valid) {
-                    let tempArr = this.moreTypeList;
-                    tempArr.forEach((item) => {
-                        if (item.key == this.addForm.tumortypeid) {
-                            this.addForm.tumorType = item.name;
-                        }
-                    });
-                    console.log(this.addForm.tumorType)
                     if (this.addForm.id) {
                         this.$http
                             .post('/api/patient/savepatient', {
@@ -670,10 +703,10 @@ export default {
                                 birthdatestr: moment(this.addForm.birthdatestr).format('YYYY-MM-DD'),
                                 tel: this.addForm.tel,
                                 address: this.addForm.address,
-                                sex: this.addForm.sex,
+                                sex: this.sex,
                                 age: parseInt(this.addForm.age),
                                 tumortypeid: this.addForm.tumortypeid,
-                                tumortype: this.addForm.tumortype,
+                                tumortype: a[0] ? a[0] : '',
                                 attachedform: this.addForm.attachedform ? this.addForm.attachedform : '',
                                 attachedformdata: this.addForm.attachedformdata,
                                 therapy: this.addForm.therapy,
@@ -699,10 +732,10 @@ export default {
                                 birthdatestr: moment(this.addForm.birthdatestr).format('YYYY-MM-DD'),
                                 tel: this.addForm.tel,
                                 address: this.addForm.address,
-                                sex: this.addForm.sex,
+                                sex: this.sex,
                                 age: parseInt(this.addForm.age),
                                 tumortypeid: this.addForm.tumortypeid,
-                                tumortype: this.addForm.tumortype,
+                                tumortype: a[0] ? a[0] : '',
                                 attachedform: this.addForm.attachedform ? this.addForm.attachedform : '',
                                 attachedformdata: this.addForm.attachedformdata,
                                 therapy: this.addForm.therapy,

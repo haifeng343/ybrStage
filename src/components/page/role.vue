@@ -238,8 +238,11 @@ export default {
                 .then(() => {
                     this.$http.post('/api/role/deleterole', { id: item.roleid }).then((res) => {
                         if (res.data.success) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
                             this.getData(this.pageIndex);
-                            this.$message.success(res.data.message);
                         } else {
                             this.$message.error(res.data.message);
                         }

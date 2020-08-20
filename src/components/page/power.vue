@@ -254,11 +254,15 @@ export default {
             })
                 .then(() => {
                     this.$http.post('/api/menu/deletemenu', { id: item.num }).then((res) => {
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
-                        this.getData();
+                        if (res.data.success) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData(this.pageIndex);
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
                     });
                 })
                 .catch(() => {});

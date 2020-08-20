@@ -273,11 +273,15 @@ export default {
             })
                 .then(() => {
                     this.$http.post('/api/organization/deleteorganization', { id: item.id }).then((res) => {
-                        this.getData(this.pageIndex);
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
+                        if (res.data.success) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData(this.pageIndex);
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
                     });
                 })
                 .catch(() => {});
