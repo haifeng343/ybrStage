@@ -8,7 +8,7 @@
         </div>
         <el-card>
             <!-- 搜索添加区域 -->
-             <div class="btnContent">
+            <div class="btnContent">
                 <div class="btnContentTop">
                     <div class="start">
                         <div class="searchForm">
@@ -17,10 +17,10 @@
                                 placeholder="输入搜索条件"
                                 v-model="keyword"
                                 clearable
-                                @clear="getData(1)"
-                                @keydown.native.enter="getData(1)"
+                                @clear="getData()"
+                                @keydown.native.enter="getData()"
                             ></el-input>
-                            <div class="searchFormBtn" @click="getData(1)">搜索</div>
+                            <div class="searchFormBtn" @click="getData()">搜索</div>
                         </div>
                         <!-- <div class="content_btn">
                             <img src="../../assets/img/loading.png" alt />
@@ -204,7 +204,7 @@ export default {
                 delbtns: [] //删除的按钮
             },
             arr1: [],
-            deleteList:[],//批量删除
+            deleteList: [], //批量删除
             formRules: {
                 name: [{ required: true, trigger: 'blur', message: '请输入部门名称' }]
             },
@@ -259,7 +259,7 @@ export default {
                                 type: 'success',
                                 message: '删除成功!'
                             });
-                            this.getData(this.pageIndex);
+                            this.getData();
                         } else {
                             this.$message.error(res.data.message);
                         }
@@ -267,7 +267,7 @@ export default {
                 })
                 .catch(() => {});
         },
-         // 批量删除
+        // 批量删除
         deleteAll() {
             this.$confirm('此操作将永久删除勾选的菜单, 是否继续?', '提示', {
                 confirmButtonText: '确定',
@@ -280,7 +280,7 @@ export default {
                                 type: 'success',
                                 message: '删除成功!'
                             });
-                            this.getData(this.pageIndex);
+                            this.getData();
                         } else {
                             this.$message.error(res.data.message);
                         }
@@ -310,7 +310,7 @@ export default {
         },
         // 搜索
         search() {
-            this.getData(1);
+            this.getData();
         },
         // 添加按钮权限
         addPower() {
@@ -406,7 +406,6 @@ export default {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
                                     this.addDialogVisible = false;
-                                    this.getData(this.pageIndex);
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
@@ -426,14 +425,13 @@ export default {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
                                     this.addDialogVisible = false;
-                                    this.getData(this.pageIndex);
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
                             });
                     }
+                    this.getData();
                     this.addDialogVisible = false;
-                    this.getData(1);
                 } else {
                     console.log('error submit!!');
                     return false;
@@ -450,12 +448,12 @@ export default {
                 })
                 .then((res) => {
                     this.tableData = res.data.result;
-                    window.localStorage.setItem('sidebar', JSON.stringify(res.data.result));
+                    localStorage.setItem('sidebar', JSON.stringify(res.data.result));
                 });
         }
     },
     created() {
-        this.getData(1);
+        this.getData();
     }
 };
 </script>

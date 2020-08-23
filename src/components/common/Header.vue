@@ -73,6 +73,8 @@ export default {
         handleCommand(command) {
             if (command == 'loginout') {
                 localStorage.removeItem('ms_username');
+                localStorage.removeItem('menu');
+                localStorage.removeItem('userInfo');
                 this.$router.push('/login');
             }
             this.toggle = !this.toggle;

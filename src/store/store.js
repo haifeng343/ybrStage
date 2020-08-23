@@ -7,8 +7,8 @@ const state = {   //要设置的全局访问的state对象
   token: null,//用户的token
   permission: [],//用户按钮权限管理
   // user: {
-  //   lockPassword: window.localStorage.getItem('lockPassword') || '',//锁屏密码
-  //   isLock: window.localStorage.getItem('isLock') || false,//是否锁屏
+  //   lockPassword: localStorage.getItem('lockPassword') || '',//锁屏密码
+  //   isLock: localStorage.getItem('isLock') || false,//是否锁屏
   // }
 };
 

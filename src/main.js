@@ -29,8 +29,8 @@ Vue.directive('has', {
 Vue.prototype.$_has = function (value) {
     let isExist = false
     // 从浏览器缓存中获取权限数组（该数组在登入成功后拉取用户的权限信息时保存在浏览器的缓存中）
-    let list = JSON.parse(window.localStorage.getItem('sidebar'));
-        let menuActive = window.localStorage.getItem('menuActive');
+    let list = JSON.parse(localStorage.getItem('sidebar'));
+        let menuActive = localStorage.getItem('menuActive');
     let arr = [];
     for (let item of list) {
         if (item.subs.length > 0) {
@@ -79,7 +79,7 @@ axios.defaults.responseType = 'json';
 axios.defaults.baseURL = 'https://api.mfetv.top';
 // 拦截器,保证拥有获取数据的权限
 axios.interceptors.request.use(config => {
-    config.headers.Authorization = window.localStorage.getItem('token');
+    config.headers.Authorization = localStorage.getItem('token');
     return config
 })
 // 封装全局axios

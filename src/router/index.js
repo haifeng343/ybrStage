@@ -145,6 +145,48 @@ const router = new Router({
                     meta: { title: '样本列表', permission: false }
                 },
                 {
+                    // 动物管理页面
+                    path: '/animal',
+                    name: 'animal',
+                    component: () => import('../components/page/animal.vue'),
+                    meta: { title: '动物管理', permission: false }
+                },
+                {
+                    // 项目列表页面
+                    path: '/projectList',
+                    name: 'projectList',
+                    component: () => import('../components/page/projectList.vue'),
+                    meta: { title: '项目列表', permission: false }
+                },
+                {
+                    // 项目类型页面
+                    path: '/projectType',
+                    name: 'projectType',
+                    component: () => import('../components/page/projectType.vue'),
+                    meta: { title: '项目类型', permission: false }
+                },
+                {
+                    // 玻片列表页面
+                    path: '/slide',
+                    name: 'slide',
+                    component: () => import('../components/page/slide.vue'),
+                    meta: { title: '玻片列表', permission: false }
+                },
+                {
+                    // 石蜡块列表页面
+                    path: '/paraffin',
+                    name: 'paraffin',
+                    component: () => import('../components/page/paraffin.vue'),
+                    meta: { title: '石蜡块列表', permission: false }
+                },
+                {
+                    // 样本类型页面
+                    path: '/sampleType',
+                    name: 'sampleType',
+                    component: () => import('../components/page/sampleType.vue'),
+                    meta: { title: '样本类型', permission: false }
+                },
+                {
                     path: '/404',
                     name: '404',
                     component: () => import('../components/page/404.vue'),

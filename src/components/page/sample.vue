@@ -1,3 +1,3 @@
 <template>
-  <div>333</div>
+  <div>样本列表</div>
 </template>

@@ -131,18 +131,32 @@ export default {
     },
     computed: {
         onRoutes() {
-            window.localStorage.setItem('menuActive',this.$route.path.replace('/', ''))
+            localStorage.setItem('menuActive',this.$route.path.replace('/', ''))
             return this.$route.path.replace('/', '');
         }
     },
     methods: {
-
+        getMunu(){
+            this.$http
+                .post('/api/menu/getmenulist', {
+                    name: '',
+                    fldSort: '',
+                    fldName: ''
+                })
+                .then((res) => {
+                    if (res.data.success) {
+                        localStorage.setItem('menu', JSON.stringify(res.data.result));
+                        this.items = res.data.result;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                });
+        },
     },
     mounted(){
-
+        this.getMunu();
     },
     created() {
-        this.items = JSON.parse(window.localStorage.getItem('menu'));
         // 通过 Event Bus 进行组件间通信，来折叠侧边栏
         bus.$on('collapse', (msg) => {
             this.collapse = msg;
