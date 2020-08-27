@@ -120,6 +120,12 @@
                 <el-form-item label="排序值" prop="sort">
                     <el-input v-model="form.sort"></el-input>
                 </el-form-item>
+                <el-form-item label="是否隐藏" prop="ishide">
+                    <el-radio-group v-model="form.ishide">
+                        <el-radio :label="0">否</el-radio>
+                        <el-radio :label="1">是</el-radio>
+                    </el-radio-group>
+                </el-form-item>
 
                 <!-- 按钮权限 -->
                 <div class="yemian">
@@ -200,8 +206,9 @@ export default {
                 url: '', //路径
                 icon: '', //图标
                 sort: '', //排序值
+                ishide:'',//0不隐藏 1隐藏
                 btns: [], //按钮权限
-                delbtns: [] //删除的按钮
+                delbtns: [], //删除的按钮
             },
             arr1: [],
             deleteList: [], //批量删除
@@ -242,7 +249,8 @@ export default {
                 parentid: item.pnum, //上级菜单
                 url: item.url, //路径
                 icon: item.icon, //图标
-                sort: item.sort //排序值
+                sort: item.sort, //排序值
+                ishide:item.ishide,//是否隐藏
             };
             this.tableData1 = item.btns;
         },
@@ -297,7 +305,8 @@ export default {
                 parentid: '', //上级菜单
                 url: '', //路径
                 icon: '', //图标
-                sort: '' //排序值
+                sort: '', //排序值
+                ishide:0,
             };
         },
         //  this.$http.post('/api/organization/getdropdowntype',{}).then(res=>{
@@ -399,6 +408,7 @@ export default {
                                 icon: this.form.icon,
                                 url: this.form.url,
                                 sort: parseInt(this.form.sort),
+                                ishide:parseInt(this.form.ishide),
                                 btns: arr,
                                 delbtns: this.form.delbtns ? this.form.delbtns : []
                             })
@@ -418,6 +428,7 @@ export default {
                                 icon: this.form.icon,
                                 url: this.form.url,
                                 sort: parseInt(this.form.sort),
+                                ishide:parseInt(this.form.ishide),
                                 btns: arr,
                                 delbtns: this.form.delbtns ? this.form.delbtns : []
                             })

@@ -16,7 +16,7 @@
         </div>
         <el-card>
             <!-- 搜索添加区域 -->
-            <el-row :gutter="20" v-if="showId==1">
+            <!-- <el-row :gutter="20" v-if="showId==1">
                 <el-col :span="2">
                     <el-button plain>信息导入</el-button>
                 </el-col>
@@ -44,7 +44,35 @@
                         ></el-button>
                     </el-input>
                 </el-col>
-            </el-row>
+            </el-row> -->
+                <!-- 搜索添加区域 -->
+            <div class="btnContent">
+                <div class="btnContentTop">
+                    <div class="start">
+                        <div class="searchForm">
+                            <el-input
+                                class="searchFormInput"
+                                placeholder="输入搜索条件"
+                                v-model="keyword"
+                                clearable
+                                @clear="getData(1)"
+                                @keydown.native.enter="getData(1)"
+                            ></el-input>
+                            <div class="searchFormBtn" @click="getData(1)">搜索</div>
+                        </div>
+                        <!-- <div class="content_btn">
+                            <img src="../../assets/img/loading.png" alt />
+                            <p>重置</p>
+                        </div>-->
+                    </div>
+                    <div class="btnContentRight">
+                        <div class="content_btn success" v-has="'add'" @click="add">
+                            <img src="../../assets/img/add1.png" alt />
+                            <p>新增组织</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- 数据表格 -->
             <el-table
@@ -86,7 +114,7 @@
                 <el-table-column prop="cardno" label="生存状态" width="100" align="center"></el-table-column>
                 <el-table-column prop="cardno" label="回访记录" width="100" align="center">
                     <template slot-scope="scope">
-                        <el-button type="text" v-if="scope">查看记录</el-button>
+                        <el-button type="text" @click="handleVisited(scope.row)">查看记录</el-button>
                     </template>
                 </el-table-column>
                 <el-table-column prop="updatetime" label="修改日期" width="200" align="center"></el-table-column>
@@ -405,6 +433,17 @@ export default {
         this.getMoreType();
     },
     methods: {
+        // 查看回访记录
+        handleVisited(item){
+            console.log(item);
+            this.$router.push({
+                name:'visitedLog',
+              params:{
+                name:'zhangsan',
+                id:'1'
+              }
+            })
+        },
         // 肿瘤类型切换
         changeTumorType(e) {
             this.$http

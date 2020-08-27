@@ -15,7 +15,11 @@
                             <span slot="title">{{ item.title }}</span>
                         </template>
                         <template v-for="subItem in item.subs">
-                            <el-submenu v-if="subItem.subs && subItem.subs.length > 0" :index="subItem.url" :key="subItem.num">
+                            <el-submenu
+                                v-if="subItem.subs && subItem.subs.length > 0"
+                                :index="subItem.url"
+                                :key="subItem.num"
+                            >
                                 <template slot="title">{{ subItem.title }}</template>
                                 <el-menu-item
                                     v-for="(threeItem,i) in subItem.subs"
@@ -23,8 +27,9 @@
                                     :index="threeItem.url"
                                 >{{ threeItem.title }}</el-menu-item>
                             </el-submenu>
+                            <!-- 这里的不等于于1隐藏菜单栏 -->
                             <el-menu-item
-                                v-else
+                                v-else-if="subItem.ishide !==1"
                                 :index="subItem.url"
                                 :key="subItem.num"
                             >{{ subItem.title }}</el-menu-item>
@@ -39,32 +44,6 @@
                 </template>
             </template>
         </el-menu>
-
-        <!-- <div class="sidebar">
-            <ul class="ybr-menu">
-                <li class="ybr-menu-item active">
-                    <div class="ybr-menu-tab">
-                        <i class="el-icon-lollipop ybr-menu-icon1"></i>
-                        <p>首页</p>
-                        <i class="el-icon-arrow-down ybr-menu-down"></i>
-                    </div>
-                </li>
-                <li class="ybr-menu-item">
-                    <div class="ybr-menu-tab">
-                        <i class="el-icon-lollipop ybr-menu-icon1"></i>
-                        <p>首页</p>
-                        <i class="el-icon-arrow-down ybr-menu-down"></i>
-                    </div>
-                </li>
-                <li class="ybr-menu-item">
-                    <div class="ybr-menu-tab">
-                        <i class="el-icon-lollipop ybr-menu-icon1"></i>
-                        <p>首页</p>
-                        <i class="el-icon-arrow-down ybr-menu-down"></i>
-                    </div>
-                </li>
-            </ul>
-        </div>-->
     </div>
 </template>
 
@@ -74,69 +53,17 @@ export default {
     data() {
         return {
             collapse: false,
-            items:[],
-            // items: [
-            //     {
-            //         icon: 'iconfont iconshouye',
-            //         url: 'dashboard',
-            //         title: '系统首页'
-            //     },
-            //     {
-            //         icon: 'iconfont iconxitongshezhi',
-            //         url: '',
-            //         title: '系统管理',
-            //         subs: [
-            //             {
-            //                 url: 'userInfo',
-            //                 title: '用户管理'
-            //             },
-            //             {
-            //                 url: 'role',
-            //                 title: '角色管理'
-            //             },
-            //             {
-            //                 url: 'department',
-            //                 title: '组织管理'
-            //             },
-            //             {
-            //                 url: 'power',
-            //                 title: '权限管理'
-            //             }
-            //         ]
-            //     },
-            //     {
-            //         icon: 'iconfont iconguanli',
-            //         url: '9',
-            //         title: '病人管理',
-            //         subs: [
-            //             {
-            //                 url: 'patient',
-            //                 title: '病人列表'
-            //             }
-            //         ]
-            //     },
-            //     {
-            //         icon: 'iconfont iconshituxianshiquanbujiedian',
-            //         url: '10',
-            //         title: '仓库管理',
-            //         subs: [
-            //             {
-            //                 url: 'patient',
-            //                 title: '材料视图'
-            //             }
-            //         ]
-            //     },
-            // ]
+            items: []
         };
     },
     computed: {
         onRoutes() {
-            localStorage.setItem('menuActive',this.$route.path.replace('/', ''))
+            localStorage.setItem('menuActive', this.$route.path.replace('/', ''));
             return this.$route.path.replace('/', '');
         }
     },
     methods: {
-        getMunu(){
+        getMunu() {
             this.$http
                 .post('/api/menu/getmenulist', {
                     name: '',
@@ -151,9 +78,9 @@ export default {
                         this.$message.error(res.data.message);
                     }
                 });
-        },
+        }
     },
-    mounted(){
+    mounted() {
         this.getMunu();
     },
     created() {

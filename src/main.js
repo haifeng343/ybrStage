@@ -29,7 +29,7 @@ Vue.directive('has', {
 Vue.prototype.$_has = function (value) {
     let isExist = false
     // 从浏览器缓存中获取权限数组（该数组在登入成功后拉取用户的权限信息时保存在浏览器的缓存中）
-    let list = JSON.parse(localStorage.getItem('sidebar'));
+    let list = JSON.parse(localStorage.getItem('menu'));
         let menuActive = localStorage.getItem('menuActive');
     let arr = [];
     for (let item of list) {

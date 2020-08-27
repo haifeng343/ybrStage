@@ -8,7 +8,7 @@
         </div>
 
         <el-card>
-           <!-- 头部搜索条件 -->
+            <!-- 头部搜索条件 -->
             <div class="btnContent">
                 <div class="btnContentTop">
                     <div class="start">
@@ -144,7 +144,7 @@ export default {
                 prev: '', //上级部门
                 checkmenus: [] //已选菜单数组
             },
-            deleteList:[],//批量删除
+            deleteList: [], //批量删除
             addFormRules: {
                 name: [{ required: true, trigger: 'blur', message: '请输入部门名称' }]
             }
@@ -197,7 +197,7 @@ export default {
                     role[i] = Number(role[i]);
                 }
             }
-            console.log(role)
+            console.log(role);
 
             this.addForm.checkmenus = role;
             this.addForm.id = item.roleid;
@@ -233,7 +233,7 @@ export default {
         handleDelete(item) {
             this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
                 confirmButtonText: '确定',
-                cancelButtonText: '取消',
+                cancelButtonText: '取消'
             })
                 .then(() => {
                     this.$http.post('/api/role/deleterole', { id: item.roleid }).then((res) => {
@@ -287,8 +287,6 @@ export default {
                             .then((res) => {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
-                                    this.addDialogVisible = false;
-                                    this.getData(this.pageIndex);
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
@@ -304,13 +302,14 @@ export default {
                             .then((res) => {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
-                                    this.addDialogVisible = false;
-                                    this.getData(this.pageIndex);
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
                             });
                     }
+                    setTimeout(() => {
+                        this.getData(this.pageIndex);
+                    }, 1000);
                     this.addDialogVisible = false;
                 } else {
                     console.log('error submit!!');
@@ -323,7 +322,7 @@ export default {
             this.$http
                 .post('/api/role/getrolelist', {
                     organizationid: 0,
-                    rolename:this.keyword,
+                    rolename: this.keyword,
                     pageIndex: pageIndex,
                     pageSize: this.pageSize,
                     fldSort: '',
@@ -367,7 +366,7 @@ export default {
                     this.data = res.data.result;
                 });
         }
-    },
+    }
 };
 </script>
 <style scoped>

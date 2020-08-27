@@ -166,6 +166,20 @@ const router = new Router({
                     meta: { title: '项目类型', permission: false }
                 },
                 {
+                    // 数据字典页面
+                    path: '/dictionary',
+                    name: 'dictionary',
+                    component: () => import('../components/page/dictionary.vue'),
+                    meta: { title: '数据字典', permission: false }
+                },
+                {
+                    // 病人病理配置
+                    path: '/pathology',
+                    name: 'pathology',
+                    component: () => import('../components/page/pathology.vue'),
+                    meta: { title: '病人病理配置', permission: false }
+                },
+                {
                     // 玻片列表页面
                     path: '/slide',
                     name: 'slide',
@@ -185,6 +199,13 @@ const router = new Router({
                     name: 'sampleType',
                     component: () => import('../components/page/sampleType.vue'),
                     meta: { title: '样本类型', permission: false }
+                },
+                {
+                    // 回访记录页面
+                    path: '/visitedLog',
+                    name: 'visitedLog',
+                    component: () => import('../components/page/visitedLog.vue'),
+                    meta: { title: '回访记录',father:'patient', permission: false }
                 },
                 {
                     path: '/404',

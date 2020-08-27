@@ -126,7 +126,7 @@ export default {
                 id: '',
                 name: '', //部门名称
                 prev: '', //上级部门
-                type: '' //类型
+                type: 1 //类型
             },
             dropList: [], //组织列表
             addFormRules: {
@@ -205,7 +205,7 @@ export default {
             this.addForm = {
                 name: '', //部门名称
                 prev: '', //上级部门
-                type: '' //1内部组织 2医院 3课题组   课题组可选医院可不选
+                type: 1 //1内部组织 2医院 3课题组   课题组可选医院可不选
             };
             this.addDialogVisible = true;
         },
