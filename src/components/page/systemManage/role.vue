@@ -30,11 +30,11 @@
                     </div>
                     <div class="btnContentRight">
                         <div class="content_btn success" v-has="'add'" @click="add">
-                            <img src="../../assets/img/add1.png" alt />
+                            <img src="../../../assets/img/add1.png" alt />
                             <p>新增角色</p>
                         </div>
                         <div class="content_btn error" v-has="'delete'" @click="deleteAll">
-                            <img src="../../assets/img/delete1.png" alt />
+                            <img src="../../../assets/img/delete1.png" alt />
                             <p>删除</p>
                         </div>
                     </div>

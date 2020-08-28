@@ -2,9 +2,9 @@
     <div>
         <!-- 卡片视图 -->
         <div class="headerTop">
-            <div class="headerTop_title">样本管理</div>
+            <div class="headerTop_title">系统管理</div>
             <i class="el-icon-d-arrow-right"></i>
-            <div class="headerTop_text">样本列表</div>
+            <div class="headerTop_text">用户管理</div>
         </div>
         <el-card>
             <!-- 头部搜索条件 -->
@@ -29,11 +29,11 @@
                     </div>
                     <div class="btnContentRight">
                         <div class="content_btn success" v-has="'add'" @click="add">
-                            <img src="../../assets/img/add1.png" alt />
-                            <p>新增样本</p>
+                            <img src="../../../assets/img/add1.png" alt />
+                            <p>新增用户</p>
                         </div>
                         <div class="content_btn error" v-has="'delete'" @click="deleteAll">
-                            <img src="../../assets/img/delete1.png" alt />
+                            <img src="../../../assets/img/delete1.png" alt />
                             <p>删除</p>
                         </div>
                     </div>
@@ -51,25 +51,19 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="no" label="样本编号" width="200" align="center"></el-table-column>
-                <el-table-column prop="organizationid" label="所属组织" width="200" align="center"></el-table-column>
-                <el-table-column prop="projectid" label="所属项目" width="200" align="center"></el-table-column>
-                <el-table-column prop="containerid" label="所属容器" width="200" align="center"></el-table-column>
-                <el-table-column prop="latticeid" label="样本盒" width="200" align="center"></el-table-column>
-                <el-table-column prop="name" label="样本名称" width="200" align="center"></el-table-column>
-                <el-table-column prop="patientname" label="病人姓名" width="200" align="center"></el-table-column>
-                <el-table-column prop="type" label="样本类型" width="200" align="center"></el-table-column>
-                <el-table-column prop="grass" label="种属" width="200" align="center"></el-table-column>
-                <el-table-column prop="tissuestype" label="组织类型" width="200" align="center"></el-table-column>
-                <el-table-column prop="diseasetype" label="疾病类型" width="200" align="center"></el-table-column>
-                <el-table-column prop="storagecondition" label="储存条件" width="200" align="center"></el-table-column>
-                <el-table-column prop="size" label="样本大小" width="200" align="center"></el-table-column>
-                <el-table-column prop="collectiontime" label="样本收集时间" width="200" align="center"></el-table-column>
-                <el-table-column prop="collectionuser" label="样本收集人" width="200" align="center"></el-table-column>
-                <el-table-column prop="storagetime" label="样本入库时间" width="200" align="center"></el-table-column>
-                <el-table-column prop="storageuser" label="样本入库人" width="200" align="center"></el-table-column>
-                <!-- <el-table-column label="手机号" prop="phone" align="center"></el-table-column>
+                <el-table-column prop="userid" label="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="username" label="用户名" align="center"></el-table-column>
+                <el-table-column prop="account" label="账号名称" align="center"></el-table-column>
+                <el-table-column label="手机号" prop="phone" align="center"></el-table-column>
+                <!-- <el-table-column label="头像(查看大图)" align="center">
+                    <template slot-scope="scope">
+                        <el-image
+                            class="table-td-thumb"
+                            :src="scope.row.thumb"
+                            :preview-src-list="[scope.row.thumb]"
+                        ></el-image>
+                    </template>
+                </el-table-column>-->
                 <el-table-column label="锁定" width="180" align="center">
                     <template slot-scope="scope">
                         <el-switch
@@ -79,7 +73,7 @@
                             inactive-text="否"
                         ></el-switch>
                     </template>
-                </el-table-column>-->
+                </el-table-column>
                 <el-table-column label="操作" width="280" align="center" fixed="right">
                     <template slot-scope="scope">
                         <el-button
@@ -98,6 +92,14 @@
                                 @click="changePwd(scope.$index, scope.row)"
                             ></el-button>
                         </el-tooltip>
+                        <!-- <el-tooltip content="跳转详情" :enterable="false" placement="top">
+                            <el-button
+                                size="mini"
+                                type="warning"
+                                icon="el-icon-price-tag"
+                                @click="handleDrag(scope.$index, scope.row)"
+                            ></el-button>
+                        </el-tooltip>-->
                         <el-button
                             size="mini"
                             type="danger"
@@ -120,22 +122,28 @@
                 :total="totalCount"
             ></el-pagination>
 
-            <!-- 添加样本 -->
+            <!-- 添加用户 -->
             <el-dialog
-                :title="addForm.id?'编辑样本':'新增样本'"
+                :title="addForm.id?'编辑用户':'新增用户'"
                 :visible.sync="addDialogVisible"
                 width="40%"
                 @close="addDialogClosed"
             >
-                <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px">
-                    <el-form-item label="样本编号" prop="no">
-                        <el-input v-model="addForm.no"></el-input>
+                <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="90px">
+                    <el-form-item label="用户名" prop="username">
+                        <el-input v-model="addForm.username"></el-input>
                     </el-form-item>
-                    <el-form-item label="样本名称" prop="name">
-                        <el-input v-model="addForm.name"></el-input>
+                    <el-form-item label="账号" prop="account">
+                        <el-input v-model="addForm.account"></el-input>
                     </el-form-item>
-                    <el-form-item label="样本大小" prop="size">
-                        <el-input v-model="addForm.size"></el-input>
+                    <el-form-item label="密码" prop="pazzword">
+                        <el-input type="password" v-model="addForm.pazzword"></el-input>
+                    </el-form-item>
+                    <!-- <el-form-item label="邮箱" prop="email" :status-icon="true">
+                        <el-input v-model="addForm.email"></el-input>
+                    </el-form-item>-->
+                    <el-form-item label="手机号" prop="phone" :status-icon="true">
+                        <el-input type="number" v-model="addForm.phone"></el-input>
                     </el-form-item>
                     <el-form-item label="所属组织">
                         <el-select v-model="addForm.organizationid" placeholder="请选择组织">
@@ -147,121 +155,20 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="所属项目">
-                        <el-select v-model="addForm.projectid" placeholder="请选择项目">
+                    <el-form-item label="拥有角色">
+                        <el-select
+                            v-model="addForm.roleids"
+                            multiple
+                            placeholder="请选择角色"
+                            @change="roleChange"
+                        >
                             <el-option
-                                v-for="item in proJectList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
+                                v-for="item in roleList"
+                                :key="item.roleid"
+                                :label="item.rolename"
+                                :value="item.roleid"
                             ></el-option>
                         </el-select>
-                    </el-form-item>
-                    <el-form-item label="所属容器">
-                        <el-select v-model="addForm.containerid" placeholder="请选择容器">
-                            <el-option
-                                v-for="item in containerList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="所属样本盒">
-                        <el-select v-model="addForm.latticeid" placeholder="请选择样本盒">
-                            <el-option
-                                v-for="item in latticeList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="所属病人">
-                        <el-select v-model="addForm.patientid" placeholder="请选择样病人">
-                            <el-option
-                                v-for="item in patientList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="样本类型">
-                        <el-select v-model="addForm.typeid" placeholder="请选择样本类型">
-                            <el-option
-                                v-for="item in typeList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="种属">
-                        <el-select v-model="addForm.grassid" placeholder="请选择种属">
-                            <el-option
-                                v-for="item in grassList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="组织类型">
-                        <el-select v-model="addForm.tissuestypeid" placeholder="请选择组织类型">
-                            <el-option
-                                v-for="item in tissuestypeList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="疾病类型">
-                        <el-select v-model="addForm.diseasetypeid" placeholder="请选择疾病类型">
-                            <el-option
-                                v-for="item in diseasetypeList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="存储条件">
-                        <el-select v-model="addForm.storageconditionid" placeholder="请选择存储条件">
-                            <el-option
-                                v-for="item in storageconditionList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="样本收集人">
-                        <el-select v-model="addForm.collectionuserid" placeholder="请选择样本收集人">
-                            <el-option
-                                v-for="item in collectionuserList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="样本入库人">
-                        <el-select v-model="addForm.storageuserid" placeholder="请选择样本入库人">
-                            <el-option
-                                v-for="item in storageuserList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="样本收集时间">
-                        <el-date-picker v-model="addForm.collectiontime" value-format="yyyy-MM-dd" type="date" placeholder="请选择样本收集时间"></el-date-picker>
-                    </el-form-item>
-                    <el-form-item label="样本入库时间">
-                        <el-date-picker v-model="addForm.storagetime" value-format="yyyy-MM-dd" type="date" placeholder="请选择样本入库时间"></el-date-picker>
                     </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
@@ -269,12 +176,37 @@
                     <el-button @click="addSubmitForm('addForm')">确 定</el-button>
                 </span>
             </el-dialog>
+            <!-- 修改密码 -->
+            <el-dialog
+                title="修改密码"
+                width="40%"
+                @close="clearForm"
+                :visible.sync="dialogFormVisible"
+            >
+                <el-form :model="form" :rules="formRules" ref="formRef">
+                    <el-form-item label="密码" prop="pazzword" label-width="60px">
+                        <el-input v-model="form.pazzword" autocomplete="off"></el-input>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="clearForm">取 消</el-button>
+                    <el-button @click="editPwdForm('form')">确 定</el-button>
+                </div>
+            </el-dialog>
         </el-card>
     </div>
 </template>
 <script>
 export default {
     data() {
+        // 校验邮箱
+        var checkEmail = (rule, value, cb) => {
+            const regEmail = /^\w+((.\w+)|(-\w+))@[A-Za-z0-9]+((.|-)[A-Za-z0-9]+).[A-Za-z0-9]+$/;
+            if (regEmail.test(value)) {
+                return cb();
+            }
+            cb(new Error('请输入合法的邮箱'));
+        };
         // 校验手机号
         var checkMobile = (rule, value, cb) => {
             const regMbole = /^(13[0-9]|14[579]|15[0-3,5-9]|17[0135678]|18[0-9])\d{8}$/;
@@ -284,12 +216,20 @@ export default {
             cb(new Error('请输入正确的手机号'));
         };
         return {
+            dialogFormVisible: false, //密码修改弹出窗
+            formRules: {
+                pazzword: [{ required: true, trigger: 'blur', message: '请输入密码' }]
+            },
+            form: {
+                id: '',
+                pazzword: ''
+            },
             loading: true,
             name: '2',
             keyword: '',
             addForm: {
                 id: '',
-                username: '', //样本
+                username: '', //用户
                 account: '', //账号
                 phone: '', //手机号
                 organizationid: '', //组织
@@ -299,8 +239,8 @@ export default {
             },
             addFormRules: {
                 username: [
-                    { required: true, trigger: 'blur', message: '请输入样本名称' },
-                    { min: 3, max: 10, message: '样本名称长度在3到10个字符之间' }
+                    { required: true, trigger: 'blur', message: '请输入用户名' },
+                    { min: 3, max: 10, message: '用户名长度在3到10个字符之间' }
                 ],
                 pazzword: [{ required: true, trigger: 'blur', message: '请输入密码' }],
                 account: [{ required: true, trigger: 'blur', message: '请输入账号昵称' }],
@@ -309,7 +249,7 @@ export default {
                     { validator: checkMobile, trigger: 'blur' }
                 ]
             },
-            addDialogVisible: true, //添加对话框的显示隐藏
+            addDialogVisible: false, //添加对话框的显示隐藏
             pageIndex: 1, //页码数
             pageSize: 10, //条数
             totalCount: 0, //总条数
@@ -369,7 +309,7 @@ export default {
             }
             return '';
         },
-        // 当前样本角色
+        // 当前用户角色
         roleChange(e) {
             console.log(e);
             let tempArr = this.roleList;
@@ -417,6 +357,33 @@ export default {
             this.$refs.formRef.resetFields();
             this.dialogFormVisible = false;
         },
+        // 密码提交
+        editPwdForm() {
+            this.$refs.formRef.validate((valid) => {
+                if (valid) {
+                    this.$http
+                        .post('/api/user/resetpazzword', { id: this.form.id })
+                        .then((res) => {
+                            if (res.data.success) {
+                                this.$message.success('密码修改成功!');
+                                this.dialogFormVisible = false;
+                                this.getData(this.pageIndex);
+                            } else {
+                                this.$message.error(res.data.message);
+                            }
+                        })
+                        .catch((error) => {
+                            this.$message.fail(error.message);
+                        });
+                }
+            });
+        },
+        // 修改密码
+        changePwd(index, item) {
+            this.form.pazzword = item.pazzword;
+            this.form.id = item.userid;
+            this.dialogFormVisible = true;
+        },
 
         // 监听 pagesize 改变事件
         handleSizeChange(val) {
@@ -437,7 +404,7 @@ export default {
             this.addDialogVisible = true;
             this.addForm = {
                 id: '',
-                username: '', //样本
+                username: '', //用户
                 account: '', //账号
                 phone: '', //手机号
                 organizationid: '', //组织
@@ -482,7 +449,7 @@ export default {
         },
         // 删除
         handleDelete(item) {
-            this.$confirm('此操作将永久删除该样本, 是否继续?', '提示', {
+            this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消'
             })
@@ -503,7 +470,7 @@ export default {
         },
         // 批量删除
         deleteAll() {
-            this.$confirm('此操作将永久删除勾选的样本数据, 是否继续?', '提示', {
+            this.$confirm('此操作将永久删除勾选的用户, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消'
             })
@@ -527,7 +494,7 @@ export default {
         // 获取数据
         getData(pageIndex) {
             this.$http
-                .post('/api/sample/getsamplelist', {
+                .post('/api/user/getuserinfo', {
                     search: this.keyword,
                     pageIndex: pageIndex,
                     pageSize: this.pageSize,

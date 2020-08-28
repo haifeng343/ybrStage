@@ -67,7 +67,7 @@
                     </div>
                     <div class="btnContentRight">
                         <div class="content_btn success" v-has="'add'" @click="add">
-                            <img src="../../assets/img/add1.png" alt />
+                            <img src="../../../assets/img/add1.png" alt />
                             <p>新增组织</p>
                         </div>
                     </div>
@@ -438,9 +438,9 @@ export default {
             console.log(item);
             this.$router.push({
                 name:'visitedLog',
-              params:{
-                name:'zhangsan',
-                id:'1'
+              query:{
+                patientid:item.patientid,
+                patientrmationid:item.id
               }
             })
         },

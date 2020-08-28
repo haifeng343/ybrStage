@@ -25,42 +25,48 @@
                     </div>
                     <div class="btnContentRight">
                         <div class="content_btn success" v-has="'add'" @click="add">
-                            <img src="../../assets/img/add1.png" alt />
+                            <img src="../../../assets/img/add1.png" alt />
                             <p>新增数据</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <ul class="tab1">
-                <li class="t1">数据类型</li>
-                <li class="t1">数据</li>
-                <li class="t1">操作</li>
-                <div class="tab1Content" v-for="(item,index) in tableData" :key="index">
-                    <li>
-                        <i
-                            v-if="showId == item.id"
-                            class="el-icon-arrow-up"
-                            @click="dpThis(item.id)"
-                        ></i>
-                        <i class="el-icon-arrow-down" v-else @click="changeTo(item.id)"></i>
-                        {{item.no}}
-                        <ul v-if="item.id ==showId?true:false">
-                            <li v-for="(item1,index1) in tableData1" :key="index1">{{item1.no}}</li>
-                        </ul>
-                    </li>
-                    <li>
-                        {{item.name}}
-                        <ul v-if="item.id ==showId?true:false">
-                            <li v-for="(item1,index1) in tableData1" :key="index1">{{item1.name}}</li>
-                        </ul>
-                    </li>
-                    <li>
+
+            <el-table :data="tableData" style="width: 100%" @expand-change="clickTable">
+                <el-table-column type="expand">
+                    <template slot-scope="props">
+                        <div class="item1" v-for="(item,index) in tableData1" :key="index">
+                            <div class="children">{{item.no}}</div>
+                            <div class="children">{{item.name}}</div>
+                            <div class="children">
+                                <el-button
+                                    size="mini"
+                                    type="success"
+                                    icon="el-icon-edit"
+                                    v-has="'edit'"
+                                    @click="handleEdit(item)"
+                                ></el-button>
+                                <el-button
+                                    size="mini"
+                                    type="danger"
+                                    icon="el-icon-delete"
+                                    v-has="'delete'"
+                                    @click="handleDelete(item)"
+                                ></el-button>
+                            </div>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="数据类型" prop="no" width="300"></el-table-column>
+                <el-table-column label="数据" prop="name"></el-table-column>
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
                         <el-button
                             size="mini"
                             type="success"
                             icon="el-icon-edit"
                             v-has="'edit'"
-                            @click="handleEdit(item)"
+                            @click="handleEdit(scope.row)"
                         ></el-button>
                         <el-tooltip content="添加子集" :enterable="false" placement="top">
                             <el-button
@@ -68,7 +74,7 @@
                                 type="warning"
                                 icon="el-icon-plus"
                                 v-has="'addChild'"
-                                @click="handleAdd(item.id)"
+                                @click="handleAdd(scope.row.id)"
                             ></el-button>
                         </el-tooltip>
                         <el-button
@@ -76,29 +82,13 @@
                             type="danger"
                             icon="el-icon-delete"
                             v-has="'delete'"
-                            @click="handleDelete(item)"
+                            @click="handleDelete(scope.row)"
                         ></el-button>
-                        <ul v-if="item.id ==showId?true:false" class="ul1">
-                            <li v-for="(item1,index1) in tableData1" :key="index1">
-                                <el-button
-                                    size="mini"
-                                    type="success"
-                                    icon="el-icon-edit"
-                                    v-has="'edit'"
-                                    @click="handleEdit(item1)"
-                                ></el-button>
-                                <el-button
-                                    size="mini"
-                                    type="danger"
-                                    icon="el-icon-delete"
-                                    v-has="'delete'"
-                                    @click="handleDelete(item1)"
-                                ></el-button>
-                            </li>
-                        </ul>
-                    </li>
-                </div>
-            </ul>
+                    </template>
+                </el-table-column>
+                <!-- <el-table-column label="描述" prop="desc"></el-table-column> -->
+            </el-table>
+
             <!-- 分页 -->
             <el-pagination
                 @size-change="handleSizeChange"
@@ -171,14 +161,13 @@ export default {
         };
     },
     methods: {
-        dpThis(Id) {
-            this.showId = null;
-        },
-        // 切换
-        changeTo(Id) {
+        // 点击行
+        clickTable(e) {
+            console.log(e);
+            this.tableData1 = [];
             this.$http
                 .post('/api/dictionary/getdictionaryvaluelist', {
-                    dictionarytypeid: Id,
+                    dictionarytypeid: e.id,
                     name: '',
                     pageIndex: 1,
                     pageSize: 1000,
@@ -187,7 +176,6 @@ export default {
                 })
                 .then((res) => {
                     if (res.data.success) {
-                        this.showId = Id;
                         this.tableData1 = res.data.result.pageData;
                     } else {
                         this.$message.error(res.data.message);
@@ -413,86 +401,18 @@ export default {
     width: 100%;
     height: auto;
 }
-.toggle {
-    width: 30px;
-    border: 1px solid #ededed;
-}
-.title {
-    font-size: 18px;
-    width: 100%;
-    padding-bottom: 15px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #ccc;
-}
-.tab1 {
-    width: 100%;
-    height: auto;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-content: center;
-    flex-wrap: wrap;
-    border: 1px solid #ededed;
-}
-.tab1 .t1{
-    display: flex;
-    flex: 1;
-    align-items: center;
-    justify-content: center;
-    border-right: 1px solid #ededed;
-    border-bottom: 1px solid #ededed;
-}
-.tab1 li {
-    text-align: center;
-    min-height: 40px;
-    line-height: 40px;
-    border-right: 1px solid #ededed;
-    user-select: none;
-}
-.tab1 li i {
-    cursor: pointer;
-}
-.tab1 li ul {
-    width: 100%;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-top: 1px solid #ededed;
-}
-.tab1 li ul li {
+.item1 {
     width: 100%;
     height: 40px;
     display: flex;
-    flex-direction: column;
-    border-right: 1px solid #ededed;
-    border-bottom: 1px solid #ededed;
-    align-items: center;
-    justify-content: center;
+    flex: 1;
 }
-.tab1 li ul li:last-child{
-    border-bottom: none;
-}
-.tab1Content {
-    width: 100%;
-    height: auto;
+.item1 .children {
     display: flex;
-    justify-content: flex-start;
     flex-direction: row;
-    flex-wrap: wrap;
-}
-.tab1Content li {
-    box-sizing: border-box;
-    width: 33.33%;
-}
-.ul1 {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-}
-.ul1 li {
-    display: flex;
-    flex-direction: row !important;
-    justify-content: center !important;
+    justify-content: center;
+    flex: 1;
+    align-items: center;
+    line-height: 23px;
 }
 </style>

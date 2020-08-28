@@ -900,6 +900,10 @@ tbody{
 .si{
     background: red;
 }
+.el-icon-close:before{
+    color: #FA483A!important;
+    cursor: pointer;
+}
 .el-message-box {
     width: 560px;
 }

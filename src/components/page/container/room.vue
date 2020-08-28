@@ -30,7 +30,7 @@
                     </div>
                     <div class="btnContentRight">
                         <div class="content_btn success" v-has="'add'" @click="add">
-                            <img src="../../assets/img/add1.png" alt />
+                            <img src="../../../assets/img/add1.png" alt />
                             <p>新增房间</p>
                         </div>
                         <!-- <div class="content_btn error">

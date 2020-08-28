@@ -40,13 +40,6 @@ const router = new Router({
                     meta: { title: '富文本编辑器' }
                 },
                 {
-                    // markdown组件
-                    path: '/markdown',
-                    name: 'markdown',
-                    component: () => import('../components/page/Markdown.vue'),
-                    meta: { title: 'markdown编辑器' }
-                },
-                {
                     // 图片上传组件
                     path: '/upload',
                     name: 'upload',
@@ -85,49 +78,56 @@ const router = new Router({
                     // 用户管理页面
                     path: '/userInfo',
                     name: 'userInfo',
-                    component: () => import('../components/page/userInfo.vue'),
+                    component: () => import('../components/page/systemManage/userInfo.vue'),
                     meta: { title: '用户管理', permission: false }
                 },
                 {
                     // 角色管理页面
                     path: '/role',
                     name: 'role',
-                    component: () => import('../components/page/role.vue'),
+                    component: () => import('../components/page/systemManage/role.vue'),
                     meta: { title: '角色管理', permission: false }
                 },
                 {
                     // 部门管理页面
                     path: '/department',
                     name: 'department',
-                    component: () => import('../components/page/department.vue'),
+                    component: () => import('../components/page/systemManage/department.vue'),
                     meta: { title: '组织管理', permission: false }
                 },
                 {
                     // 权限管理页面
                     path: '/power',
                     name: 'power',
-                    component: () => import('../components/page/power.vue'),
+                    component: () => import('../components/page/systemManage/power.vue'),
                     meta: { title: '权限管理', permission: false }
+                },
+                {
+                    // 数据字典页面
+                    path: '/dictionary',
+                    name: 'dictionary',
+                    component: () => import('../components/page/systemManage/dictionary.vue'),
+                    meta: { title: '数据字典', permission: false }
                 },
                 {
                     // 病人列表页面
                     path: '/patient',
                     name: 'patient',
-                    component: () => import('../components/page/patient.vue'),
+                    component: () => import('../components/page/sampleSource/patient.vue'),
                     meta: { title: '病人管理', permission: false }
                 },
                 {
                     // 冰箱管理页面
                     path: '/containerList',
                     name: 'containerList',
-                    component: () => import('../components/page/containerList.vue'),
+                    component: () => import('../components/page/container/containerList.vue'),
                     meta: { title: '冰箱管理', permission: false }
                 },
                 {
                     // 房间管理页面
                     path: '/room',
                     name: 'room',
-                    component: () => import('../components/page/room.vue'),
+                    component: () => import('../components/page/container/room.vue'),
                     meta: { title: '房间管理', permission: false }
                 },
                 {
@@ -141,63 +141,56 @@ const router = new Router({
                     // 样本列表页面
                     path: '/sample',
                     name: 'sample',
-                    component: () => import('../components/page/sample.vue'),
+                    component: () => import('../components/page/sample/sample.vue'),
                     meta: { title: '样本列表', permission: false }
                 },
                 {
                     // 动物管理页面
                     path: '/animal',
                     name: 'animal',
-                    component: () => import('../components/page/animal.vue'),
+                    component: () => import('../components/page/sampleSource/animal.vue'),
                     meta: { title: '动物管理', permission: false }
                 },
                 {
                     // 项目列表页面
                     path: '/projectList',
                     name: 'projectList',
-                    component: () => import('../components/page/projectList.vue'),
+                    component: () => import('../components/page/project/projectList.vue'),
                     meta: { title: '项目列表', permission: false }
                 },
                 {
                     // 项目类型页面
                     path: '/projectType',
                     name: 'projectType',
-                    component: () => import('../components/page/projectType.vue'),
+                    component: () => import('../components/page/project/projectType.vue'),
                     meta: { title: '项目类型', permission: false }
-                },
-                {
-                    // 数据字典页面
-                    path: '/dictionary',
-                    name: 'dictionary',
-                    component: () => import('../components/page/dictionary.vue'),
-                    meta: { title: '数据字典', permission: false }
                 },
                 {
                     // 病人病理配置
                     path: '/pathology',
                     name: 'pathology',
-                    component: () => import('../components/page/pathology.vue'),
+                    component: () => import('../components/page/systemManage/pathology.vue'),
                     meta: { title: '病人病理配置', permission: false }
                 },
                 {
                     // 玻片列表页面
                     path: '/slide',
                     name: 'slide',
-                    component: () => import('../components/page/slide.vue'),
+                    component: () => import('../components/page/sample/slide.vue'),
                     meta: { title: '玻片列表', permission: false }
                 },
                 {
                     // 石蜡块列表页面
                     path: '/paraffin',
                     name: 'paraffin',
-                    component: () => import('../components/page/paraffin.vue'),
+                    component: () => import('../components/page/sample/paraffin.vue'),
                     meta: { title: '石蜡块列表', permission: false }
                 },
                 {
                     // 样本类型页面
                     path: '/sampleType',
                     name: 'sampleType',
-                    component: () => import('../components/page/sampleType.vue'),
+                    component: () => import('../components/page/sample/sampleType.vue'),
                     meta: { title: '样本类型', permission: false }
                 },
                 {

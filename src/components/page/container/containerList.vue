@@ -21,7 +21,7 @@
                         <p>重置</p>
                     </div>-->
                     <div class="content_btn success" @click="add">
-                        <img src="../../assets/img/add1.png" alt />
+                        <img src="../../../assets/img/add1.png" alt />
                         <p>新增冰箱</p>
                     </div>
                     <!-- <div class="content_btn error">
@@ -64,7 +64,7 @@
             <div class="item" v-for="item in tableData" :key="item.containerid">
                 <div class="item1 kk">
                     <div class="itemTop">
-                        <img src="../../assets/img/icebox.png" alt />
+                        <img src="../../../assets/img/icebox.png" alt />
                     </div>
                     <div class="itemBot">
                         <p>{{item.name}}</p>
@@ -73,7 +73,7 @@
                 <div class="item2 kk">
                     <div class="itemTop2">
                         <div class="start">
-                            <img src="../../assets/img/tag.png" class="img1" alt />
+                            <img src="../../../assets/img/tag.png" class="img1" alt />
                             <div class="txt">
                                 冰箱编号：
                                 <p>{{item.no}}</p>
@@ -88,7 +88,7 @@
                             <p>{{item.model}}</p>
                         </div>
                         <div class="start">
-                            <img src="../../assets/img/use.png" class="img1" alt />
+                            <img src="../../../assets/img/use.png" class="img1" alt />
                             <div class="txt">{{item.keeperuser}}</div>
                         </div>
                         <div class="dic">
@@ -104,11 +104,11 @@
                 </div>
                 <div class="item3">
                     <div class="item3Item" @click="handleEdit(item)">
-                        <img src="../../assets/img/edit.png" alt />
+                        <img src="../../../assets/img/edit.png" alt />
                         <p>编辑</p>
                     </div>
                     <div class="item3Item">
-                        <img src="../../assets/img/delete.png" alt />
+                        <img src="../../../assets/img/delete.png" alt />
                         <p>删除</p>
                     </div>
                 </div>
