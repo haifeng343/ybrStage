@@ -62,26 +62,11 @@ export default {
             return this.$route.path.replace('/', '');
         }
     },
-    methods: {
-        getMunu() {
-            this.$http
-                .post('/api/menu/getmenulist', {
-                    name: '',
-                    fldSort: '',
-                    fldName: ''
-                })
-                .then((res) => {
-                    if (res.data.success) {
-                        localStorage.setItem('menu', JSON.stringify(res.data.result));
-                        this.items = res.data.result;
-                    } else {
-                        this.$message.error(res.data.message);
-                    }
-                });
-        }
-    },
+    methods: {},
     mounted() {
-        this.getMunu();
+        setTimeout(() => {
+            this.items = JSON.parse(localStorage.getItem('menu'));
+        }, 500);
     },
     created() {
         // 通过 Event Bus 进行组件间通信，来折叠侧边栏

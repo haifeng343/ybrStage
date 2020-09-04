@@ -2,11 +2,12 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import NProgress from 'nprogress'
 
-Vue.use(Router)
 const originalPush = Router.prototype.push
-Router.prototype.push = function push (location) {
+Router.prototype.replace = function push (location) {
     return originalPush.call(this, location).catch(err => err)
 }
+Vue.use(Router)
+
 
 const router = new Router({
     mode: 'history',
@@ -25,6 +26,12 @@ const router = new Router({
                     name: 'dashboard',
                     component: () => import('../components/page/Dashboard.vue'),
                     meta: { title: '系统首页' }
+                },
+                {
+                    path: '/scanding',
+                    name: 'scanding',
+                    component: () => import('../components/page/scanding.vue'),
+                    meta: { title: '钉钉扫码' }
                 },
                 {
                     path: '/table',
@@ -110,6 +117,20 @@ const router = new Router({
                     meta: { title: '数据字典', permission: false }
                 },
                 {
+                    // 配置流程节点页面
+                    path: '/configuration',
+                    name: 'configuration',
+                    component: () => import('../components/page/systemManage/configuration.vue'),
+                    meta: { title: '配置流程节点', permission: false }
+                },
+                {
+                    //流程管理页面
+                    path: '/flow',
+                    name: 'flow',
+                    component: () => import('../components/page/systemManage/flow.vue'),
+                    meta: { title: '流程管理', permission: false }
+                },
+                {
                     // 病人列表页面
                     path: '/patient',
                     name: 'patient',
@@ -122,6 +143,20 @@ const router = new Router({
                     name: 'containerList',
                     component: () => import('../components/page/container/containerList.vue'),
                     meta: { title: '冰箱管理', permission: false }
+                },
+                {
+                    // 液氮罐管理页面
+                    path: '/tank',
+                    name: 'tank',
+                    component: () => import('../components/page/container/tank.vue'),
+                    meta: { title: '液氮罐管理', permission: false }
+                },
+                {
+                    // 石蜡块柜管理页面
+                    path: '/pareffinBlock',
+                    name: 'pareffinBlock',
+                    component: () => import('../components/page/container/pareffinBlock.vue'),
+                    meta: { title: '石蜡块柜管理', permission: false }
                 },
                 {
                     // 房间管理页面
@@ -211,6 +246,12 @@ const router = new Router({
                     name: '403',
                     component: () => import('../components/page/403.vue'),
                     meta: { title: '403' }
+                },
+                {
+                    path: '/demo',
+                    name: 'demo',
+                    component: () => import('../components/page/demo.vue'),
+                    meta: { title: 'demo' }
                 },
 
             ]

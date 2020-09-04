@@ -215,7 +215,9 @@ export default {
                         data: [74, 118, 200, 235, 90]
                     }
                 ]
-            }
+            },
+            code:'',//钉钉登录的code
+            openid:JSON.parse(localStorage.getItem('userInfo')).openid || '',
         };
     },
     components: {
@@ -237,6 +239,9 @@ export default {
     //     window.removeEventListener('resize', this.renderChart);
     //     bus.$off('collapse', this.handleBus);
     // },
+    mounted(){
+        
+    },
     methods: {
         changeDate() {
             const now = new Date().getTime();

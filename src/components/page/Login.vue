@@ -47,13 +47,9 @@
                     </div>
                 </el-form>
                 <div class="saoCode" v-if="showId == 1">
-                    <img
-                        class="img2"
-                        src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596537032864&di=19df71a3bc3c00a0f64fff0e0c5aa6e3&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F01%2F37%2F17%2F96573c3f71ecd2f.jpg"
-                        alt
-                    />
-                    <p class="tips">请使用钉钉扫描二维码登录</p>
-                    <p class="tips">“SAAS样本库追溯平台”</p>
+                    <div id="ding-login"></div>
+                    <!-- <p class="tips">请使用钉钉扫描二维码登录</p>
+                    <p class="tips">“SAAS样本库追溯平台”</p>-->
                 </div>
             </transition>
         </div>
@@ -84,9 +80,20 @@
 </template>
 
 <script>
+// 钉钉后台获取的appid和appSecret，appSecret没有用到扫码中
+let appid = 'dingoavnbhbtdoebjs9u5j';
+let appSecret = '55AxDMCBrfRcqWs2O0RnWmSaRc8aPIEhs0WqFYzhlZ2M3KfDsZp_h1Sk1UfwPrRZ';
+// 重定向地址，因为vue用的hash，所以网址后面是 #/
+// let redirect = encodeURIComponent(`http://localhost:8081/dashboard`);
+let redirect = encodeURIComponent(`http://saas.mfetv.top/scanding`);
+// 官网给的跳转连接格式
+let http_url = encodeURIComponent(
+    `https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${appid}&response_type=code&scope=snsapi_login&state=login&redirect_uri=${redirect}`
+);
 export default {
     data: function () {
         return {
+            src: '',
             showId: 2, //1扫码登录 2账户登录
             img1: this.showId == 1 ? require('../../assets/img/code.png') : require('../../assets/img/pc.png'), //扫码/账户登录
             nav: [
@@ -103,14 +110,15 @@ export default {
                 }
             ],
             param: {
-                username: 'test',
+                username: 'admin',
                 password: '123456'
             },
             rules: {
                 username: [{ required: true, message: '请输入用户名', trigger: 'change' }],
                 password: [{ required: true, message: '请输入密码', trigger: 'change' }]
             },
-            confirmSuccess: false //验证是否成功
+            confirmSuccess: false, //验证是否成功
+            ddSrc: ''
         };
     },
     methods: {
@@ -129,6 +137,7 @@ export default {
             });
             if (this.showId == 1) {
                 this.img1 = require('../../assets/img/code.png');
+                this.dingLogin();
             } else {
                 this.img1 = require('../../assets/img/pc.png');
             }
@@ -143,6 +152,7 @@ export default {
             } else {
                 this.showId = 1;
                 this.img1 = require('../../assets/img/code.png');
+                this.dingLogin();
             }
             let tempArr = this.nav;
             tempArr.forEach((item) => {
@@ -156,22 +166,6 @@ export default {
         // 忘记密码
         goForget() {
             this.$router.push({ name: 'forget' });
-        },
-        // 获取菜单列表
-        getMenu() {
-            this.$http
-                .post('/api/menu/getmenulist', {
-                    name: '',
-                    fldSort: '',
-                    fldName: ''
-                })
-                .then((res) => {
-                    if (res.data.success) {
-                        localStorage.setItem('menu', JSON.stringify(res.data.result));
-                    } else {
-                        this.$message.error(res.data.message);
-                    }
-                });
         },
         // 登录
         submitForm() {
@@ -189,16 +183,11 @@ export default {
             let _self = this;
             let s = WIDGETS.imgSmoothCheck({
                 selector: '#select',
-                data: [
-                    'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3984473917,238095211&fm=26&gp=0.jpg',
-                    'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2020089733,86807406&fm=26&gp=0.jpg',
-                    'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1032775318,1475043169&fm=26&gp=0.jpg'
-                ],
+                data: ['https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3984473917,238095211&fm=26&gp=0.jpg'],
                 imgHeight: 100,
                 imgWidth: 200,
-                allowableErrorValue: 3,
+                allowableErrorValue: 1,
                 success: function () {
-                    _self.$message.success('验证通过，马上登录');
                     _self.$http
                         .post('/api/saas_pc/login', {
                             user: _self.param.username,
@@ -206,10 +195,12 @@ export default {
                         })
                         .then((res) => {
                             if (res.data.success == true) {
-                                _self.getMenu();
+                                _self.$message.success('登录成功');
                                 _self.$store.state.userInfo = res.data.result;
                                 localStorage.setItem('userInfo', JSON.stringify(res.data.result));
                                 localStorage.setItem('ms_username', res.data.result.username);
+                                localStorage.setItem('token', res.data.result.token);
+                                localStorage.setItem('menu', JSON.stringify(res.data.result.authmenu));
                                 _self.$router.push('/');
                             } else {
                                 _self.$message.error(res.data.message);
@@ -223,6 +214,47 @@ export default {
             $('.refresh').on('click', function () {
                 s.refresh();
             });
+        },
+        // 获取钉钉扫码登录
+        getDDCodeImg() {},
+        // 切换钉钉登录
+        dingLogin() {
+            // 这边需要用 $nextTick() 方法来等DOM渲染完成后，才能获取到盒子容器（$nextTick 方法见另一篇文章）
+            this.$nextTick(() => {
+                // 钉钉登录，参数文档中那些其他项就不展示了，按照文档自己配置就可以
+                var obj = DDLogin({
+                    id: 'ding-login',
+                    goto: http_url,
+                    style: 'border:none;background-color:#FFFFFF;'
+                });
+                // 重置扫码登录框的样式，让登录框居中
+                let box = document.getElementById('ding-login');
+                box.querySelector('iframe').style.position = 'absolute';
+                box.querySelector('iframe').style.top = '0';
+                box.querySelector('iframe').style.bottom = '0';
+                box.querySelector('iframe').style.left = '0';
+                box.querySelector('iframe').style.right = '0';
+                box.querySelector('iframe').style.margin = 'auto';
+            });
+        }
+    },
+    created() {
+        // 获取到扫码结果，并且跳转获取临时登录码
+        var handleMessage = function (event) {
+            var origin = event.origin;
+            if (origin == 'https://login.dingtalk.com') {
+                //判断是否来自ddLogin扫码事件。
+                // 拿到 loginTmpCode 后，跳转连接拿到临时登陆码，之后返回到跳转的地址，会携带临时登陆码
+                var loginTmpCode = event.data;
+                let url = `https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${appid}&response_type=code&scope=snsapi_login&state=login&redirect_uri=${http_url}&loginTmpCode=${loginTmpCode}`;
+                // 这边直接打开拼接好的连接，去获取临时登录码，回来地址在下面
+                location.href = url;
+            }
+        };
+        if (typeof window.addEventListener != 'undefined') {
+            window.addEventListener('message', handleMessage, false);
+        } else if (typeof window.attachEvent != 'undefined') {
+            window.attachEvent('onmessage', handleMessage);
         }
     },
     mounted() {
@@ -306,7 +338,7 @@ export default {
 .ms-login {
     position: absolute;
     width: 310px;
-    height: 330px;
+    height: 360px;
     background: rgba(255, 255, 255, 1);
     border-radius: 8px;
     top: 355px;
@@ -338,6 +370,7 @@ export default {
 }
 .saoCode {
     width: 100%;
+    height: 310px;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -428,6 +461,12 @@ export default {
     -o-user-select: none;
     -ms-user-select: none;
 }
+#ding-login {
+    position: relative;
+    top: 52px;
+    width: 350px;
+    height: 300px;
+}
 </style>
 <style>
 .input1 .el-input__inner {
@@ -438,5 +477,8 @@ export default {
 }
 .show {
     opacity: 1;
+}
+.login_qrcode_text {
+    margin-top: 5px !important;
 }
 </style>

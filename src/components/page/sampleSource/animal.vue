@@ -59,8 +59,12 @@
                 <el-table-column prop="position" label="存放位置"></el-table-column>
                 <el-table-column prop="status" label="生存状态">
                     <template slot-scope="scope">
-                        <div class="sheng" v-if="scope.row.status==1"></div>
-                        <div class="si" v-if="scope.row.status==2"></div>
+                        <div class="circle circle1" v-if="scope.row.status==1">
+                            <div class="circle circle2"></div>
+                        </div>
+                        <div class="circle3" v-if="scope.row.status==2">
+                            <div class="circle1 circle2"></div>
+                        </div>
                     </template>
                 </el-table-column>
                 <el-table-column prop="createtime" label="创建时间" width="200"></el-table-column>
@@ -169,9 +173,9 @@ export default {
                 sampletypestr:'',//样本名称
                 samplecount:'',//样本数量
                 age:'',//年龄
-                sex:1,//公
+                sex:'',//公
                 position:'',//存放位置
-                status:1,//1生 2死
+                status:'',//1生 2死
             },
             dropList: [], //组织列表
             addFormRules: {

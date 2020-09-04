@@ -441,7 +441,9 @@ export default {
                                 }
                             });
                     }
-                    this.getData();
+                    setTimeout(() => {
+                        this.getData();
+                    }, 1000);
                     this.addDialogVisible = false;
                 } else {
                     console.log('error submit!!');
@@ -459,7 +461,6 @@ export default {
                 })
                 .then((res) => {
                     this.tableData = res.data.result;
-                    localStorage.setItem('sidebar', JSON.stringify(res.data.result));
                 });
         }
     },

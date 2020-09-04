@@ -127,7 +127,12 @@
                 width="40%"
                 @close="addDialogClosed"
             >
-                <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px">
+                <el-form
+                    :model="addForm"
+                    :rules="addFormRules"
+                    ref="addFormRef"
+                    label-width="100px"
+                >
                     <el-form-item label="样本编号" prop="no">
                         <el-input v-model="addForm.no"></el-input>
                     </el-form-item>
@@ -150,7 +155,7 @@
                     <el-form-item label="所属项目">
                         <el-select v-model="addForm.projectid" placeholder="请选择项目">
                             <el-option
-                                v-for="item in proJectList"
+                                v-for="item in projectList"
                                 :key="item.id"
                                 :label="item.name"
                                 :value="item.id"
@@ -181,9 +186,9 @@
                         <el-select v-model="addForm.patientid" placeholder="请选择样病人">
                             <el-option
                                 v-for="item in patientList"
-                                :key="item.id"
+                                :key="item.patientid"
                                 :label="item.name"
-                                :value="item.id"
+                                :value="item.patientid"
                             ></el-option>
                         </el-select>
                     </el-form-item>
@@ -240,28 +245,40 @@
                     <el-form-item label="样本收集人">
                         <el-select v-model="addForm.collectionuserid" placeholder="请选择样本收集人">
                             <el-option
-                                v-for="item in collectionuserList"
+                                v-for="item in userList"
                                 :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
+                                :label="item.username"
+                                :value="item.userid"
                             ></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="样本入库人">
                         <el-select v-model="addForm.storageuserid" placeholder="请选择样本入库人">
                             <el-option
-                                v-for="item in storageuserList"
+                                v-for="item in userList"
                                 :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
+                                :label="item.username"
+                                :value="item.userid"
                             ></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="样本收集时间">
-                        <el-date-picker v-model="addForm.collectiontime" value-format="yyyy-MM-dd" type="date" placeholder="请选择样本收集时间"></el-date-picker>
+                        <el-date-picker
+                            v-model="addForm.collectiontime"
+                            value-format="yyyy-MM-dd"
+                            format="yyyy 年 MM 月 dd 日"
+                            type="date"
+                            placeholder="请选择样本收集时间"
+                        ></el-date-picker>
                     </el-form-item>
                     <el-form-item label="样本入库时间">
-                        <el-date-picker v-model="addForm.storagetime" value-format="yyyy-MM-dd" type="date" placeholder="请选择样本入库时间"></el-date-picker>
+                        <el-date-picker
+                            v-model="addForm.storagetime"
+                            value-format="yyyy-MM-dd"
+                            format="yyyy 年 MM 月 dd 日"
+                            type="date"
+                            placeholder="请选择样本入库时间"
+                        ></el-date-picker>
                     </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
@@ -289,13 +306,21 @@ export default {
             keyword: '',
             addForm: {
                 id: '',
-                username: '', //样本
-                account: '', //账号
-                phone: '', //手机号
-                organizationid: '', //组织
-                pazzword: '', //密码
-                roleids: [], //权限
-                rolenames: [] //权限名称
+                no: '', //样本编号
+                name: '', //样本名称
+                size: '', //样本大小
+                organizationid: '', //所属组织
+                projectid: '', //所属项目
+                containerid: '', //所属容器
+                latticeid: '', //所属样本盒
+                patientid: '', //所属病人
+                typeid: '', //样本类型
+                grassid: '', //种属
+                tissuestypeid: '', //组织类型
+                diseasetypeid: '', //疾病类型
+                storageconditionid: '', //存储条件
+                collectionuserid: '', //样本收集人
+                storageuserid: '' //样本入库人
             },
             addFormRules: {
                 username: [
@@ -316,15 +341,56 @@ export default {
             tableData: [], //表格数据
             roleList: [], //角色列表
             dropList: [], //组织列表
-            deleteList: [] //批量删除
+            deleteList: [], //批量删除
+            projectList: [], //项目列表
+            containerList: [], //容器列表
+            latticeList: [], //样本盒列表
+            patientList: [], //病人列表
+            typeList: [], //样本类型
+            grassList: [], //种属
+            tissuestypeList: [], //组织类型
+            diseasetypeList: [], //疾病类型
+            storageconditionList: [], //储存类型
+            userList: [] //用户列表
         };
     },
     created() {
         this.getData(1);
         this.getRoleList(); //获取角色列表
         this.getDropList(); //获取组织列表
+        this.getProject(); //获取项目列表
+        this.getPatient(); //获取病人列表
     },
     methods: {
+        // 病人列表
+        getPatient() {
+            this.$http
+                .post('/api/patient/getpatientlist', {
+                    name: '',
+                    pageIndex: 1,
+                    pageSize: 1000,
+                    fldSort: '',
+                    fldName: ''
+                })
+                .then((res) => {
+                    this.patientList = res.data.result.pageData;
+                });
+        },
+        //项目列表
+        getProject() {
+            this.$http
+                .post('/api/project/getlist', {
+                    no: '',
+                    name: '',
+                    pageIndex: 1,
+                    pageSize: 1000,
+                    fldSort: '',
+                    fldName: ''
+                })
+                .then((res) => {
+                    this.projectList = res.data.result.pageData;
+                });
+        },
         // 批量勾选
         handleSelectionChange(e) {
             let arr = [];
@@ -437,15 +503,22 @@ export default {
             this.addDialogVisible = true;
             this.addForm = {
                 id: '',
-                username: '', //样本
-                account: '', //账号
-                phone: '', //手机号
-                organizationid: '', //组织
-                pazzword: '', //密码
-                roleids: [], //权限
-                rolenames: [] //权限名称
+                no: '', //样本编号
+                name: '', //样本名称
+                size: '', //样本大小
+                organizationid: '', //所属组织
+                projectid: '', //所属项目
+                containerid: '', //所属容器
+                latticeid: '', //所属样本盒
+                patientid: '', //所属病人
+                typeid: '', //样本类型
+                grassid: '', //种属
+                tissuestypeid: '', //组织类型
+                diseasetypeid: '', //疾病类型
+                storageconditionid: '', //存储条件
+                collectionuserid: '', //样本收集人
+                storageuserid: '' //样本入库人
             };
-            // console.log(this.$refs.childRef.getData)//调用子组件的属性和方法
         },
         // 编辑
         handleEdit(index, item) {

@@ -877,32 +877,34 @@ tbody{
 .table-td:last-child{
     border-right: none;
 } */
-.sheng,.si{
+.circle,.circle3{
     width: 10px;
     height: 10px;
     position: relative;
-    background: green;
     border-radius: 50%;
     margin: 0 auto;
-}
-.sheng::after{
-    content: '';
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
     background: green;
+}
+.circle1{
+   position: relative;
+}
+.circle2{
     position: absolute;
-    left: 50%;
-    top: 50%;
-    animation: move 3s ease-in-out infinite;
-    transform: translate(-50% ,-50%);
+    animation: ripple 1.5s ease-in-out infinite;
 }
-.si{
-    background: red;
+.circle3{
+    background: red!important;
+    position: relative;
 }
-.el-icon-close:before{
-    color: #FA483A!important;
-    cursor: pointer;
+@keyframes ripple{
+    0%{
+        opacity: 1;
+        transform: scale(1);
+    }
+    100%{
+        opacity: 0;
+        transform: scale(2);
+    }
 }
 .el-message-box {
     width: 560px;

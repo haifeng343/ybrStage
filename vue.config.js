@@ -13,7 +13,8 @@ module.exports = {
                     '/api':''
                 }
             }
-        }
+        },
+        disableHostCheck:true
     },
     configureWebpack: {
         plugins: [

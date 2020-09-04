@@ -363,7 +363,15 @@ export default {
                     fldName: ''
                 })
                 .then((res) => {
-                    this.data = res.data.result;
+                    let tempArr = res.data.result;
+                    tempArr.forEach(item=>{
+                        if(item.subs.length){
+                            item.subs.forEach(item1=>{
+                                item1.subs = item1.btns;
+                            })
+                        }
+                    })
+                    this.data = tempArr;
                 });
         }
     }
