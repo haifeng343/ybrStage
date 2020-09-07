@@ -137,7 +137,7 @@
                         <el-input v-model="addForm.account"></el-input>
                     </el-form-item>
                     <el-form-item label="密码" prop="pazzword">
-                        <el-input type="password" v-model="addForm.pazzword"></el-input>
+                        <el-input type="password" show-password v-model="addForm.pazzword"></el-input>
                     </el-form-item>
                     <!-- <el-form-item label="邮箱" prop="email" :status-icon="true">
                         <el-input v-model="addForm.email"></el-input>
@@ -185,7 +185,7 @@
             >
                 <el-form :model="form" :rules="formRules" ref="formRef">
                     <el-form-item label="密码" prop="pazzword" label-width="60px">
-                        <el-input v-model="form.pazzword" autocomplete="off"></el-input>
+                        <el-input v-model="form.pazzword" show-password autocomplete="off"></el-input>
                     </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">

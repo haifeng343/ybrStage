@@ -143,7 +143,7 @@
                         <el-input v-model="addForm.size"></el-input>
                     </el-form-item>
                     <el-form-item label="所属组织">
-                        <el-select v-model="addForm.organizationid" placeholder="请选择组织">
+                        <el-select v-model="addForm.organizationid" filterable placeholder="请选择组织">
                             <el-option
                                 v-for="item in dropList"
                                 :key="item.id"
@@ -153,7 +153,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="所属项目">
-                        <el-select v-model="addForm.projectid" placeholder="请选择项目">
+                        <el-select v-model="addForm.projectid" filterable placeholder="请选择项目">
                             <el-option
                                 v-for="item in projectList"
                                 :key="item.id"
@@ -163,7 +163,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="所属容器">
-                        <el-select v-model="addForm.containerid" placeholder="请选择容器">
+                        <el-select v-model="addForm.containerid" filterable placeholder="请选择容器">
                             <el-option
                                 v-for="item in containerList"
                                 :key="item.id"
@@ -173,7 +173,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="所属样本盒">
-                        <el-select v-model="addForm.latticeid" placeholder="请选择样本盒">
+                        <el-select v-model="addForm.latticeid" filterable placeholder="请选择样本盒">
                             <el-option
                                 v-for="item in latticeList"
                                 :key="item.id"
@@ -183,7 +183,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="所属病人">
-                        <el-select v-model="addForm.patientid" placeholder="请选择样病人">
+                        <el-select v-model="addForm.patientid" filterable placeholder="请选择样病人">
                             <el-option
                                 v-for="item in patientList"
                                 :key="item.patientid"
@@ -193,7 +193,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="样本类型">
-                        <el-select v-model="addForm.typeid" placeholder="请选择样本类型">
+                        <el-select v-model="addForm.typeid" filterable placeholder="请选择样本类型">
                             <el-option
                                 v-for="item in typeList"
                                 :key="item.id"
@@ -203,7 +203,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="种属">
-                        <el-select v-model="addForm.grassid" placeholder="请选择种属">
+                        <el-select v-model="addForm.grassid" filterable placeholder="请选择种属">
                             <el-option
                                 v-for="item in grassList"
                                 :key="item.id"
@@ -213,7 +213,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="组织类型">
-                        <el-select v-model="addForm.tissuestypeid" placeholder="请选择组织类型">
+                        <el-select v-model="addForm.tissuestypeid" filterable placeholder="请选择组织类型">
                             <el-option
                                 v-for="item in tissuestypeList"
                                 :key="item.id"
@@ -223,7 +223,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="疾病类型">
-                        <el-select v-model="addForm.diseasetypeid" placeholder="请选择疾病类型">
+                        <el-select v-model="addForm.diseasetypeid" filterable placeholder="请选择疾病类型">
                             <el-option
                                 v-for="item in diseasetypeList"
                                 :key="item.id"
@@ -233,7 +233,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="存储条件">
-                        <el-select v-model="addForm.storageconditionid" placeholder="请选择存储条件">
+                        <el-select v-model="addForm.storageconditionid" filterable placeholder="请选择存储条件">
                             <el-option
                                 v-for="item in storageconditionList"
                                 :key="item.id"
@@ -243,7 +243,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="样本收集人">
-                        <el-select v-model="addForm.collectionuserid" placeholder="请选择样本收集人">
+                        <el-select v-model="addForm.collectionuserid" filterable placeholder="请选择样本收集人">
                             <el-option
                                 v-for="item in userList"
                                 :key="item.id"
@@ -253,7 +253,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="样本入库人">
-                        <el-select v-model="addForm.storageuserid" placeholder="请选择样本入库人">
+                        <el-select v-model="addForm.storageuserid" filterable placeholder="请选择样本入库人">
                             <el-option
                                 v-for="item in userList"
                                 :key="item.id"
@@ -360,8 +360,27 @@ export default {
         this.getDropList(); //获取组织列表
         this.getProject(); //获取项目列表
         this.getPatient(); //获取病人列表
+        this.getUserList(); //获取用户列表
     },
     methods: {
+        // 用户列表
+        getUserList(){
+             this.$http
+                .post('/api/user/getuserinfo', {
+                    search: '',
+                    pageIndex: 1,
+                    pageSize: 1000,
+                    fldSort: '',
+                    fldName: ''
+                })
+                .then((res) => {
+                    if (res.data.success) {
+                        this.userList = res.data.result.pageData;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                });
+        },
         // 病人列表
         getPatient() {
             this.$http

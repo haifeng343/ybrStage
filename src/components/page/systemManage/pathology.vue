@@ -7,14 +7,18 @@
             <div class="headerTop_text">数据字典</div>
         </div>
         <el-card>
-            <el-table :data="tables" style="width: 100%">
+            <el-table
+                :data="tables"
+                style="width: 100%"
+            >
                 <el-table-column type="expand">
                     <template slot-scope="props">
                         <div v-for="(item,index) in columns" :key="index" class="tab2">
                             <div v-if="props.row.name === item.tablename">
                                 <div class="item1">
                                     <div class="label">{{item.colname}}</div>
-                                    <template>
+                                    <!-- type为1的时候是标签和添加标签 -->
+                                    <template v-if="item.type==1">
                                         <div class="tagList">
                                             <span
                                                 class="tag"
@@ -37,6 +41,7 @@
                                                 class="input1"
                                                 v-model="item.value"
                                                 clearable
+                                                @blur="setHideInput(item)"
                                                 @keydown.native.enter="save(item)"
                                             ></el-input>
                                         </div>
@@ -99,7 +104,7 @@ export default {
             ],
             showId: null, //显示对应的input
             tables: [], //病理父
-            columns: [] //病理子
+            columns: [], //病理子
         };
     },
     mounted() {
@@ -171,7 +176,7 @@ export default {
                     });
                 }
             });
-        }
+        },
     }
 };
 </script>

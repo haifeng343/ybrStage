@@ -32,7 +32,14 @@
                 </div>
             </div>
 
-            <el-table :data="tableData" style="width: 100%" @expand-change="clickTable">
+            <el-table
+                :data="tableData"
+                ref="refTable"
+                style="width: 100%"
+                row-key="id"
+                :expand-row-keys="expands"
+                @expand-change="expandSelect"
+            >
                 <el-table-column type="expand">
                     <template slot-scope="props">
                         <div class="item1" v-for="(item,index) in tableData1" :key="index">
@@ -136,6 +143,7 @@
 export default {
     data() {
         return {
+            expands: [], // 要展开的行，数值的元素是row的key值
             showId: null, //展示哪一行数据
             toggle: false, //是否收起
             keyword: '', //关键字
@@ -161,13 +169,22 @@ export default {
         };
     },
     methods: {
-        // 点击行
-        clickTable(e) {
-            console.log(e);
-            this.tableData1 = [];
+        // 折叠面板每次只能展开一行
+        expandSelect(row, expandedRows) {
+            console.log(row);
+            let that = this;
+            if (expandedRows.length) {
+                that.expands = [];
+                if (row) {
+                    that.expands.push(row.id);
+                }
+            } else {
+                that.expands = [];
+            }
+
             this.$http
                 .post('/api/dictionary/getdictionaryvaluelist', {
-                    dictionarytypeid: e.id,
+                    dictionarytypeid: row.id,
                     name: '',
                     pageIndex: 1,
                     pageSize: 1000,
@@ -411,8 +428,16 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    flex: 1;
     align-items: center;
     line-height: 23px;
+}
+.item1 .children:first-child {
+    width: 19%;
+}
+.item1 .children:nth-child(2n) {
+    width: 43%;
+}
+.item1 .children:last-child {
+    width: 37%;
 }
 </style>

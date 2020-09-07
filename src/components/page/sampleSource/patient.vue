@@ -299,6 +299,7 @@
                                         </el-col>
                                     </tr>
                                     <tr v-for="(item,index) in tableData1" :key="index">
+                                        <!-- 1下拉框 -->
                                         <div v-if="item.type==1">
                                             <el-col :span="8">
                                                 <td>{{item.colname}}</td>
@@ -320,6 +321,7 @@
                                                 </td>
                                             </el-col>
                                         </div>
+                                        <!-- 2附件 -->
                                         <div v-if="item.type==2">
                                             <el-col :span="8">
                                                 <td>附件</td>
@@ -356,6 +358,7 @@ export default {
             cb(new Error('请输入正确的手机号'));
         };
         return {
+            //1.下拉框 2.附件 3.文本 4.文本域
             showId: 1, //1病人信息列表 2疾病分类
             saasList: [
                 {

@@ -114,7 +114,7 @@ export default {
             name: 'linxin',
             message: 2,
             toggle: false,
-            openid: ''
+            openid: null,
             // addDialogVisible: false,
             // addForm: {
             //     pwd: '',
@@ -254,6 +254,7 @@ export default {
         }
         setTimeout(() => {
             this.openid = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).openid : '';
+            this.name = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).nickname : '';
         }, 500);
     }
 };
