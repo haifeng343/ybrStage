@@ -1,19 +1,22 @@
 <template>
     <div>
         <div class="headerTop">
-            <div class="headerTop_title">样本源管理</div>
-            <i class="el-icon-d-arrow-right"></i>
-            <div class="headerTop_text">病人管理</div>
+            <div class="start">
+                <div class="headerTop_title">样本源管理</div>
+                <i class="el-icon-d-arrow-right"></i>
+                <div class="headerTop_text">病人管理</div>
+            </div>
+            <div class="btnsRight">
+                <div
+                    :class="['btnsItem',item.id==showId?'btnActive':'']"
+                    v-for="item in saasList"
+                    :key="item.id"
+                    @click="setActive(item.id)"
+                >{{item.name}}</div>
+            </div>
         </div>
         <!-- 卡片视图 -->
-        <div class="btnsRight">
-            <div
-                :class="['btnsItem',item.id==showId?'btnActive':'']"
-                v-for="item in saasList"
-                :key="item.id"
-                @click="setActive(item.id)"
-            >{{item.name}}</div>
-        </div>
+
         <el-card>
             <!-- 搜索添加区域 -->
             <!-- <el-row :gutter="20" v-if="showId==1">
@@ -44,8 +47,8 @@
                         ></el-button>
                     </el-input>
                 </el-col>
-            </el-row> -->
-                <!-- 搜索添加区域 -->
+            </el-row>-->
+            <!-- 搜索添加区域 -->
             <div class="btnContent" v-if="showId==1">
                 <div class="btnContentTop">
                     <div class="start">
@@ -68,7 +71,7 @@
                     <div class="btnContentRight">
                         <div class="content_btn success" v-has="'add'" @click="add">
                             <img src="../../../assets/img/add1.png" alt />
-                            <p>新增组织</p>
+                            <p>新增病人信息</p>
                         </div>
                     </div>
                 </div>
@@ -436,15 +439,15 @@ export default {
     },
     methods: {
         // 查看回访记录
-        handleVisited(item){
+        handleVisited(item) {
             console.log(item);
             this.$router.push({
-                name:'visitedLog',
-              query:{
-                patientid:item.patientid,
-                patientrmationid:item.id
-              }
-            })
+                name: 'visitedLog',
+                query: {
+                    patientid: item.patientid,
+                    patientrmationid: item.id
+                }
+            });
         },
         // 肿瘤类型切换
         changeTumorType(e) {
@@ -820,7 +823,19 @@ export default {
         }
     }
 }
-
+.headerTop{
+    display: flex;
+    justify-content: space-between;
+}
+.btnsRight{
+    margin-bottom: -33px;
+    margin-right: 1px;
+}
+.start{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
 .table1 .el-select {
     width: 98% !important;
 }

@@ -1040,13 +1040,11 @@ tbody{
 }
 
 .btnsRight {
-    position: absolute;
-    right: 50px;
-    top: 78px;
     display: flex;
     flex-direction: row;
     width: auto;
     height: auto;
+    z-index: 0;
 }
 
 .btnsItem {
