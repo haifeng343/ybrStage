@@ -1,0 +1,484 @@
+<template>
+    <div class="login-wrap">
+        <img src="../../assets/img/logo.png" class="logo" alt />
+        <div class="ms-login">
+            <div class="ms-title">
+                <p
+                    :class="[item.active==true?'active':'']"
+                    @click="setNav(item.id)"
+                    v-for="item in nav"
+                    :key="item.id"
+                >{{item.name}}</p>
+            </div>
+            <img :src="img1" class="code" @click="setActive" alt />
+            <transition name="el-fade-in">
+                <el-form
+                    :model="param"
+                    :rules="rules"
+                    ref="login"
+                    label-width="0px"
+                    class="ms-content"
+                    v-if="showId == 2"
+                >
+                    <el-form-item prop="username">
+                        <el-input
+                            v-model="param.username"
+                            :class="['input1',param.username!==''?'selectd':'']"
+                            placeholder="username"
+                        ></el-input>
+                        <img src="../../assets/img/user.png" class="imgBg" alt />
+                    </el-form-item>
+                    <el-form-item prop="password">
+                        <el-input
+                            :class="['input1',param.password!==''?'selectd':'']"
+                            type="password"
+                            placeholder="password"
+                            v-model="param.password"
+                            @keyup.enter.native="submitForm()"
+                        ></el-input>
+                        <img src="../../assets/img/suo.png" class="imgBg" alt />
+                    </el-form-item>
+                    <div class="login-btn">
+                        <el-button @click="submitForm()">登录</el-button>
+                    </div>
+                    <div class="noHas">
+                        <!-- <p @click="goForget">忘记密码？</p>
+                        <p>还没有账号</p>-->
+                    </div>
+                </el-form>
+                <div class="saoCode" v-if="showId == 1">
+                    <div id="ding-login"></div>
+                    <!-- <p class="tips">请使用钉钉扫描二维码登录</p>
+                    <p class="tips">“SAAS样本库追溯平台”</p>-->
+                </div>
+            </transition>
+        </div>
+        <!-- 验证 -->
+        <div class="mask" v-if="confirmSuccess"></div>
+        <div
+            :class="['widgets__img_check_box',confirmSuccess?'show':'']"
+            id="select"
+            style="width:600px;margin:0 auto;top:2px;"
+        >
+            <div class="widgets__img_display">
+                <div class="widgets__img_cnt">
+                    <img src1="a.jpg" class="widgets__img_src" />
+                    <canvas class="widgets__img_fragment_hollow"></canvas>
+                    <div class="widgets__img_fragment_cnt">
+                        <canvas class="widgets__img_fragment widgets__img_fragment_shadow"></canvas>
+                        <canvas class="widgets__img_fragment widgets__img_fragment_content"></canvas>
+                    </div>
+                    <div class="widgets__icon_refresh"></div>
+                </div>
+            </div>
+            <div class="widgets__smooth_cnt">
+                <div class="widgets__smooth_bar"></div>
+                <div class="widgets__smooth_circle"></div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+// 钉钉后台获取的appid和appSecret，appSecret没有用到扫码中
+let appid = 'dingoavnbhbtdoebjs9u5j';
+let appSecret = '55AxDMCBrfRcqWs2O0RnWmSaRc8aPIEhs0WqFYzhlZ2M3KfDsZp_h1Sk1UfwPrRZ';
+// 重定向地址，因为vue用的hash，所以网址后面是 #/
+// let redirect = encodeURIComponent(`http://localhost:8081/dashboard`);
+let redirect = encodeURIComponent(`http://saas.mfetv.top/scanding`);
+// 官网给的跳转连接格式
+let http_url = encodeURIComponent(
+    `https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${appid}&response_type=code&scope=snsapi_login&state=login&redirect_uri=${redirect}`
+);
+export default {
+    data: function () {
+        return {
+            src: '',
+            showId: 2, //1扫码登录 2账户登录
+            img1: this.showId == 1 ? require('../../assets/img/code.png') : require('../../assets/img/pc.png'), //扫码/账户登录
+            nav: [
+                //菜单栏
+                {
+                    id: 1,
+                    name: '扫码登录',
+                    active: false
+                },
+                {
+                    id: 2,
+                    name: '账户登录',
+                    active: true
+                }
+            ],
+            param: {
+                username: 'admin',
+                password: '123456'
+            },
+            rules: {
+                username: [{ required: true, message: '请输入用户名', trigger: 'change' }],
+                password: [{ required: true, message: '请输入密码', trigger: 'change' }]
+            },
+            confirmSuccess: false, //验证是否成功
+            ddSrc: ''
+        };
+    },
+    methods: {
+        // 设置选中菜单
+        setNav(Id) {
+            this.mouseMoveStata = false;
+            this.beginClientX = 0;
+            this.showId = Id;
+            let tempArr = this.nav;
+            tempArr.forEach((item) => {
+                if (item.id == this.showId) {
+                    item.active = true;
+                } else {
+                    item.active = false;
+                }
+            });
+            if (this.showId == 1) {
+                this.img1 = require('../../assets/img/code.png');
+                this.dingLogin();
+            } else {
+                this.img1 = require('../../assets/img/pc.png');
+            }
+        },
+        // 设置当前选中的扫码/账号登录
+        setActive() {
+            this.mouseMoveStata = false;
+            this.beginClientX = 0;
+            if (this.showId == 1) {
+                this.showId = 2;
+                this.img1 = require('../../assets/img/pc.png');
+            } else {
+                this.showId = 1;
+                this.img1 = require('../../assets/img/code.png');
+                this.dingLogin();
+            }
+            let tempArr = this.nav;
+            tempArr.forEach((item) => {
+                if (item.id == this.showId) {
+                    item.active = true;
+                } else {
+                    item.active = false;
+                }
+            });
+        },
+        // 忘记密码
+        goForget() {
+            this.$router.push({ name: 'forget' });
+        },
+        // 登录
+        submitForm() {
+            this.$refs.login.validate((valid) => {
+                if (valid) {
+                    this.confirmSuccess = true;
+                } else {
+                    this.$message.error('请输入账号和密码');
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+        },
+        setPintu() {
+            let _self = this;
+            let s = WIDGETS.imgSmoothCheck({
+                selector: '#select',
+                data: ['https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3984473917,238095211&fm=26&gp=0.jpg'],
+                imgHeight: 100,
+                imgWidth: 200,
+                allowableErrorValue: 1,
+                success: function () {
+                    _self.$http
+                        .post('/api/saas_pc/login', {
+                            user: _self.param.username,
+                            pazz: _self.param.password
+                        })
+                        .then((res) => {
+                            if (res.data.success == true) {
+                                _self.$message.success('登录成功');
+                                _self.$store.state.userInfo = res.data.result;
+                                localStorage.setItem('userInfo', JSON.stringify(res.data.result));
+                                localStorage.setItem('ms_username', res.data.result.username);
+                                localStorage.setItem('token', res.data.result.token);
+                                localStorage.setItem('menu', JSON.stringify(res.data.result.authmenu));
+                                _self.$router.push('/');
+                            } else {
+                                _self.$message.error(res.data.message);
+                            }
+                        });
+                },
+                error: function (res) {
+                    _self.$message.error('重新再试');
+                }
+            });
+            $('.refresh').on('click', function () {
+                s.refresh();
+            });
+        },
+        // 获取钉钉扫码登录
+        getDDCodeImg() {},
+        // 切换钉钉登录
+        dingLogin() {
+            // 这边需要用 $nextTick() 方法来等DOM渲染完成后，才能获取到盒子容器（$nextTick 方法见另一篇文章）
+            this.$nextTick(() => {
+                // 钉钉登录，参数文档中那些其他项就不展示了，按照文档自己配置就可以
+                var obj = DDLogin({
+                    id: 'ding-login',
+                    goto: http_url,
+                    style: 'border:none;background-color:#FFFFFF;'
+                });
+                // 重置扫码登录框的样式，让登录框居中
+                let box = document.getElementById('ding-login');
+                box.querySelector('iframe').style.position = 'absolute';
+                box.querySelector('iframe').style.top = '0';
+                box.querySelector('iframe').style.bottom = '0';
+                box.querySelector('iframe').style.left = '0';
+                box.querySelector('iframe').style.right = '0';
+                box.querySelector('iframe').style.margin = 'auto';
+            });
+        }
+    },
+    created() {
+        // 获取到扫码结果，并且跳转获取临时登录码
+        var handleMessage = function (event) {
+            var origin = event.origin;
+            if (origin == 'https://login.dingtalk.com') {
+                //判断是否来自ddLogin扫码事件。
+                // 拿到 loginTmpCode 后，跳转连接拿到临时登陆码，之后返回到跳转的地址，会携带临时登陆码
+                var loginTmpCode = event.data;
+                let url = `https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${appid}&response_type=code&scope=snsapi_login&state=login&redirect_uri=${http_url}&loginTmpCode=${loginTmpCode}`;
+                // 这边直接打开拼接好的连接，去获取临时登录码，回来地址在下面
+                location.href = url;
+            }
+        };
+        if (typeof window.addEventListener != 'undefined') {
+            window.addEventListener('message', handleMessage, false);
+        } else if (typeof window.attachEvent != 'undefined') {
+            window.attachEvent('onmessage', handleMessage);
+        }
+    },
+    mounted() {
+        this.setPintu();
+    }
+};
+</script>
+
+
+
+<style lang="less" scoped>
+@import '../../assets/css/img_smooth_check.css';
+.el-input--small .el-input__inner {
+    padding-left: 35px !important;
+}
+.el-input--small {
+    height: 40px !important;
+}
+.el-form-item--small .el-form-item__content,
+.el-form-item--small .el-form-item__label {
+    height: 32px;
+    position: relative;
+}
+.imgBg {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-63%);
+    z-index: 2;
+    left: 4px;
+}
+// div >>> .el-input > input {
+//     height: 40px;
+// }
+.login-wrap {
+    position: relative;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+    width: 100%;
+    height: 100%;
+    background-image: url(../../assets/img/login_bg.png);
+    background-size: 100%;
+}
+.logo {
+    width: 200px;
+    height: 75px;
+    position: absolute;
+    top: 46px;
+    left: 83px;
+}
+.ms-title {
+    width: 200px;
+    margin: 20px auto 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+    font-size: 18px;
+    color: #70737e;
+}
+.ms-title p {
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.ms-title p.active {
+    color: #353845;
+    position: relative;
+    font-weight: 600;
+}
+.ms-title p.active::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    width: 70px;
+    height: 2px;
+    background: rgba(53, 56, 69, 1);
+    transform: translateX(-50%);
+}
+.ms-login {
+    position: absolute;
+    width: 310px;
+    height: 360px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 8px;
+    top: 355px;
+    right: 320px;
+    overflow: hidden;
+}
+.code {
+    width: 23px;
+    height: 23px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    z-index: 1;
+}
+.ms-content {
+    padding: 33px;
+}
+.login-btn {
+    text-align: center;
+}
+
+.login-btn button {
+    width: 100%;
+    height: 36px;
+    margin-bottom: 9px;
+    background: #5d81f4 !important;
+    color: #fff !important;
+}
+.saoCode {
+    width: 100%;
+    height: 310px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.saoCode .img2 {
+    width: 185px;
+    height: 185px;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+.saoCode .tips {
+    width: 169px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(112, 115, 126, 1);
+}
+.kpl {
+    color: #5d81f4;
+}
+.drag {
+    border-radius: 6px;
+    position: relative;
+    background-color: #fff;
+    width: 244px;
+    color: #cdcdcd;
+    border: 1px solid rgba(225, 229, 239, 1);
+    height: 34px;
+    margin-bottom: 20px;
+    line-height: 34px;
+    overflow: hidden;
+    text-align: center;
+}
+.noHas {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #353845;
+}
+.noHas p {
+    cursor: pointer;
+}
+.handler {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 40px;
+    height: 34px;
+    cursor: move;
+}
+
+.handler_bg {
+    /* background: #fff
+        url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDIxIDc5LjE1NTc3MiwgMjAxNC8wMS8xMy0xOTo0NDowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo0ZDhlNWY5My05NmI0LTRlNWQtOGFjYi03ZTY4OGYyMTU2ZTYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NTEyNTVEMURGMkVFMTFFNEI5NDBCMjQ2M0ExMDQ1OUYiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NTEyNTVEMUNGMkVFMTFFNEI5NDBCMjQ2M0ExMDQ1OUYiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTQgKE1hY2ludG9zaCkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo2MTc5NzNmZS02OTQxLTQyOTYtYTIwNi02NDI2YTNkOWU5YmUiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NGQ4ZTVmOTMtOTZiNC00ZTVkLThhY2ItN2U2ODhmMjE1NmU2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+YiRG4AAAALFJREFUeNpi/P//PwMlgImBQkA9A+bOnfsIiBOxKcInh+yCaCDuByoswaIOpxwjciACFegBqZ1AvBSIS5OTk/8TkmNEjwWgQiUgtQuIjwAxUF3yX3xyGIEIFLwHpKyAWB+I1xGSwxULIGf9A7mQkBwTlhBXAFLHgPgqEAcTkmNCU6AL9d8WII4HOvk3ITkWJAXWUMlOoGQHmsE45ViQ2KuBuASoYC4Wf+OUYxz6mQkgwAAN9mIrUReCXgAAAABJRU5ErkJggg==')
+        no-repeat center; */
+    color: #fff;
+    background: #5d81f4;
+}
+
+/* .handler_ok_bg {
+    background: #fff
+        url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDIxIDc5LjE1NTc3MiwgMjAxNC8wMS8xMy0xOTo0NDowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo0ZDhlNWY5My05NmI0LTRlNWQtOGFjYi03ZTY4OGYyMTU2ZTYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDlBRDI3NjVGMkQ2MTFFNEI5NDBCMjQ2M0ExMDQ1OUYiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDlBRDI3NjRGMkQ2MTFFNEI5NDBCMjQ2M0ExMDQ1OUYiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTQgKE1hY2ludG9zaCkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDphNWEzMWNhMC1hYmViLTQxNWEtYTEwZS04Y2U5NzRlN2Q4YTEiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NGQ4ZTVmOTMtOTZiNC00ZTVkLThhY2ItN2U2ODhmMjE1NmU2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+k+sHwwAAASZJREFUeNpi/P//PwMyKD8uZw+kUoDYEYgloMIvgHg/EM/ptHx0EFk9I8wAoEZ+IDUPiIMY8IN1QJwENOgj3ACo5gNAbMBAHLgAxA4gQ5igAnNJ0MwAVTsX7IKyY7L2UNuJAf+AmAmJ78AEDTBiwGYg5gbifCSxFCZoaBMCy4A4GOjnH0D6DpK4IxNSVIHAfSDOAeLraJrjgJp/AwPbHMhejiQnwYRmUzNQ4VQgDQqXK0ia/0I17wJiPmQNTNBEAgMlQIWiQA2vgWw7QppBekGxsAjIiEUSBNnsBDWEAY9mEFgMMgBk00E0iZtA7AHEctDQ58MRuA6wlLgGFMoMpIG1QFeGwAIxGZo8GUhIysmwQGSAZgwHaEZhICIzOaBkJkqyM0CAAQDGx279Jf50AAAAAABJRU5ErkJggg==')
+        no-repeat center;
+} */
+
+.drag_bg {
+    /* border-radius: 30px; */
+    background: #5d81f4;
+    height: 34px;
+    width: 0px;
+}
+
+.drag_text {
+    position: absolute;
+    top: 0px;
+    width: 244px;
+    font-size: 14px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+}
+#ding-login {
+    position: relative;
+    top: 52px;
+    width: 350px;
+    height: 300px;
+}
+</style>
+<style>
+.input1 .el-input__inner {
+    padding-left: 35px !important;
+}
+.selectd > input {
+    border: 1px solid #5d81f4 !important;
+}
+.show {
+    opacity: 1;
+}
+.login_qrcode_text {
+    margin-top: 5px !important;
+}
+</style>

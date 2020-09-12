@@ -22,10 +22,6 @@
                             ></el-input>
                             <div class="searchFormBtn" @click="getData(1)">搜索</div>
                         </div>
-                        <!-- <div class="content_btn">
-                            <img src="../../assets/img/loading.png" alt />
-                            <p>重置</p>
-                        </div>-->
                     </div>
                     <div class="btnContentRight">
                         <div class="content_btn success" v-has="'add'" @click="add">
@@ -53,17 +49,17 @@
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="no" label="样本编号" width="200" align="center"></el-table-column>
-                <el-table-column prop="organizationid" label="所属组织" width="200" align="center"></el-table-column>
-                <el-table-column prop="projectid" label="所属项目" width="200" align="center"></el-table-column>
-                <el-table-column prop="containerid" label="所属容器" width="200" align="center"></el-table-column>
-                <el-table-column prop="latticeid" label="样本盒" width="200" align="center"></el-table-column>
+                <!-- <el-table-column prop="organizationid" label="所属组织" width="200" align="center"></el-table-column>
+                <el-table-column prop="projectid" label="所属项目" width="200" align="center"></el-table-column> -->
+                <!-- <el-table-column prop="containerid" label="所属容器" width="200" align="center"></el-table-column>
+                <el-table-column prop="latticeid" label="样本盒" width="200" align="center"></el-table-column>-->
                 <el-table-column prop="name" label="样本名称" width="200" align="center"></el-table-column>
                 <el-table-column prop="patientname" label="病人姓名" width="200" align="center"></el-table-column>
                 <el-table-column prop="type" label="样本类型" width="200" align="center"></el-table-column>
                 <el-table-column prop="grass" label="种属" width="200" align="center"></el-table-column>
                 <el-table-column prop="tissuestype" label="组织类型" width="200" align="center"></el-table-column>
                 <el-table-column prop="diseasetype" label="疾病类型" width="200" align="center"></el-table-column>
-                <el-table-column prop="storagecondition" label="储存条件" width="200" align="center"></el-table-column>
+                <!-- <el-table-column prop="storagecondition" label="储存条件" width="200" align="center"></el-table-column> -->
                 <el-table-column prop="size" label="样本大小" width="200" align="center"></el-table-column>
                 <el-table-column prop="collectiontime" label="样本收集时间" width="200" align="center"></el-table-column>
                 <el-table-column prop="collectionuser" label="样本收集人" width="200" align="center"></el-table-column>
@@ -87,17 +83,8 @@
                             type="success"
                             icon="el-icon-edit"
                             v-has="'edit'"
-                            @click="handleEdit(scope.$index, scope.row)"
+                            @click="handleEdit(scope.row)"
                         ></el-button>
-                        <el-tooltip content="修改密码" :enterable="false" placement="top">
-                            <el-button
-                                size="mini"
-                                type="warning"
-                                icon="el-icon-edit-outline"
-                                v-has="'editPwd'"
-                                @click="changePwd(scope.$index, scope.row)"
-                            ></el-button>
-                        </el-tooltip>
                         <el-button
                             size="mini"
                             type="danger"
@@ -142,7 +129,7 @@
                     <el-form-item label="样本大小" prop="size">
                         <el-input v-model="addForm.size"></el-input>
                     </el-form-item>
-                    <el-form-item label="所属组织">
+                    <!-- <el-form-item label="所属组织">
                         <el-select v-model="addForm.organizationid" filterable placeholder="请选择组织">
                             <el-option
                                 v-for="item in dropList"
@@ -151,31 +138,11 @@
                                 :value="item.id"
                             ></el-option>
                         </el-select>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="所属项目">
                         <el-select v-model="addForm.projectid" filterable placeholder="请选择项目">
                             <el-option
                                 v-for="item in projectList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="所属容器">
-                        <el-select v-model="addForm.containerid" filterable placeholder="请选择容器">
-                            <el-option
-                                v-for="item in containerList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            ></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="所属样本盒">
-                        <el-select v-model="addForm.latticeid" filterable placeholder="请选择样本盒">
-                            <el-option
-                                v-for="item in latticeList"
                                 :key="item.id"
                                 :label="item.name"
                                 :value="item.id"
@@ -222,18 +189,22 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="疾病类型">
-                        <el-select v-model="addForm.diseasetypeid" filterable placeholder="请选择疾病类型">
+                    <el-form-item label="肿瘤类型">
+                        <el-select v-model="addForm.diseasetypeid" filterable placeholder="请选择肿瘤类型">
                             <el-option
                                 v-for="item in diseasetypeList"
-                                :key="item.id"
+                                :key="item.key"
                                 :label="item.name"
-                                :value="item.id"
+                                :value="item.key"
                             ></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="存储条件">
-                        <el-select v-model="addForm.storageconditionid" filterable placeholder="请选择存储条件">
+                        <el-select
+                            v-model="addForm.storageconditionid"
+                            filterable
+                            placeholder="请选择存储条件"
+                        >
                             <el-option
                                 v-for="item in storageconditionList"
                                 :key="item.id"
@@ -243,7 +214,11 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="样本收集人">
-                        <el-select v-model="addForm.collectionuserid" filterable placeholder="请选择样本收集人">
+                        <el-select
+                            v-model="addForm.collectionuserid"
+                            filterable
+                            placeholder="请选择样本收集人"
+                        >
                             <el-option
                                 v-for="item in userList"
                                 :key="item.id"
@@ -253,7 +228,11 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="样本入库人">
-                        <el-select v-model="addForm.storageuserid" filterable placeholder="请选择样本入库人">
+                        <el-select
+                            v-model="addForm.storageuserid"
+                            filterable
+                            placeholder="请选择样本入库人"
+                        >
                             <el-option
                                 v-for="item in userList"
                                 :key="item.id"
@@ -265,19 +244,25 @@
                     <el-form-item label="样本收集时间">
                         <el-date-picker
                             v-model="addForm.collectiontime"
-                            value-format="yyyy-MM-dd"
-                            format="yyyy 年 MM 月 dd 日"
-                            type="date"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            type="datetime"
                             placeholder="请选择样本收集时间"
                         ></el-date-picker>
                     </el-form-item>
                     <el-form-item label="样本入库时间">
                         <el-date-picker
                             v-model="addForm.storagetime"
-                            value-format="yyyy-MM-dd"
-                            format="yyyy 年 MM 月 dd 日"
-                            type="date"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                           type="datetime"
                             placeholder="请选择样本入库时间"
+                        ></el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="保存期限">
+                        <el-date-picker
+                            v-model="addForm.shelf_life"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            type="datetime"
+                            placeholder="请选择样本保存期限"
                         ></el-date-picker>
                     </el-form-item>
                 </el-form>
@@ -301,7 +286,6 @@ export default {
             cb(new Error('请输入正确的手机号'));
         };
         return {
-            loading: true,
             name: '2',
             keyword: '',
             addForm: {
@@ -309,18 +293,27 @@ export default {
                 no: '', //样本编号
                 name: '', //样本名称
                 size: '', //样本大小
-                organizationid: '', //所属组织
+                // organizationid: '', //所属组织
                 projectid: '', //所属项目
-                containerid: '', //所属容器
-                latticeid: '', //所属样本盒
                 patientid: '', //所属病人
+                patientname: '',
                 typeid: '', //样本类型
+                type: '',
                 grassid: '', //种属
+                grass: '',
                 tissuestypeid: '', //组织类型
+                tissuestype: '',
                 diseasetypeid: '', //疾病类型
-                storageconditionid: '', //存储条件
+                diseasetype: '',
+                storageconditionid: 0, //存储条件
+                storagecondition: '',
                 collectionuserid: '', //样本收集人
-                storageuserid: '' //样本入库人
+                collectionuser: '',
+                storageuserid: '', //样本入库人
+                storageuser: '',
+                shelf_life: '', //保存期限
+                storagetime:'',
+                collectiontime:'',
             },
             addFormRules: {
                 username: [
@@ -334,7 +327,7 @@ export default {
                     { validator: checkMobile, trigger: 'blur' }
                 ]
             },
-            addDialogVisible: true, //添加对话框的显示隐藏
+            addDialogVisible: false, //添加对话框的显示隐藏
             pageIndex: 1, //页码数
             pageSize: 10, //条数
             totalCount: 0, //总条数
@@ -349,7 +342,7 @@ export default {
             typeList: [], //样本类型
             grassList: [], //种属
             tissuestypeList: [], //组织类型
-            diseasetypeList: [], //疾病类型
+            diseasetypeList: [], //肿瘤类型
             storageconditionList: [], //储存类型
             userList: [] //用户列表
         };
@@ -361,11 +354,82 @@ export default {
         this.getProject(); //获取项目列表
         this.getPatient(); //获取病人列表
         this.getUserList(); //获取用户列表
+        this.getPatienttumorType(); //获取肿瘤类型getpatienttumortype
+        this.getValueList(); //获取组织类型 、 种属
+        this.getTypeList(); //获取类型列表
     },
     methods: {
+        // 类型列表
+        getTypeList() {
+            this.$http
+                .post('/api/sampletype/getsampletypelist', {
+                    name: '',
+                    pageIndex: 1,
+                    pageSize: 1000,
+                    fldSort: '',
+                    fldName: ''
+                })
+                .then((res) => {
+                    this.typeList = res.data.result.pageData;
+                });
+        },
+        // 肿瘤类型
+        getPatienttumorType() {
+            this.$http.post('api/patient/getpatienttumortype', {}).then((res) => {
+                if (res.data.success) {
+                    let tempArr = res.data.result;
+                    let tempArr1 = [];
+                    tempArr.forEach((item) => {
+                        if (item.key !== 0) {
+                            tempArr1.push(item);
+                        }
+                    });
+                    this.diseasetypeList = tempArr1;
+                } else {
+                    this.$message.error(res.data.message);
+                }
+            });
+        },
+        // 组织类型 、 种属
+        getValueList() {
+            // 种属
+            this.$http
+                .post('api/dictionary/getdictionaryvaluelist', {
+                    dictionarytypeid: 84,
+                    fldName: '',
+                    fldSort: '',
+                    name: '',
+                    pageIndex: 1,
+                    pageSize: 1000
+                })
+                .then((res) => {
+                    if (res.data.success) {
+                        this.grassList = res.data.result.pageData;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                });
+            // 组织类型
+            this.$http
+                .post('api/dictionary/getdictionaryvaluelist', {
+                    dictionarytypeid: 49,
+                    fldName: '',
+                    fldSort: '',
+                    name: '',
+                    pageIndex: 1,
+                    pageSize: 1000
+                })
+                .then((res) => {
+                    if (res.data.success) {
+                        this.tissuestypeList = res.data.result.pageData;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                });
+        },
         // 用户列表
-        getUserList(){
-             this.$http
+        getUserList() {
+            this.$http
                 .post('/api/user/getuserinfo', {
                     search: '',
                     pageIndex: 1,
@@ -417,7 +481,7 @@ export default {
                 e.filter((item) => {
                     return item;
                 }).map((item) => {
-                    arr.push(item.userid);
+                    arr.push(item.id);
                 });
             }
             this.deleteList = arr;
@@ -525,50 +589,52 @@ export default {
                 no: '', //样本编号
                 name: '', //样本名称
                 size: '', //样本大小
-                organizationid: '', //所属组织
+                // organizationid: '', //所属组织
                 projectid: '', //所属项目
-                containerid: '', //所属容器
-                latticeid: '', //所属样本盒
                 patientid: '', //所属病人
                 typeid: '', //样本类型
                 grassid: '', //种属
                 tissuestypeid: '', //组织类型
+                tissuestype: '',
                 diseasetypeid: '', //疾病类型
-                storageconditionid: '', //存储条件
+                diseasetype: '',
+                storageconditionid: 0, //存储条件
                 collectionuserid: '', //样本收集人
-                storageuserid: '' //样本入库人
+                storageuserid: '', //样本入库人
+                shelf_life: '', //保存期限
+                storagetime:'',
+                collectiontime:'',
             };
         },
         // 编辑
-        handleEdit(index, item) {
-            console.log(item);
-            // 格式转化
-            let role = [];
-            if (item.roleids) {
-                role = item.roleids.split(',');
-                for (let i = 0; i < role.length; i++) {
-                    role[i] = Number(role[i]);
-                }
-            }
-            let tempArr = this.roleList;
-            let arr = [];
-            tempArr.forEach((item) => {
-                role.forEach((item1) => {
-                    if (item.roleid == item1) {
-                        arr.push(item.rolename);
-                    }
-                });
-            });
-            this.addForm.rolenames = arr;
+        handleEdit(item) {
+            console.log(item)
             this.addForm = {
-                id: item.userid,
-                username: item.username,
-                organizationid: item.organizationid,
-                phone: item.phone,
-                account: item.account,
-                pazzword: item.pazzword,
-                roleids: role ? role : [],
-                rolenames: arr ? arr : []
+                id: item.id,
+                no: item.no, //样本编号
+                name: item.name, //样本名称
+                size: item.size, //样本大小
+                // organizationid: item.organizationid, //所属组织
+                projectid: item.projectid, //所属项目
+                patientid: item.patientid, //所属病人
+                patientname: item.patientname,
+                typeid: item.typeid, //样本类型
+                type: item.type,
+                grassid: item.grassid, //种属
+                grass: item.grass,
+                tissuestypeid: item.tissuestypeid, //组织类型
+                tissuestype: item.tissuestype,
+                diseasetypeid: item.diseasetypeid, //疾病类型
+                diseasetype: item.diseasetype,
+                storageconditionid: item.storageconditionid?item.storageconditionid:0, //存储条件
+                storagecondition: item.storagecondition,
+                collectionuserid: item.collectionuserid, //样本收集人
+                collectionuser: item.collectionuser,
+                storageuserid: item.storageuserid, //样本入库人
+                storageuser: item.storageuser,
+                storagetime: item.storagetime,
+                collectiontime: item.collectiontime,
+                shelf_life: item.shelf_life, //保存期限
             };
             this.addDialogVisible = true;
         },
@@ -579,7 +645,7 @@ export default {
                 cancelButtonText: '取消'
             })
                 .then(() => {
-                    this.$http.post('/api/user/deleteuser', { id: item.userid }).then((res) => {
+                    this.$http.post('/api/sample/deletesample', { id: item.id }).then((res) => {
                         if (res.data.success) {
                             this.$message({
                                 type: 'success',
@@ -600,7 +666,7 @@ export default {
                 cancelButtonText: '取消'
             })
                 .then(() => {
-                    this.$http.post('/api/user/deleteusers', { id: this.deleteList }).then((res) => {
+                    this.$http.post('/api/sample/deletesamples', { id: this.deleteList }).then((res) => {
                         if (res.data.success) {
                             this.$message({
                                 type: 'success',
@@ -639,19 +705,77 @@ export default {
         },
         // 提交校验
         addSubmitForm(formName) {
+            let that = this;
             this.$refs.addFormRef.validate((valid) => {
                 if (valid) {
+                    this.typeList.forEach((item) => {
+                        if (item.id == this.addForm.typeid) {
+                            that.addForm.type = item.name;
+                        }
+                    });
+                    this.grassList.forEach((item) => {
+                        if (item.id == that.addForm.grassid) {
+                            that.addForm.grass = item.name;
+                        }
+                    });
+                    this.tissuestypeList.forEach((item) => {
+                        if (item.id == this.addForm.tissuestypeid) {
+                            that.addForm.tissuestype = item.name;
+                        }
+                    });
+                    this.diseasetypeList.forEach((item) => {
+                        if (that.addForm.diseasetypeid == item.key) {
+                            that.addForm.diseasetype = item.name;
+                        }
+                    });
+                    this.storageconditionList.forEach((item) => {
+                        if (that.addForm.storageconditionid == item.id) {
+                            that.addForm.storagecondition = item.name;
+                        }
+                    });
+                    this.userList.forEach((item) => {
+                        if (that.addForm.collectionuserid == item.userid) {
+                            that.addForm.collectionuser = item.username;
+                        }
+                    });
+                    this.userList.forEach((item) => {
+                        if (that.addForm.storageuserid == item.userid) {
+                            that.addForm.storageuser = item.username;
+                        }
+                    });
+                    this.patientList.forEach(item=>{
+                        if(item.id==that.addForm.patientid){
+                            that.addForm.patientname = item.name;
+                        }
+                    })
                     if (this.addForm.id) {
                         this.$http
-                            .post('/api/user/saveuserinfo', {
-                                userid: this.addForm.id,
-                                username: this.addForm.username,
-                                account: this.addForm.account,
-                                pazzword: this.addForm.pazzword,
-                                organizationid: this.addForm.organizationid,
-                                phone: this.addForm.phone,
-                                roleids: this.addForm.roleids ? this.addForm.roleids : [],
-                                rolenames: this.addForm.rolenames ? this.addForm.rolenames : []
+                            .post('/api/sample/savesample', {
+                                id: this.addForm.id,
+                                // organizationid: this.addForm.organizationid,
+                                projectid: this.addForm.projectid,
+                                name: this.addForm.name,
+                                no: this.addForm.no,
+                                patientid: this.addForm.patientid,
+                                patientname: this.addForm.patientname,
+                                typeid: this.addForm.typeid,
+                                type: this.addForm.type,
+                                grassid: this.addForm.grassid,
+                                grass: this.addForm.grass,
+                                tissuestypeid: this.addForm.tissuestypeid,
+                                tissuestype: this.addForm.tissuestype,
+                                diseasetypeid: this.addForm.diseasetypeid,
+                                diseasetype: this.addForm.diseasetype,
+                                storageconditionid: this.addForm.storageconditionid,
+                                storagecondition: this.addForm.storagecondition,
+                                size: parseInt(this.addForm.size),
+                                collectiontime: this.addForm.collectiontime,
+                                collectionuserid: this.addForm.collectionuserid,
+                                collectionuser: this.addForm.collectionuser,
+                                storagetime: this.addForm.storagetime,
+                                storageuserid: this.addForm.storageuserid,
+                                storageuser: this.addForm.storageuser,
+                                shelf_life: this.addForm.shelf_life
                             })
                             .then((res) => {
                                 if (res.data.success) {
@@ -664,14 +788,30 @@ export default {
                             });
                     } else {
                         this.$http
-                            .post('/api/user/saveuserinfo', {
-                                username: this.addForm.username,
-                                account: this.addForm.account,
-                                pazzword: this.addForm.pazzword,
-                                organizationid: this.addForm.organizationid,
-                                phone: this.addForm.phone,
-                                roleids: this.addForm.roleids ? this.addForm.roleids : [],
-                                rolenames: this.addForm.rolenames ? this.addForm.rolenames : []
+                            .post('/api/sample/savesample', {
+                                projectid: this.addForm.projectid,
+                                name: this.addForm.name,
+                                no: this.addForm.no,
+                                patientid: this.addForm.patientid,
+                                patientname: this.addForm.patientname,
+                                typeid: this.addForm.typeid,
+                                type: this.addForm.type,
+                                grassid: this.addForm.grassid,
+                                grass: this.addForm.grass,
+                                tissuestypeid: this.addForm.tissuestypeid,
+                                tissuestype: this.addForm.tissuestype,
+                                diseasetypeid: this.addForm.diseasetypeid,
+                                diseasetype: this.addForm.diseasetype,
+                                storageconditionid: this.addForm.storageconditionid,
+                                storagecondition: this.addForm.storagecondition,
+                                size: parseInt(this.addForm.size),
+                                collectiontime: this.addForm.collectiontime,
+                                collectionuserid: this.addForm.collectionuserid,
+                                collectionuser: this.addForm.collectionuser,
+                                storagetime: this.addForm.storagetime,
+                                storageuserid: this.addForm.storageuserid,
+                                storageuser: this.addForm.storageuser,
+                                shelf_life: this.addForm.shelf_life
                             })
                             .then((res) => {
                                 if (res.data.success) {

@@ -46,7 +46,7 @@
                 </el-col>
             </el-row> -->
                 <!-- 搜索添加区域 -->
-            <div class="btnContent">
+            <div class="btnContent" v-if="showId==1">
                 <div class="btnContentTop">
                     <div class="start">
                         <div class="searchForm">
@@ -84,7 +84,7 @@
                 :header-cell-style="{background:'#fff',color:'#606266'}"
                 :row-class-name="tableRowClassName"
             >
-                <el-table-column prop="name" fixed label="疾病分类" align="center"></el-table-column>
+                <el-table-column prop="name" fixed label="肿瘤类型" align="center"></el-table-column>
             </el-table>
 
             <!-- 数据表格 -->
@@ -96,9 +96,7 @@
                 v-if="showId==1"
                 :header-cell-style="{background:'#fff',color:'#606266'}"
                 :row-class-name="tableRowClassName"
-                @selection-change="handleSelectionChange"
             >
-                <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="cardno" label="身份证号" width="200" align="center"></el-table-column>
                 <el-table-column prop="name" label="病人名称" width="160" align="center"></el-table-column>
                 <el-table-column prop="sex" label="性别" width="160" align="center">
@@ -111,7 +109,8 @@
                 <el-table-column prop="age" label="年龄" width="80" align="center"></el-table-column>
                 <el-table-column prop="tumortype" label="肿瘤类型" width="160" align="center"></el-table-column>
                 <el-table-column prop="therapy" label="治疗方法" width="200" align="center"></el-table-column>
-                <el-table-column prop="cardno" label="生存状态" width="100" align="center"></el-table-column>
+                <el-table-column prop="tel" label="手机号" width="200" align="center"></el-table-column>
+                <!-- <el-table-column prop="cardno" label="生存状态" width="100" align="center"></el-table-column> -->
                 <el-table-column prop="cardno" label="回访记录" width="100" align="center">
                     <template slot-scope="scope">
                         <el-button type="text" @click="handleVisited(scope.row)">查看记录</el-button>
@@ -367,7 +366,7 @@ export default {
                 },
                 {
                     id: 2,
-                    name: '疾病分类'
+                    name: '肿瘤类型'
                 }
             ],
             sexList: [
@@ -507,9 +506,6 @@ export default {
         //更改信息
         setActive(e) {
             this.showId = e;
-        },
-        handleSelectionChange(e) {
-            console.log(e);
         },
         handleDrag(item) {
             // 参数会在头部拼接

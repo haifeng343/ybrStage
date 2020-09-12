@@ -37,7 +37,7 @@
                     </el-submenu>
                 </template>
                 <template v-else>
-                    <el-menu-item :index="item.url" :key="item.num">
+                    <el-menu-item :index="item.url" :key="item.num" v-if="item.ishide !==1">
                         <i :class="item.icon"></i>
                         <span slot="title">{{ item.title }}</span>
                     </el-menu-item>

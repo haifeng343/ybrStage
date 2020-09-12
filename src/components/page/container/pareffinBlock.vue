@@ -164,7 +164,7 @@
                 <el-form-item label="样本盒规格" prop="samplebox" :status-icon="true">
                     <el-radio-group v-model="addForm.samplebox" @change="changeSamplebox">
                         <el-radio :label="1">9x9</el-radio>
-                        <el-radio :label="2">11x11</el-radio>
+                        <el-radio :label="2">12x12</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="容器描述" prop="remark" :status-icon="true">
@@ -208,7 +208,7 @@ export default {
                 model: '', //石蜡块柜型号
                 levela: '', //大层层数
                 levelb: '', //小层层数
-                samplebox: '', //样本盒规格 1.9x9   2.11x11
+                samplebox: '', //样本盒规格 1.9x9   2.12x12
                 keeperuserid: '', //容器保管员id
                 keeperuser: '', //容器保管员str
                 remark: '', //容器描述
@@ -291,7 +291,7 @@ export default {
                 model: item.model, //石蜡块柜型号
                 levela: item.levela, //大层层数
                 levelb: item.levelb, //小层层数
-                samplebox: item.samplebox, //样本盒规格 1.9x9   2.11x11
+                samplebox: item.samplebox, //样本盒规格 1.9x9   2.12x12
                 keeperuserid: item.keeperuserid, //容器保管员id
                 keeperuser: item.keeperuser, //容器保管员str
                 remark: item.remark, //容器描述
@@ -431,7 +431,7 @@ export default {
                 model: '', //石蜡块柜型号
                 levela: '', //大层层数
                 levelb: '', //小层层数
-                samplebox: 1, //样本盒规格 1.9x9   2.11x11
+                samplebox: 1, //样本盒规格 1.9x9   2.12x12
                 keeperuserid: '', //容器保管员id
                 keeperuser: '', //容器保管员str
                 remark: '', //容器描述

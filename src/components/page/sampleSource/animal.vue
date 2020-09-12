@@ -212,7 +212,6 @@ export default {
                     label: '样本3'
                 }
             ],
-            deleteList: [], //批量删除
             tableData1:[],//动物类型列表
         };
     },

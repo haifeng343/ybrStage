@@ -64,8 +64,8 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column label="数据类型" prop="no" width="300"></el-table-column>
-                <el-table-column label="数据" prop="name"></el-table-column>
+                <el-table-column label="字典编号" prop="no" width="300"></el-table-column>
+                <el-table-column label="字典名称" prop="name"></el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button
@@ -84,6 +84,7 @@
                                 @click="handleAdd(scope.row.id)"
                             ></el-button>
                         </el-tooltip>
+                        <!-- 不能删除父元素 会影响到后续取值问题 -->
                         <el-button
                             size="mini"
                             type="danger"
@@ -114,7 +115,10 @@
             width="40%"
             @close="addDialogClosed"
         >
-            <el-form :model="form" :rules="formRules" ref="formRef" label-width="90px">
+            <el-form :model="form" :rules="formRules" ref="formRef" label-width="70px">
+                <el-form-item label="code" prop="no">
+                    <el-input v-model="form.no"></el-input>
+                </el-form-item>
                 <el-form-item label="数据" prop="name">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
@@ -128,9 +132,6 @@
                         ></el-option>
                     </el-select>
                 </el-form-item>-->
-                <el-form-item label="数据类型" prop="no">
-                    <el-input v-model="form.no"></el-input>
-                </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addDialogClosed">取 消</el-button>
@@ -168,6 +169,9 @@ export default {
             childrenId: null //子集Id
         };
     },
+    mounted() {
+        this.getData(1);
+    },
     methods: {
         // 折叠面板每次只能展开一行
         expandSelect(row, expandedRows) {
@@ -181,10 +185,13 @@ export default {
             } else {
                 that.expands = [];
             }
-
+            this.getChildList(row.id);
+        },
+        // 获取子节点
+        getChildList(Id) {
             this.$http
                 .post('/api/dictionary/getdictionaryvaluelist', {
-                    dictionarytypeid: row.id,
+                    dictionarytypeid: Id,
                     name: '',
                     pageIndex: 1,
                     pageSize: 1000,
@@ -209,7 +216,6 @@ export default {
         },
         // 添加子集
         handleAdd(Id) {
-            console.log(Id);
             this.childrenId = Id;
             this.form.id = Id;
             this.IsAddChild = true;
@@ -217,13 +223,15 @@ export default {
         },
         // 编辑
         handleEdit(item) {
-            console.log(item);
             this.addDialogVisible = true;
             this.form = {
                 id: item.id, //id
                 name: item.name, //菜单名称
                 no: item.no
             };
+            if (item.parentid !== 0) {
+                this.childrenId = item.parentid;
+            }
         },
         // 插入
         addTo(item) {
@@ -242,14 +250,14 @@ export default {
                 cancelButtonText: '取消'
             })
                 .then(() => {
-                    if (!this.IsAddChild) {
+                    if (!this.IsAddChild && item.parentid > 0) {
                         this.$http.post('/api/dictionary/deletedictionarytype', { id: item.id }).then((res) => {
                             if (res.data.success) {
                                 this.$message({
                                     type: 'success',
                                     message: '删除成功!'
                                 });
-                                this.getData();
+                                this.getData(this.pageIndex);
                             } else {
                                 this.$message.error(res.data.message);
                             }
@@ -261,7 +269,8 @@ export default {
                                     type: 'success',
                                     message: '删除成功!'
                                 });
-                                this.getData();
+                                this.getData(this.pageIndex);
+                                this.getChildList(item.parentid);
                             } else {
                                 this.$message.error(res.data.message);
                             }
@@ -323,6 +332,8 @@ export default {
                                     if (res.data.success) {
                                         this.$message.success(res.data.message);
                                         this.addDialogVisible = false;
+                                        this.getData(this.pageIndex);
+                                        this.getChildList(this.childrenId);
                                     } else {
                                         this.$message.error(res.data.message);
                                     }
@@ -339,6 +350,8 @@ export default {
                                     if (res.data.success) {
                                         this.$message.success(res.data.message);
                                         this.addDialogVisible = false;
+                                        this.getData(this.pageIndex);
+                                        this.getChildList(this.childrenId);
                                     } else {
                                         this.$message.error(res.data.message);
                                     }
@@ -355,6 +368,8 @@ export default {
                                     if (res.data.success) {
                                         this.$message.success(res.data.message);
                                         this.addDialogVisible = false;
+                                        this.getData(this.pageIndex);
+                                        this.getChildList(this.childrenId);
                                     } else {
                                         this.$message.error(res.data.message);
                                     }
@@ -370,15 +385,14 @@ export default {
                                     if (res.data.success) {
                                         this.$message.success(res.data.message);
                                         this.addDialogVisible = false;
+                                        this.getData(this.pageIndex);
+                                        this.getChildList(this.childrenId);
                                     } else {
                                         this.$message.error(res.data.message);
                                     }
                                 });
                         }
                     }
-                    setTimeout(() => {
-                        this.getData(this.pageIndex);
-                    }, 1000);
                     this.addDialogVisible = false;
                 } else {
                     console.log('error submit!!');
@@ -391,8 +405,8 @@ export default {
             this.$http
                 .post('/api/dictionary/getdictionarytypelist', {
                     name: this.keyword,
-                    pageIndex: 1,
-                    pageSize: 10,
+                    pageIndex: pageIndex,
+                    pageSize: this.pageSize,
                     fldSort: '',
                     fldName: ''
                 })
@@ -407,9 +421,6 @@ export default {
                     }
                 });
         }
-    },
-    created() {
-        this.getData();
     }
 };
 </script>

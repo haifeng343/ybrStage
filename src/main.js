@@ -16,7 +16,8 @@ import '../src/assets/css/main.css'
 import 'babel-polyfill';
 import store from './store/store.js'
 import $ from 'jquery'
-
+import {zhuan} from '../src/utils/utils.js';
+Vue.prototype.zhuan = zhuan;
 Vue.directive('has', {
     inserted: function (el, binding) {
         if (!Vue.prototype.$_has(binding.value)) {

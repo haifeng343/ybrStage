@@ -170,7 +170,7 @@ export default {
                 flowdef_key: '', //审批流程值
                 flowdef_name: '', //审批流程名称
                 flowdef_typeid: '', //审批流程类型
-                flowdef_type: '', //审批流程类型
+                flowdef_type: '' //审批流程类型
             },
             addFormRules: {
                 flowdef_key: [{ required: true, trigger: 'blur', message: '请输入审批流程值' }],
@@ -179,10 +179,8 @@ export default {
             },
             keyList: [], //审批流程Key
 
-            addDialogVisible1:false,//配置流程节点
-            addForm1:{
-
-            },
+            addDialogVisible1: false, //配置流程节点
+            addForm1: {}
         };
     },
     mounted() {
@@ -217,15 +215,15 @@ export default {
             this.addForm.checkmenus = arr;
         },
         // 配置流程节点
-        handleJie(item){
+        handleJie(item) {
             console.log(item);
             this.addDialogVisible1 = true;
             this.$router.push({
-                name:'configuration',
-                query:{
-                    flowdefid:item.id
+                name: 'configuration',
+                query: {
+                    flowdefid: item.id
                 }
-            })
+            });
         },
         // 编辑
         handleEdit(item) {
@@ -234,7 +232,7 @@ export default {
                 flowdef_key: item.flowdef_key, //审批流程值
                 flowdef_name: item.flowdef_name, //审批流程名称
                 flowdef_typeid: item.flowdef_typeid, //审批流程类型
-                flowdef_type: item.flowdef_type, //审批流程类型
+                flowdef_type: item.flowdef_type //审批流程类型
             };
             this.addDialogVisible = true;
         },
@@ -274,11 +272,11 @@ export default {
             this.$refs.addFormRef.validate((valid) => {
                 if (valid) {
                     let tempArr = this.keyList;
-                    tempArr.forEach(item=>{
-                        if(item.key == this.addForm.flowdef_typeid){
-                            this.addForm.flowdef_type = item.name
+                    tempArr.forEach((item) => {
+                        if (item.key == this.addForm.flowdef_typeid) {
+                            this.addForm.flowdef_type = item.name;
                         }
-                    })
+                    });
                     if (this.addForm.id) {
                         this.$http
                             .post('/api/flow/save', {
@@ -291,6 +289,7 @@ export default {
                             .then((res) => {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
+                                    this.getData(this.pageIndex);
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
@@ -306,14 +305,12 @@ export default {
                             .then((res) => {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
+                                    this.getData(this.pageIndex);
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
                             });
                     }
-                    setTimeout(() => {
-                        this.getData(this.pageIndex);
-                    }, 1000);
                     this.addDialogVisible = false;
                 } else {
                     console.log('error submit!!');
@@ -349,7 +346,7 @@ export default {
                 flowdef_key: '', //审批流程值
                 flowdef_name: '', //审批流程名称
                 flowdef_typeid: '', //审批流程类型
-                flowdef_type: '', //审批流程类型
+                flowdef_type: '' //审批流程类型
             };
             this.addDialogVisible = true;
         },
@@ -360,7 +357,7 @@ export default {
                 flowdef_key: '', //审批流程值
                 flowdef_name: '', //审批流程名称
                 flowdef_typeid: '', //审批流程类型
-                flowdef_type: '', //审批流程类型
+                flowdef_type: '' //审批流程类型
             };
             this.$refs.addFormRef.resetFields();
             this.addDialogVisible = false;
@@ -372,16 +369,16 @@ export default {
                 flowdef_key: '', //审批流程值
                 flowdef_name: '', //审批流程名称
                 flowdef_typeid: '', //审批流程类型
-                flowdef_type: '', //审批流程类型
+                flowdef_type: '' //审批流程类型
             };
             this.$refs.addFormRef.resetFields();
             this.addDialogVisible1 = false;
-        },
+        }
     }
 };
 </script>
 <style scoped>
-.el-select{
+.el-select {
     width: 100%;
 }
 </style>

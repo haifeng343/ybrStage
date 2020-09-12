@@ -96,7 +96,12 @@
                     <el-input v-model="addForm.name" placeholder="请输入类型名称"></el-input>
                 </el-form-item>
                 <el-form-item label="类型简介" prop="remark">
-                    <el-input v-model="addForm.remark" type="textarea" placeholder="请输入类型简介" rows="4"></el-input>
+                    <el-input
+                        v-model="addForm.remark"
+                        type="textarea"
+                        placeholder="请输入类型简介"
+                        rows="4"
+                    ></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -207,6 +212,7 @@ export default {
                             .then((res) => {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
+                                    this.getData(this.pageIndex);
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
@@ -221,14 +227,12 @@ export default {
                             .then((res) => {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
+                                    this.getData(this.pageIndex);
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
                             });
                     }
-                    setTimeout(() => {
-                        this.getData(this.pageIndex);
-                    }, 1000);
                     this.addDialogVisible = false;
                 } else {
                     console.log('error submit!!');

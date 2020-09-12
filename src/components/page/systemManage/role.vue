@@ -287,6 +287,7 @@ export default {
                             .then((res) => {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
+                                    this.getData(this.pageIndex);
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
@@ -302,14 +303,12 @@ export default {
                             .then((res) => {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
+                                    this.getData(this.pageIndex);
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
                             });
                     }
-                    setTimeout(() => {
-                        this.getData(this.pageIndex);
-                    }, 1000);
                     this.addDialogVisible = false;
                 } else {
                     console.log('error submit!!');
@@ -364,13 +363,13 @@ export default {
                 })
                 .then((res) => {
                     let tempArr = res.data.result;
-                    tempArr.forEach(item=>{
-                        if(item.subs.length){
-                            item.subs.forEach(item1=>{
+                    tempArr.forEach((item) => {
+                        if (item.subs.length) {
+                            item.subs.forEach((item1) => {
                                 item1.subs = item1.btns;
-                            })
+                            });
                         }
-                    })
+                    });
                     this.data = tempArr;
                 });
         }

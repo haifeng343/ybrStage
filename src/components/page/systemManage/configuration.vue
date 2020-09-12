@@ -183,7 +183,7 @@ export default {
             pageIndex: 1,
             pageSize: 10,
             totalCount: 0,
-            flowdefid:parseInt(this.$route.query.flowdefid),
+            flowdefid: parseInt(this.$route.query.flowdefid),
             //表格数据
             tableData: [],
             addDialogVisible: false,
@@ -195,11 +195,11 @@ export default {
                 fun: '', //执行业务
                 audit_csuserid: '', //抄送人
                 audit_csuser: '', //抄送人
-                audit_csroleid: '', //抄送角色
+                audit_csroleid: 0, //抄送角色
                 audit_csrole: '', //抄送角色
                 audit_userid: '', //审核人
                 audit_user: '', //审核人
-                audit_roleid: '', //审核角色
+                audit_roleid: 0, //审核角色
                 audit_role: '' //审核角色
             },
             nodeList: [
@@ -311,26 +311,29 @@ export default {
         add() {
             this.addForm = {
                 id: '',
-                parentid: '', //
+                parentid: null, //
                 nodetype: '', //节点类型
                 node_name: '', //节点名称
                 fun: '', //执行业务
                 audit_csuserid: '', //抄送人
                 audit_csuser: '', //抄送人
-                audit_csroleid: '', //抄送角色
+                audit_csroleid: 0, //抄送角色
                 audit_csrole: '', //抄送角色
                 audit_userid: '', //审核人
                 audit_user: '', //审核人
-                audit_roleid: '', //审核角色
+                audit_roleid: 0, //审核角色
                 audit_role: '' //审核角色
             };
             this.addDialogVisible = true;
         },
         // 编辑
         handleEdit(item) {
-            console.log(item)
+            console.log(item);
             // 格式转化
-            let role = [],role1 = [],user=[],user1=[];
+            let role = [],
+                role1 = [],
+                user = [],
+                user1 = [];
             if (item.audit_roleid) {
                 role = item.audit_roleid.split(',');
                 for (let i = 0; i < role.length; i++) {
@@ -369,7 +372,7 @@ export default {
                 audit_userid: user1, //审核人
                 audit_user: item.audit_user, //审核人
                 audit_roleid: role, //审核角色
-                audit_role: item.audit_role, //审核角色
+                audit_role: item.audit_role //审核角色
             };
             this.addDialogVisible = true;
         },
@@ -416,28 +419,36 @@ export default {
                         arr3 = [],
                         arr4 = [];
                     userArr.forEach((item) => {
-                        this.addForm.audit_userid.forEach((item1) => {
-                            if (item1 == item.userid) {
-                                arr1.push(item.nickname);
-                            }
-                        });
-                        this.addForm.audit_csuserid.forEach((item2) => {
-                            if (item2 == item.userid) {
-                                arr2.push(item.nickname);
-                            }
-                        });
+                        if (this.addForm.audit_userid) {
+                            this.addForm.audit_userid.forEach((item1) => {
+                                if (item1 == item.userid) {
+                                    arr1.push(item.nickname);
+                                }
+                            });
+                        }
+                        if (this.addForm.audit_csuserid) {
+                            this.addForm.audit_csuserid.forEach((item2) => {
+                                if (item2 == item.userid) {
+                                    arr2.push(item.nickname);
+                                }
+                            });
+                        }
                     });
                     roleList1.forEach((item) => {
-                        this.addForm.audit_csroleid.forEach((item1) => {
-                            if (item1 == item.roleid) {
-                                arr3.push(item.rolename);
-                            }
-                        });
-                        this.addForm.audit_roleid.forEach((item2) => {
-                            if (item2 == item.roleid) {
-                                arr4.push(item.rolename);
-                            }
-                        });
+                        if (this.addForm.audit_csroleid.length) {
+                            this.addForm.audit_csroleid.forEach((item1) => {
+                                if (item1 == item.roleid) {
+                                    arr3.push(item.rolename);
+                                }
+                            });
+                        }
+                        if (this.addForm.audit_roleid.length) {
+                            this.addForm.audit_roleid.forEach((item2) => {
+                                if (item2 == item.roleid) {
+                                    arr4.push(item.rolename);
+                                }
+                            });
+                        }
                     });
                     if (this.addForm.id) {
                         this.$http
@@ -460,6 +471,7 @@ export default {
                             .then((res) => {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
+                                    that.getData(that.pageIndex);
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
@@ -473,26 +485,23 @@ export default {
                                 node_name: this.addForm.node_name,
                                 fun: this.addForm.fun,
                                 audit_csuserid: this.addForm.audit_csuserid,
-                                audit_csuser: arr1,
+                                audit_csuser: arr2,
                                 audit_csroleid: this.addForm.audit_csroleid,
                                 audit_csrole: arr3,
                                 audit_userid: this.addForm.audit_userid,
-                                audit_user: arr2,
+                                audit_user: arr1,
                                 audit_roleid: this.addForm.audit_roleid,
                                 audit_role: arr4
                             })
                             .then((res) => {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
+                                    that.getData(that.pageIndex);
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
                             });
                     }
-                    setTimeout(() => {
-                        console.log(that.flowdefid)
-                        that.getData(that.pageIndex);
-                    }, 1000);
                     this.addDialogVisible = false;
                 } else {
                     console.log('error submit!!');

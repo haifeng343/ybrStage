@@ -7,10 +7,7 @@
             <div class="headerTop_text">数据字典</div>
         </div>
         <el-card>
-            <el-table
-                :data="tables"
-                style="width: 100%"
-            >
+            <el-table :data="tables" style="width: 100%">
                 <el-table-column type="expand">
                     <template slot-scope="props">
                         <div v-for="(item,index) in columns" :key="index" class="tab2">
@@ -46,6 +43,18 @@
                                             ></el-input>
                                         </div>
                                     </template>
+                                    <!-- type为2的时候上传附件 -->
+                                    <template v-if="item.type==2">
+                                        <!-- <input type="file" /> -->
+                                    </template>
+                                    <!-- type为3的时候文本 -->
+                                    <template v-if="item.type==3">
+                                        <el-input maxlength="-1" placeholder="请输入"></el-input>
+                                    </template>
+                                    <!-- type为4的时候文本域 -->
+                                    <template v-if="item.type==4">
+                                        <el-input type="textarea" rows="3" maxlength="-1" placeholder="请输入"></el-input>
+                                    </template>
                                 </div>
                             </div>
                         </div>
@@ -63,48 +72,9 @@ export default {
     data() {
         return {
             keyword: '', //关键字
-
-            tableData: [
-                {
-                    id: '12987122',
-                    name: '好滋好味鸡蛋仔',
-                    category: '江浙小吃、小吃零食',
-                    desc: '荷兰优质淡奶，奶香浓而不腻',
-                    address: '上海市普陀区真北路',
-                    shop: '王小虎夫妻店',
-                    shopId: '10333'
-                },
-                {
-                    id: '12987123',
-                    name: '好滋好味鸡蛋仔',
-                    category: '江浙小吃、小吃零食',
-                    desc: '荷兰优质淡奶，奶香浓而不腻',
-                    address: '上海市普陀区真北路',
-                    shop: '王小虎夫妻店',
-                    shopId: '10333'
-                },
-                {
-                    id: '12987125',
-                    name: '好滋好味鸡蛋仔',
-                    category: '江浙小吃、小吃零食',
-                    desc: '荷兰优质淡奶，奶香浓而不腻',
-                    address: '上海市普陀区真北路',
-                    shop: '王小虎夫妻店',
-                    shopId: '10333'
-                },
-                {
-                    id: '12987126',
-                    name: '好滋好味鸡蛋仔',
-                    category: '江浙小吃、小吃零食',
-                    desc: '荷兰优质淡奶，奶香浓而不腻',
-                    address: '上海市普陀区真北路',
-                    shop: '王小虎夫妻店',
-                    shopId: '10333'
-                }
-            ],
             showId: null, //显示对应的input
             tables: [], //病理父
-            columns: [], //病理子
+            columns: [] //病理子
         };
     },
     mounted() {
@@ -176,7 +146,7 @@ export default {
                     });
                 }
             });
-        },
+        }
     }
 };
 </script>

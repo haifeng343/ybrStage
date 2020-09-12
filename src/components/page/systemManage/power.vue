@@ -206,9 +206,9 @@ export default {
                 url: '', //路径
                 icon: '', //图标
                 sort: '', //排序值
-                ishide:'',//0不隐藏 1隐藏
+                ishide: '', //0不隐藏 1隐藏
                 btns: [], //按钮权限
-                delbtns: [], //删除的按钮
+                delbtns: [] //删除的按钮
             },
             arr1: [],
             deleteList: [], //批量删除
@@ -250,7 +250,7 @@ export default {
                 url: item.url, //路径
                 icon: item.icon, //图标
                 sort: item.sort, //排序值
-                ishide:item.ishide,//是否隐藏
+                ishide: item.ishide //是否隐藏
             };
             this.tableData1 = item.btns;
         },
@@ -306,7 +306,7 @@ export default {
                 url: '', //路径
                 icon: '', //图标
                 sort: '', //排序值
-                ishide:0,
+                ishide: 0
             };
         },
         //  this.$http.post('/api/organization/getdropdowntype',{}).then(res=>{
@@ -408,7 +408,7 @@ export default {
                                 icon: this.form.icon,
                                 url: this.form.url,
                                 sort: parseInt(this.form.sort),
-                                ishide:parseInt(this.form.ishide),
+                                ishide: parseInt(this.form.ishide),
                                 btns: arr,
                                 delbtns: this.form.delbtns ? this.form.delbtns : []
                             })
@@ -416,6 +416,7 @@ export default {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
                                     this.addDialogVisible = false;
+                                    this.getData();
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
@@ -428,7 +429,7 @@ export default {
                                 icon: this.form.icon,
                                 url: this.form.url,
                                 sort: parseInt(this.form.sort),
-                                ishide:parseInt(this.form.ishide),
+                                ishide: parseInt(this.form.ishide),
                                 btns: arr,
                                 delbtns: this.form.delbtns ? this.form.delbtns : []
                             })
@@ -436,14 +437,12 @@ export default {
                                 if (res.data.success) {
                                     this.$message.success(res.data.message);
                                     this.addDialogVisible = false;
+                                    this.getData();
                                 } else {
                                     this.$message.error(res.data.message);
                                 }
                             });
                     }
-                    setTimeout(() => {
-                        this.getData();
-                    }, 1000);
                     this.addDialogVisible = false;
                 } else {
                     console.log('error submit!!');
