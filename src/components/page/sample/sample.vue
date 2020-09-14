@@ -50,7 +50,7 @@
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="no" label="样本编号" width="200" align="center"></el-table-column>
                 <!-- <el-table-column prop="organizationid" label="所属组织" width="200" align="center"></el-table-column>
-                <el-table-column prop="projectid" label="所属项目" width="200" align="center"></el-table-column> -->
+                <el-table-column prop="projectid" label="所属项目" width="200" align="center"></el-table-column>-->
                 <!-- <el-table-column prop="containerid" label="所属容器" width="200" align="center"></el-table-column>
                 <el-table-column prop="latticeid" label="样本盒" width="200" align="center"></el-table-column>-->
                 <el-table-column prop="name" label="样本名称" width="200" align="center"></el-table-column>
@@ -60,7 +60,13 @@
                 <el-table-column prop="tissuestype" label="组织类型" width="200" align="center"></el-table-column>
                 <el-table-column prop="diseasetype" label="疾病类型" width="200" align="center"></el-table-column>
                 <!-- <el-table-column prop="storagecondition" label="储存条件" width="200" align="center"></el-table-column> -->
-                <el-table-column prop="size" label="样本大小" width="200" align="center"></el-table-column>
+                <el-table-column prop="losssize" label="损耗值" width="200" align="center"></el-table-column>
+                <el-table-column label="样本容量" width="200" align="center">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.size?scope.row.size+'ml':''}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="thawcount" label="溶冻次数" width="200" align="center"></el-table-column>
                 <el-table-column prop="collectiontime" label="样本收集时间" width="200" align="center"></el-table-column>
                 <el-table-column prop="collectionuser" label="样本收集人" width="200" align="center"></el-table-column>
                 <el-table-column prop="storagetime" label="样本入库时间" width="200" align="center"></el-table-column>
@@ -120,14 +126,17 @@
                     ref="addFormRef"
                     label-width="100px"
                 >
-                    <el-form-item label="样本编号" prop="no">
-                        <el-input v-model="addForm.no"></el-input>
-                    </el-form-item>
                     <el-form-item label="样本名称" prop="name">
                         <el-input v-model="addForm.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="样本大小" prop="size">
+                    <el-form-item label="样本容量" prop="size">
                         <el-input v-model="addForm.size"></el-input>
+                    </el-form-item>
+                    <el-form-item label="损耗量" prop="losssize">
+                        <el-input v-model="addForm.losssize"></el-input>
+                    </el-form-item>
+                    <el-form-item label="溶冻次数" prop="thawcount">
+                        <el-input v-model="addForm.thawcount"></el-input>
                     </el-form-item>
                     <!-- <el-form-item label="所属组织">
                         <el-select v-model="addForm.organizationid" filterable placeholder="请选择组织">
@@ -138,7 +147,7 @@
                                 :value="item.id"
                             ></el-option>
                         </el-select>
-                    </el-form-item> -->
+                    </el-form-item>-->
                     <el-form-item label="所属项目">
                         <el-select v-model="addForm.projectid" filterable placeholder="请选择项目">
                             <el-option
@@ -199,7 +208,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="存储条件">
+                    <!-- <el-form-item label="存储条件">
                         <el-select
                             v-model="addForm.storageconditionid"
                             filterable
@@ -212,7 +221,7 @@
                                 :value="item.id"
                             ></el-option>
                         </el-select>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="样本收集人">
                         <el-select
                             v-model="addForm.collectionuserid"
@@ -253,7 +262,7 @@
                         <el-date-picker
                             v-model="addForm.storagetime"
                             value-format="yyyy-MM-dd HH:mm:ss"
-                           type="datetime"
+                            type="datetime"
                             placeholder="请选择样本入库时间"
                         ></el-date-picker>
                     </el-form-item>
@@ -312,8 +321,10 @@ export default {
                 storageuserid: '', //样本入库人
                 storageuser: '',
                 shelf_life: '', //保存期限
-                storagetime:'',
-                collectiontime:'',
+                storagetime: '',
+                collectiontime: '',
+                losssize: '',//损耗量
+                thawcount: ''//融冻次数
             },
             addFormRules: {
                 username: [
@@ -586,7 +597,6 @@ export default {
             this.addDialogVisible = true;
             this.addForm = {
                 id: '',
-                no: '', //样本编号
                 name: '', //样本名称
                 size: '', //样本大小
                 // organizationid: '', //所属组织
@@ -602,16 +612,17 @@ export default {
                 collectionuserid: '', //样本收集人
                 storageuserid: '', //样本入库人
                 shelf_life: '', //保存期限
-                storagetime:'',
-                collectiontime:'',
+                storagetime: '',
+                collectiontime: '',
+                losssize: '',
+                thawcount: ''
             };
         },
         // 编辑
         handleEdit(item) {
-            console.log(item)
+            console.log(item);
             this.addForm = {
                 id: item.id,
-                no: item.no, //样本编号
                 name: item.name, //样本名称
                 size: item.size, //样本大小
                 // organizationid: item.organizationid, //所属组织
@@ -626,7 +637,7 @@ export default {
                 tissuestype: item.tissuestype,
                 diseasetypeid: item.diseasetypeid, //疾病类型
                 diseasetype: item.diseasetype,
-                storageconditionid: item.storageconditionid?item.storageconditionid:0, //存储条件
+                storageconditionid: item.storageconditionid ? item.storageconditionid : 0, //存储条件
                 storagecondition: item.storagecondition,
                 collectionuserid: item.collectionuserid, //样本收集人
                 collectionuser: item.collectionuser,
@@ -635,6 +646,8 @@ export default {
                 storagetime: item.storagetime,
                 collectiontime: item.collectiontime,
                 shelf_life: item.shelf_life, //保存期限
+                losssize: item.losssize,
+                thawcount: item.thawcount
             };
             this.addDialogVisible = true;
         },
@@ -743,11 +756,11 @@ export default {
                             that.addForm.storageuser = item.username;
                         }
                     });
-                    this.patientList.forEach(item=>{
-                        if(item.id==that.addForm.patientid){
+                    this.patientList.forEach((item) => {
+                        if (item.id == that.addForm.patientid) {
                             that.addForm.patientname = item.name;
                         }
-                    })
+                    });
                     if (this.addForm.id) {
                         this.$http
                             .post('/api/sample/savesample', {
@@ -755,7 +768,6 @@ export default {
                                 // organizationid: this.addForm.organizationid,
                                 projectid: this.addForm.projectid,
                                 name: this.addForm.name,
-                                no: this.addForm.no,
                                 patientid: this.addForm.patientid,
                                 patientname: this.addForm.patientname,
                                 typeid: this.addForm.typeid,
@@ -775,7 +787,9 @@ export default {
                                 storagetime: this.addForm.storagetime,
                                 storageuserid: this.addForm.storageuserid,
                                 storageuser: this.addForm.storageuser,
-                                shelf_life: this.addForm.shelf_life
+                                shelf_life: this.addForm.shelf_life,
+                                losssize: parseInt(this.addForm.losssize),
+                                thawcount: parseInt(this.addForm.thawcount)
                             })
                             .then((res) => {
                                 if (res.data.success) {
@@ -791,7 +805,6 @@ export default {
                             .post('/api/sample/savesample', {
                                 projectid: this.addForm.projectid,
                                 name: this.addForm.name,
-                                no: this.addForm.no,
                                 patientid: this.addForm.patientid,
                                 patientname: this.addForm.patientname,
                                 typeid: this.addForm.typeid,
@@ -811,7 +824,9 @@ export default {
                                 storagetime: this.addForm.storagetime,
                                 storageuserid: this.addForm.storageuserid,
                                 storageuser: this.addForm.storageuser,
-                                shelf_life: this.addForm.shelf_life
+                                shelf_life: this.addForm.shelf_life,
+                                losssize: parseInt(this.addForm.losssize),
+                                thawcount: parseInt(this.addForm.thawcount)
                             })
                             .then((res) => {
                                 if (res.data.success) {
