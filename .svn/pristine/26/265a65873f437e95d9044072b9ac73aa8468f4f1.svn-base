@@ -3,7 +3,7 @@
         <div class="headerTop">
             <div class="headerTop_title">容器管理</div>
             <i class="el-icon-d-arrow-right"></i>
-            <div class="headerTop_text">冰箱管理</div>
+            <div class="headerTop_text">石蜡块柜管理</div>
         </div>
         <!-- 头部搜索条件 -->
         <div class="btnContent">
@@ -22,7 +22,7 @@
                     </div>-->
                     <div class="content_btn success" @click="add">
                         <img src="../../../assets/img/add1.png" alt />
-                        <p>新增冰箱</p>
+                        <p>新增石蜡块柜</p>
                     </div>
                     <!-- <div class="content_btn error">
                         <img src="../../assets/img/delete1.png" alt />
@@ -64,7 +64,7 @@
             <div class="item" v-for="item in tableData" :key="item.containerid">
                 <div class="item1 kk">
                     <div class="itemTop">
-                        <img src="../../../assets/img/icebox.png" alt />
+                        <img src="../../../assets/img/paraffin.png" alt />
                     </div>
                     <div class="itemBot">
                         <p>{{item.name}}</p>
@@ -75,16 +75,16 @@
                         <div class="start">
                             <img src="../../../assets/img/tag.png" class="img1" alt />
                             <div class="txt">
-                                冰箱编号：
+                                石蜡块柜编号：
                                 <p>{{item.no}}</p>
                             </div>
                         </div>
                         <div class="txt">
-                            冰箱名称：
+                            石蜡块柜名称：
                             <p>{{item.name}}</p>
                         </div>
                         <div class="txt">
-                            冰箱型号：
+                            石蜡块柜型号：
                             <p>{{item.model}}</p>
                         </div>
                         <div class="start">
@@ -97,8 +97,8 @@
                         </div>
                     </div>
                     <div class="itemBot2">
-                        <div class="title2">冰箱可放入材料：</div>
-                        <div class="txt2">冰箱可放入材料冰箱可放入材料冰箱可放入材料冰箱可放入材料冰箱可放入材料冰箱可放入材料</div>
+                        <div class="title2">石蜡块柜可放入材料：</div>
+                        <!-- <div class="txt2">石蜡块柜可放入材料石蜡块柜可放入材料石蜡块柜可放入材料石蜡块柜可放入材料石蜡块柜可放入材料石蜡块柜可放入材料</div> -->
                     </div>
                     <div class="more" @click="toDetail">查看详情</div>
                 </div>
@@ -115,16 +115,16 @@
             </div>
         </div>
 
-        <!-- 添加冰箱 -->
+        <!-- 添加石蜡块柜 -->
         <el-dialog
-            :title="addForm.id?'编辑冰箱':'新增冰箱'"
+            :title="addForm.id?'编辑石蜡块柜':'新增石蜡块柜'"
             :visible.sync="addDialogVisible"
             width="40%"
             @close="addDialogClosed"
         >
             <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="90px">
                 <el-form-item label="选择房间" prop="roomid">
-                    <el-select v-model="addForm.roomid" filterable placeholder="请选择">
+                    <el-select v-model="addForm.roomid" placeholder="请选择">
                         <el-option
                             v-for="item in roomList1"
                             :key="item.id"
@@ -134,7 +134,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="容器保管员" prop="keeperuserid">
-                    <el-select v-model="addForm.keeperuserid" filterable placeholder="请选择">
+                    <el-select v-model="addForm.keeperuserid" placeholder="请选择">
                         <el-option
                             v-for="item in userList"
                             :key="item.userid"
@@ -143,23 +143,17 @@
                         ></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="冰箱编号" prop="no">
+                <el-form-item label="石蜡块柜编号" prop="no">
                     <el-input type="text" v-model="addForm.no"></el-input>
                 </el-form-item>
-                <el-form-item label="冰箱名称" prop="name" :status-icon="true">
+                <el-form-item label="石蜡块柜名称" prop="name" :status-icon="true">
                     <el-input type="text" v-model="addForm.name"></el-input>
                 </el-form-item>
-                <el-form-item label="冰箱品牌" prop="brand" :status-icon="true">
+                <el-form-item label="石蜡块柜品牌" prop="brand" :status-icon="true">
                     <el-input type="text" v-model="addForm.brand"></el-input>
                 </el-form-item>
-                <el-form-item label="冰箱型号" prop="model" :status-icon="true">
+                <el-form-item label="石蜡块柜型号" prop="model" :status-icon="true">
                     <el-input type="text" v-model="addForm.model"></el-input>
-                </el-form-item>
-                <el-form-item label="平面布局长" prop="levelc_x" :status-icon="true">
-                    <el-input type="text" v-model="addForm.levelc_x"></el-input>
-                </el-form-item>
-                <el-form-item label="平面布局宽" prop="levelc_y" :status-icon="true">
-                    <el-input type="text" v-model="addForm.levelc_y"></el-input>
                 </el-form-item>
                 <el-form-item label="大层层数" prop="levela" :status-icon="true">
                     <el-input type="text" v-model="addForm.levela"></el-input>
@@ -175,12 +169,6 @@
                 </el-form-item>
                 <el-form-item label="容器描述" prop="remark" :status-icon="true">
                     <el-input type="textarea" rows="4" v-model="addForm.remark"></el-input>
-                </el-form-item>
-                <el-form-item label="可放入材料" prop="dataids" :status-icon="true">
-                    <el-select v-model="addForm.dataids"></el-select>
-                </el-form-item>
-                <el-form-item label="温度" prop="temperatureid" :status-icon="true">
-                    <el-select v-model="addForm.temperatureid"></el-select>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -214,41 +202,32 @@ export default {
             addForm: {
                 id: '',
                 roomid: '', //房间id
-                no: '', //冰箱编号
-                name: '', //冰箱名称
-                brand: '', //冰箱品牌
-                model: '', //冰箱型号
-                levelc_x: '', //平面布局长
-                levelc_y: '', //平面布局宽
+                no: '', //石蜡块柜编号
+                name: '', //石蜡块柜名称
+                brand: '', //石蜡块柜品牌
+                model: '', //石蜡块柜型号
                 levela: '', //大层层数
                 levelb: '', //小层层数
                 samplebox: '', //样本盒规格 1.9x9   2.12x12
                 keeperuserid: '', //容器保管员id
                 keeperuser: '', //容器保管员str
                 remark: '', //容器描述
-                dataids: [], //可放入材料id
-                datas: '', //可放入材料str
-                temperatureid: '', //温度id
-                temperature: '' //温度str
             },
             addFormRules: {
                 roomid: [{ required: true, trigger: 'change', message: '请选择房间' }],
                 keeperuserid: [{ required: true, trigger: 'change', message: '请选择容器保管员' }],
-                no: [{ required: true, trigger: 'blur', message: '请输入冰箱编号' }],
-                name: [{ required: true, trigger: 'blur', message: '请输入冰箱名称' }],
-                brand: [{ required: true, trigger: 'blur', message: '请输入冰箱品牌' }],
-                model: [{ required: true, trigger: 'blur', message: '请输入冰箱型号' }],
-                levelc_x: [{ required: true, trigger: 'blur', message: '请输入平面布局长' }],
-                levelc_y: [{ required: true, trigger: 'blur', message: '请输入平面布局宽' }],
+                no: [{ required: true, trigger: 'blur', message: '请输入石蜡块柜编号' }],
+                name: [{ required: true, trigger: 'blur', message: '请输入石蜡块柜名称' }],
+                brand: [{ required: true, trigger: 'blur', message: '请输入石蜡块柜品牌' }],
+                model: [{ required: true, trigger: 'blur', message: '请输入石蜡块柜型号' }],
                 levela: [{ required: true, trigger: 'blur', message: '请输入大层层数' }],
                 levelb: [{ required: true, trigger: 'blur', message: '请输入小层层数' }],
-                levelb: [{ required: true, trigger: 'blur', message: '请输入小层层数' }],
-                remark: [{ required: true, trigger: 'blur', message: '请输入容器描述' }],
+                remark: [{ required: true, trigger: 'blur', message: '请输入容器描述' }]
             },
             roomList: [], //房间列表
             roomList1: [], //房间列表不包含全部
             userList: [], //用户列表
-            addDialogVisible: false, //添加对话框的显示隐藏
+            addDialogVisible: false //添加对话框的显示隐藏
         };
     },
     mounted() {
@@ -258,7 +237,7 @@ export default {
     },
     methods: {
         // 切换房间
-        changeRoom(e){
+        changeRoom(e) {
             this.value = e;
             this.getData(1);
         },
@@ -300,32 +279,26 @@ export default {
                     this.userList = res.data.result.pageData;
                 });
         },
-        // 编辑冰箱
-        handleEdit(item){
+        // 编辑石蜡块柜
+        handleEdit(item) {
             console.log(item);
-            this.addForm={
-                id:item.containerid,
+            this.addForm = {
+                id: item.containerid,
                 roomid: item.roomid, //房间id
-                no: item.no, //冰箱编号
-                name: item.name, //冰箱名称
-                brand: item.brand, //冰箱品牌
-                model: item.model, //冰箱型号
-                levelc_x: item.levelc_x, //平面布局长
-                levelc_y: item.levelc_y, //平面布局宽
+                no: item.no, //石蜡块柜编号
+                name: item.name, //石蜡块柜名称
+                brand: item.brand, //石蜡块柜品牌
+                model: item.model, //石蜡块柜型号
                 levela: item.levela, //大层层数
                 levelb: item.levelb, //小层层数
                 samplebox: item.samplebox, //样本盒规格 1.9x9   2.12x12
                 keeperuserid: item.keeperuserid, //容器保管员id
                 keeperuser: item.keeperuser, //容器保管员str
                 remark: item.remark, //容器描述
-                dataids: item.dataids, //可放入材料id
-                datas: item.datas, //可放入材料str
-                temperatureid: item.temperatureid==0?null:item.temperatureid, //温度id
-                temperature: item.temperature //温度str
-            }
+            };
             this.addDialogVisible = true;
         },
-        // 跳转冰箱详情
+        // 跳转石蜡块柜详情
         toDetail() {
             this.$router.push('/iceboxDetail');
         },
@@ -342,9 +315,9 @@ export default {
         // 表格数据
         getData(pageIndex) {
             this.$http
-                .post('/api/container/getlistbyfridge', {
+                .post('/api/container/getlistbyarchives', {
                     name: this.keyword,
-                    roomid:this.value,
+                    roomid: this.value,
                     pageIndex: pageIndex,
                     pageSize: this.pageSize,
                     fldSort: '',
@@ -375,25 +348,19 @@ export default {
 
                     if (this.addForm.id) {
                         this.$http
-                            .post('/api/container/savebyfridge', {
+                            .post('/api/container/savebyarchives', {
                                 containerid: this.addForm.id,
                                 roomid: this.addForm.roomid,
                                 no: this.addForm.no,
                                 name: this.addForm.name,
                                 brand: this.addForm.brand,
                                 model: this.addForm.model,
-                                levelc_x: parseInt(this.addForm.levelc_x),
-                                levelc_y: parseInt(this.addForm.levelc_y),
                                 levela: parseInt(this.addForm.levela),
                                 levelb: parseInt(this.addForm.levelb),
                                 samplebox: this.addForm.samplebox,
                                 keeperuserid: this.addForm.keeperuserid,
                                 keeperuser: this.addForm.keeperuser,
                                 remark: this.addForm.remark,
-                                dataids: this.addForm.dataids ? this.addForm.dataids : null,
-                                datas: this.addForm.datas,
-                                temperatureid: this.addForm.temperatureid ? this.addForm.temperatureid : 0,
-                                temperature: this.addForm.temperature
                             })
                             .then((res) => {
                                 if (res.data.success) {
@@ -406,24 +373,18 @@ export default {
                             });
                     } else {
                         this.$http
-                            .post('/api/container/savebyfridge', {
+                            .post('/api/container/savebyarchives', {
                                 roomid: this.addForm.roomid,
                                 no: this.addForm.no,
                                 name: this.addForm.name,
                                 brand: this.addForm.brand,
                                 model: this.addForm.model,
-                                levelc_x: parseInt(this.addForm.levelc_x),
-                                levelc_y: parseInt(this.addForm.levelc_y),
                                 levela: parseInt(this.addForm.levela),
                                 levelb: parseInt(this.addForm.levelb),
                                 samplebox: this.addForm.samplebox,
                                 keeperuserid: this.addForm.keeperuserid,
                                 keeperuser: this.addForm.keeperuser,
                                 remark: this.addForm.remark,
-                                dataids: this.addForm.dataids ? this.addForm.dataids : null,
-                                datas: this.addForm.datas,
-                                temperatureid: this.addForm.temperatureid ? this.addForm.temperatureid : 0,
-                                temperature: this.addForm.temperature
                             })
                             .then((res) => {
                                 if (res.data.success) {
@@ -440,12 +401,12 @@ export default {
         },
         // 删除
         handleDelete(item) {
-            this.$confirm('此操作将永久删除该冰箱, 是否继续?', '提示', {
+            this.$confirm('此操作将永久删除该石蜡块柜, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消'
             })
                 .then(() => {
-                    this.$http.post('/api/container/deletebyfridge', { containerid: item.containerid }).then((res) => {
+                    this.$http.post('/api/container/deletebyarchives', { containerid: item.containerid }).then((res) => {
                         if (res.data.success) {
                             this.$message({
                                 type: 'success',
@@ -459,40 +420,32 @@ export default {
                 })
                 .catch(() => {});
         },
-        // 添加冰箱
+        // 添加石蜡块柜
         add() {
-            // this.addForm = {
-            //     id: '',
-            //     roomid: '', //房间id
-            //     no: '', //冰箱编号
-            //     name: '', //冰箱名称
-            //     brand: '', //冰箱品牌
-            //     model: '', //冰箱型号
-            //     levelc_x: '', //平面布局长
-            //     levelc_y: '', //平面布局宽
-            //     levela: '', //大层层数
-            //     levelb: '', //小层层数
-            //     samplebox: 1, //样本盒规格 1.9x9   2.12x12
-            //     keeperuserid: '', //容器保管员id
-            //     keeperuser: '', //容器保管员str
-            //     remark: '', //容器描述
-            //     dataids: [], //可放入材料id
-            //     datas: '', //可放入材料str
-            //     temperatureid: '', //温度id
-            //     temperature: '' //温度str
-            // }
-            // this.addDialogVisible = true;
-            this.$router.push('/addContainer')
+            this.addForm = {
+                id: '',
+                roomid: '', //房间id
+                no: '', //石蜡块柜编号
+                name: '', //石蜡块柜名称
+                brand: '', //石蜡块柜品牌
+                model: '', //石蜡块柜型号
+                levela: '', //大层层数
+                levelb: '', //小层层数
+                samplebox: 1, //样本盒规格 1.9x9   2.12x12
+                keeperuserid: '', //容器保管员id
+                keeperuser: '', //容器保管员str
+                remark: '', //容器描述
+            }
+            this.addDialogVisible = true;
         },
         // 关闭弹窗
         addDialogClosed() {
             this.$refs.addFormRef.resetFields();
             this.addDialogVisible = false;
-        },
+        }
     }
 };
 </script>
 <style lang="less" scoped>
 @import url('../../../assets/css/container.less');
-
 </style>

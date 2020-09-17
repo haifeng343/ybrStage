@@ -248,7 +248,7 @@ export default {
             roomList: [], //房间列表
             roomList1: [], //房间列表不包含全部
             userList: [], //用户列表
-            addDialogVisible: false, //添加对话框的显示隐藏
+            addDialogVisible: false //添加对话框的显示隐藏
         };
     },
     mounted() {

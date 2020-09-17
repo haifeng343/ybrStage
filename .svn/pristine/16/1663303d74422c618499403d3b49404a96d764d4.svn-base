@@ -205,7 +205,7 @@ export default {
                 parentid: '', //上级菜单
                 url: '', //路径
                 icon: '', //图标
-                sort: 0, //排序值
+                sort: '', //排序值
                 ishide: '', //0不隐藏 1隐藏
                 btns: [], //按钮权限
                 delbtns: [] //删除的按钮
@@ -305,7 +305,7 @@ export default {
                 parentid: '', //上级菜单
                 url: '', //路径
                 icon: '', //图标
-                sort: 0, //排序值
+                sort: '', //排序值
                 ishide: 0
             };
         },
