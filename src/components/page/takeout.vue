@@ -1,0 +1,697 @@
+<template>
+    <div>
+        <!-- 卡片视图 -->
+        <div class="headerTop">
+            <div class="headerTop_title">申请管理</div>
+            <i class="el-icon-d-arrow-right"></i>
+            <div class="headerTop_text">实验取出申请</div>
+        </div>
+        <el-card>
+            <el-row>
+                <span class="headerTop_title">取出申请</span>
+                <el-button style="float: right;" type="danger">提交申请</el-button>
+                <el-button style="float: right;margin-right: 10px;">取消申请</el-button>
+            </el-row>
+            <el-divider></el-divider>
+            <!-- 头部搜索条件 -->
+            <el-form>
+                <el-row style="text-align: right">
+                    <el-col :span="8" style="right: 0">出库单：
+                        <el-input placeholder="请输入内容" style="width: 250px"></el-input>
+                    </el-col>
+                    <el-col :span="8" style="right: 0">申请部门：
+                        <el-input placeholder="请输入内容" style="width: 250px"></el-input>
+                    </el-col>
+                    <el-col :span="8" style="right: 0">申请人：
+                        <el-input placeholder="请输入内容" style="width: 250px"></el-input>
+                    </el-col>
+                </el-row>
+                <el-row style="padding-top: 20px;text-align: right">
+                    <el-col :span="8">归还类型：
+                        <el-select placeholder="请选择" v-model="select1" style="width: 250px">
+                        </el-select>
+                    </el-col>
+                    <el-col :span="8">预计归还时间：
+                        <el-date-picker
+                                v-model="value1"
+                                type="datetime"
+                                placeholder="请选择预计归还时间"
+                                style="width: 250px">
+                        </el-date-picker>
+                    </el-col>
+                    <el-col :span="8">备注：
+                        <el-input placeholder="请输入内容" style="width: 250px"></el-input>
+                    </el-col>
+                </el-row>
+            </el-form>
+        </el-card>
+        <el-card>
+
+            <!-- 头部搜索条件 -->
+            <div class="btnContent">
+                <div class="btnContentTop">
+                    <div class="start">
+                        <div class="headerTop_title">
+                            申请样本
+                            <b class="headerTop_text" style="color: red">注：申请必须是同类型（例如：样本、试剂等），否则无法提交申请</b>
+                        </div>
+                    </div>
+                    <div>
+                        <el-button style="float: right;" type="danger">选取样本</el-button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据表格 -->
+            <el-table
+                    :data="tableData"
+                    border
+                    class="table"
+                    height="560"
+                    :header-cell-style="{ background: '#fff', color: '#606266' }"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+                <el-table-column :resizable="false" type="selection" ></el-table-column>
+                <el-table-column :resizable="false" prop="id" label="样本编号" align="center"></el-table-column>
+                <el-table-column :resizable="false" prop="no" label="身份编号" width="200" align="center"></el-table-column>
+                <el-table-column :resizable="false" prop="name" label="样本名称" width="200" align="center"></el-table-column>
+                <el-table-column :resizable="false" prop="patientname" label="所属物种" width="200" align="center"></el-table-column>
+                <el-table-column :resizable="false" prop="type" label="所属项目" width="200" align="center"></el-table-column>
+                <el-table-column :resizable="false" prop="grass" label="样本类型" width="200" align="center"></el-table-column>
+                <el-table-column :resizable="false" prop="tissuestype" label="组织类型" width="200" align="center"></el-table-column>
+                <el-table-column :resizable="false" prop="diseasetype" label="肿瘤类型" width="200" align="center"></el-table-column>
+                <el-table-column :resizable="false" prop="losssize" label="剩余容量" width="200" align="center"></el-table-column>
+                <el-table-column :resizable="false" prop="losssize" label="融冻次数" width="200" align="center"></el-table-column>
+                <el-table-column :resizable="false" label="状态" align="center" fixed="right">
+                    <template slot-scope="scope">
+                        <el-button size="mini" type="success" icon="el-icon-edit" v-has="'edit'"
+                                   @click="handleEdit(scope.row)"></el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <!-- 分页 -->
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="pageIndex"
+                    :page-sizes="[10, 20, 30, 40, 50]"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="totalCount"
+            ></el-pagination>
+        </el-card>
+    </div>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                pickerOptions: {
+                    shortcuts: [{
+                        text: '今天',
+                        onClick(picker) {
+                            picker.$emit('pick', new Date());
+                        }
+                    }, {
+                        text: '昨天',
+                        onClick(picker) {
+                            const date = new Date();
+                            date.setTime(date.getTime() - 3600 * 1000 * 24);
+                            picker.$emit('pick', date);
+                        }
+                    }, {
+                        text: '一周前',
+                        onClick(picker) {
+                            const date = new Date();
+                            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                            picker.$emit('pick', date);
+                        }
+                    }]
+                },
+                rules: {
+                    // returnType: [
+                    //     {required: true, message: '未选择归还类型', trigger: 'change'}
+                    // ],
+                },
+                select1:'',
+                value1: '',
+                name: '2',
+                keyword: '',
+                addForm: {
+                    id: '',
+                    no: '', //样本编号
+                    name: '', //样本名称
+                    size: '', //样本大小
+                    // organizationid: '', //所属组织
+                    projectid: '', //所属项目
+                    patientid: '', //所属病人
+                    patientname: '',
+                    typeid: '', //样本类型
+                    type: '',
+                    grassid: '', //种属
+                    grass: '',
+                    tissuestypeid: '', //组织类型
+                    tissuestype: '',
+                    diseasetypeid: '', //疾病类型
+                    diseasetype: '',
+                    storageconditionid: 0, //存储条件
+                    storagecondition: '',
+                    collectionuserid: '', //样本收集人
+                    collectionuser: '',
+                    storageuserid: '', //样本入库人
+                    storageuser: '',
+                    shelf_life: '', //保存期限
+                    storagetime: '',
+                    collectiontime: '',
+                    losssize: '', //损耗量
+                    thawcount: '', //融冻次数
+                    surplussize: '' //剩余容量
+                },
+                addDialogVisible: false, //添加对话框的显示隐藏
+                pageIndex: 1, //页码数
+                pageSize: 10, //条数
+                totalCount: 0, //总条数
+                tableData: [], //表格数据
+                roleList: [], //角色列表
+                dropList: [], //组织列表
+                deleteList: [], //批量删除
+                projectList: [], //项目列表
+                containerList: [], //容器列表
+                latticeList: [], //样本盒列表
+                patientList: [], //病人列表
+                typeList: [], //样本类型
+                grassList: [], //种属
+                tissuestypeList: [], //组织类型
+                diseasetypeList: [], //肿瘤类型
+                storageconditionList: [], //储存类型
+                userList: [] //用户列表
+            };
+        },
+        created() {
+            this.getData(1);
+            this.getRoleList(); //获取角色列表
+            this.getDropList(); //获取组织列表
+            this.getProject(); //获取项目列表
+            this.getPatient(); //获取病人列表
+            this.getUserList(); //获取用户列表
+            this.getPatienttumorType(); //获取肿瘤类型getpatienttumortype
+            this.getValueList(); //获取组织类型 、 种属
+            this.getTypeList(); //获取类型列表
+        },
+        methods: {
+            // 类型列表
+            getTypeList() {
+                this.$http
+                    .post('/api/sampletype/getsampletypelist', {
+                        name: '',
+                        pageIndex: 1,
+                        pageSize: 1000,
+                        fldSort: '',
+                        fldName: ''
+                    })
+                    .then((res) => {
+                        this.typeList = res.data.result.pageData;
+                    });
+            },
+            // 肿瘤类型
+            getPatienttumorType() {
+                this.$http.post('api/patient/getpatienttumortype', {}).then((res) => {
+                    if (res.data.success) {
+                        let tempArr = res.data.result;
+                        let tempArr1 = [];
+                        tempArr.forEach((item) => {
+                            if (item.key !== 0) {
+                                tempArr1.push(item);
+                            }
+                        });
+                        this.diseasetypeList = tempArr1;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                });
+            },
+            // 组织类型 、 种属
+            getValueList() {
+                // 种属
+                this.$http
+                    .post('api/dictionary/getdictionaryvaluelist', {
+                        dictionarytypeid: 84,
+                        fldName: '',
+                        fldSort: '',
+                        name: '',
+                        pageIndex: 1,
+                        pageSize: 1000
+                    })
+                    .then((res) => {
+                        if (res.data.success) {
+                            this.grassList = res.data.result.pageData;
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+                // 组织类型
+                this.$http
+                    .post('api/dictionary/getdictionaryvaluelist', {
+                        dictionarytypeid: 49,
+                        fldName: '',
+                        fldSort: '',
+                        name: '',
+                        pageIndex: 1,
+                        pageSize: 1000
+                    })
+                    .then((res) => {
+                        if (res.data.success) {
+                            this.tissuestypeList = res.data.result.pageData;
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+            },
+            // 用户列表
+            getUserList() {
+                this.$http
+                    .post('/api/user/getuserinfo', {
+                        search: '',
+                        pageIndex: 1,
+                        pageSize: 1000,
+                        fldSort: '',
+                        fldName: ''
+                    })
+                    .then((res) => {
+                        if (res.data.success) {
+                            this.userList = res.data.result.pageData;
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+            },
+            // 病人列表
+            getPatient() {
+                this.$http
+                    .post('/api/patient/getpatientlist', {
+                        name: '',
+                        pageIndex: 1,
+                        pageSize: 1000,
+                        fldSort: '',
+                        fldName: ''
+                    })
+                    .then((res) => {
+                        this.patientList = res.data.result.pageData;
+                    });
+            },
+            //项目列表
+            getProject() {
+                this.$http
+                    .post('/api/project/getlist', {
+                        no: '',
+                        name: '',
+                        pageIndex: 1,
+                        pageSize: 1000,
+                        fldSort: '',
+                        fldName: ''
+                    })
+                    .then((res) => {
+                        this.projectList = res.data.result.pageData;
+                    });
+            },
+            // 批量勾选
+            handleSelectionChange(e) {
+                let arr = [];
+                if (e.length > 0) {
+                    e.filter((item) => {
+                        return item;
+                    }).map((item) => {
+                        arr.push(item.id);
+                    });
+                }
+                this.deleteList = arr;
+            },
+            handleDrag(item) {
+                // 参数会在头部拼接
+                this.$router.push({
+                    query: {
+                        id: 1,
+                        name: 'zhangsan'
+                    },
+                    path: '/markdown'
+                });
+                // 参数不会在头部显示
+                // this.$router.push({
+                //   name:'markdown',
+                //   params:{
+                //     name:'zhangsan',
+                //     id:'1'
+                //   }
+                // })
+            },
+            // 获取部门列表
+            getDropList() {
+                this.$http.post('/api/user/getdropdownorg').then((res) => {
+                    this.dropList = res.data.result;
+                });
+            },
+            tableRowClassName({row}) {
+                if (row.state === '失败') {
+                    return 'warning-row';
+                } else if (row.state === '成功') {
+                    return 'success-row';
+                }
+                return '';
+            },
+            // 当前样本角色
+            roleChange(e) {
+                console.log(e);
+                let tempArr = this.roleList;
+                let arr = [];
+                tempArr.forEach((item) => {
+                    e.forEach((item1) => {
+                        if (item.roleid == item1) {
+                            arr.push(item.rolename);
+                        }
+                    });
+                });
+                this.addForm.rolenames = arr;
+                console.log(arr);
+            },
+            // 角色列表
+            getRoleList() {
+                this.$http
+                    .post('/api/role/getrolelist', {
+                        organizationid: 0,
+                        pageIndex: this.pageIndex,
+                        pageSize: 1000,
+                        fldSort: '',
+                        fldName: ''
+                    })
+                    .then((res) => {
+                        this.roleList = res.data.result.pageData;
+                    });
+            },
+            // 锁定/不锁定
+            changelocker(item) {
+                if (item.islocked) {
+                    //不锁定
+                    this.$http.post('/api/user/lockuser', {id: item.userid}).then((res) => {
+                        this.getData(this.pageIndex);
+                    });
+                } else {
+                    //锁定
+                    this.$http.post('/api/user/unlockuser', {id: item.userid}).then((res) => {
+                        this.getData(this.pageIndex);
+                    });
+                }
+            },
+            // 关闭弹窗
+            clearForm() {
+                this.$refs.formRef.resetFields();
+                this.dialogFormVisible = false;
+            },
+
+            // 监听 pagesize 改变事件
+            handleSizeChange(val) {
+                this.pageSize = val;
+                this.getData(this.pageIndex);
+            },
+            // 监听页码值改变的事件
+            handleCurrentChange(val) {
+                this.pageIndex = val;
+                this.getData(val);
+            },
+            // 搜索
+            search() {
+                this.getData(1);
+            },
+            // 添加
+            add() {
+                this.addDialogVisible = true;
+                this.addForm = {
+                    id: '',
+                    name: '', //样本名称
+                    size: '', //样本大小
+                    // organizationid: '', //所属组织
+                    projectid: '', //所属项目
+                    patientid: '', //所属病人
+                    typeid: '', //样本类型
+                    grassid: '', //种属
+                    tissuestypeid: '', //组织类型
+                    tissuestype: '',
+                    diseasetypeid: '', //疾病类型
+                    diseasetype: '',
+                    storageconditionid: 0, //存储条件
+                    collectionuserid: '', //样本收集人
+                    storageuserid: '', //样本入库人
+                    shelf_life: '', //保存期限
+                    storagetime: '',
+                    collectiontime: '',
+                    losssize: '',
+                    thawcount: '',
+                    surplussize: ''
+                };
+            },
+            // 编辑
+            handleEdit(item) {
+                console.log(item);
+                this.addForm = {
+                    id: item.id,
+                    name: item.name, //样本名称
+                    size: item.size, //样本大小
+                    // organizationid: item.organizationid, //所属组织
+                    projectid: item.projectid, //所属项目
+                    patientid: item.patientid, //所属病人
+                    patientname: item.patientname,
+                    typeid: item.typeid, //样本类型
+                    type: item.type,
+                    grassid: item.grassid, //种属
+                    grass: item.grass,
+                    tissuestypeid: item.tissuestypeid, //组织类型
+                    tissuestype: item.tissuestype,
+                    diseasetypeid: item.diseasetypeid, //疾病类型
+                    diseasetype: item.diseasetype,
+                    storageconditionid: item.storageconditionid ? item.storageconditionid : 0, //存储条件
+                    storagecondition: item.storagecondition,
+                    collectionuserid: item.collectionuserid, //样本收集人
+                    collectionuser: item.collectionuser,
+                    storageuserid: item.storageuserid, //样本入库人
+                    storageuser: item.storageuser,
+                    storagetime: item.storagetime,
+                    collectiontime: item.collectiontime,
+                    shelf_life: item.shelf_life, //保存期限
+                    losssize: item.losssize,
+                    thawcount: item.thawcount,
+                    surplussize: item.surplussize
+                };
+                this.addDialogVisible = true;
+            },
+            // 删除
+            handleDelete(item) {
+                this.$confirm('此操作将永久删除该样本, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消'
+                })
+                    .then(() => {
+                        this.$http.post('/api/sample/deletesample', {id: item.id}).then((res) => {
+                            if (res.data.success) {
+                                this.$message({
+                                    type: 'success',
+                                    message: '删除成功!'
+                                });
+                                this.getData(this.pageIndex);
+                            } else {
+                                this.$message.error(res.data.message);
+                            }
+                        });
+                    })
+                    .catch(() => {
+                    });
+            },
+            // 批量删除
+            deleteAll() {
+                if (this.deleteList.length > 0) {
+                    this.$confirm('此操作将永久删除勾选的样本数据, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消'
+                    })
+                        .then(() => {
+                            this.$http.post('/api/sample/deletesamples', {id: this.deleteList}).then((res) => {
+                                if (res.data.success) {
+                                    this.$message({
+                                        type: 'success',
+                                        message: '删除成功!'
+                                    });
+                                    this.getData(this.pageIndex);
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            });
+                        })
+                        .catch(() => {
+                        });
+                } else {
+                    this.$message({
+                        message: '请先选择样本'
+                    });
+                }
+            },
+            // 当前状态改变的时候
+            swichChange(item) {
+            },
+            // 获取数据
+            getData(pageIndex) {
+                this.$http
+                    .post('/api/sample/getsamplelist', {
+                        search: this.keyword,
+                        pageIndex: pageIndex,
+                        pageSize: this.pageSize,
+                        fldSort: '',
+                        fldName: ''
+                    })
+                    .then((res) => {
+                        if (res.data.success) {
+                            this.tableData = res.data.result.pageData;
+                            this.totalCount = res.data.result.totalItemCount;
+                            this.pageIndex = res.data.result.pageIndex;
+                            this.pageSize = res.data.result.pageSize;
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+            },
+            // 提交校验
+            addSubmitForm(formName) {
+                let that = this;
+                this.$refs.addFormRef.validate((valid) => {
+                    if (valid) {
+                        this.typeList.forEach((item) => {
+                            if (item.id == this.addForm.typeid) {
+                                that.addForm.type = item.name;
+                            }
+                        });
+                        this.grassList.forEach((item) => {
+                            if (item.id == that.addForm.grassid) {
+                                that.addForm.grass = item.name;
+                            }
+                        });
+                        this.tissuestypeList.forEach((item) => {
+                            if (item.id == this.addForm.tissuestypeid) {
+                                that.addForm.tissuestype = item.name;
+                            }
+                        });
+                        this.diseasetypeList.forEach((item) => {
+                            if (that.addForm.diseasetypeid == item.key) {
+                                that.addForm.diseasetype = item.name;
+                            }
+                        });
+                        this.storageconditionList.forEach((item) => {
+                            if (that.addForm.storageconditionid == item.id) {
+                                that.addForm.storagecondition = item.name;
+                            }
+                        });
+                        this.userList.forEach((item) => {
+                            if (that.addForm.collectionuserid == item.userid) {
+                                that.addForm.collectionuser = item.username;
+                            }
+                        });
+                        this.userList.forEach((item) => {
+                            if (that.addForm.storageuserid == item.userid) {
+                                that.addForm.storageuser = item.username;
+                            }
+                        });
+                        this.patientList.forEach((item) => {
+                            if (item.id == that.addForm.patientid) {
+                                that.addForm.patientname = item.name;
+                            }
+                        });
+                        if (this.addForm.id) {
+                            this.$http
+                                .post('/api/sample/savesample', {
+                                    id: this.addForm.id,
+                                    // organizationid: this.addForm.organizationid,
+                                    projectid: this.addForm.projectid,
+                                    name: this.addForm.name,
+                                    patientid: this.addForm.patientid,
+                                    patientname: this.addForm.patientname,
+                                    typeid: this.addForm.typeid,
+                                    type: this.addForm.type,
+                                    grassid: this.addForm.grassid,
+                                    grass: this.addForm.grass,
+                                    tissuestypeid: this.addForm.tissuestypeid,
+                                    tissuestype: this.addForm.tissuestype,
+                                    diseasetypeid: this.addForm.diseasetypeid,
+                                    diseasetype: this.addForm.diseasetype,
+                                    storageconditionid: this.addForm.storageconditionid,
+                                    storagecondition: this.addForm.storagecondition,
+                                    size: parseInt(this.addForm.size),
+                                    collectiontime: this.addForm.collectiontime,
+                                    collectionuserid: this.addForm.collectionuserid,
+                                    collectionuser: this.addForm.collectionuser,
+                                    storagetime: this.addForm.storagetime,
+                                    storageuserid: this.addForm.storageuserid,
+                                    storageuser: this.addForm.storageuser,
+                                    shelf_life: this.addForm.shelf_life,
+                                    losssize: parseInt(this.addForm.losssize),
+                                    thawcount: parseInt(this.addForm.thawcount),
+                                    surplussize: parseInt(this.addForm.surplussize)
+                                })
+                                .then((res) => {
+                                    if (res.data.success) {
+                                        this.addDialogVisible = false;
+                                        this.getData(this.pageIndex);
+                                        this.$message.success(res.data.message);
+                                    } else {
+                                        this.$message.error(res.data.message);
+                                    }
+                                });
+                        } else {
+                            this.$http
+                                .post('/api/sample/savesample', {
+                                    projectid: this.addForm.projectid,
+                                    name: this.addForm.name,
+                                    patientid: this.addForm.patientid,
+                                    patientname: this.addForm.patientname,
+                                    typeid: this.addForm.typeid,
+                                    type: this.addForm.type,
+                                    grassid: this.addForm.grassid,
+                                    grass: this.addForm.grass,
+                                    tissuestypeid: this.addForm.tissuestypeid,
+                                    tissuestype: this.addForm.tissuestype,
+                                    diseasetypeid: this.addForm.diseasetypeid,
+                                    diseasetype: this.addForm.diseasetype,
+                                    storageconditionid: this.addForm.storageconditionid,
+                                    storagecondition: this.addForm.storagecondition,
+                                    size: parseInt(this.addForm.size),
+                                    collectiontime: this.addForm.collectiontime,
+                                    collectionuserid: this.addForm.collectionuserid,
+                                    collectionuser: this.addForm.collectionuser,
+                                    storagetime: this.addForm.storagetime,
+                                    storageuserid: this.addForm.storageuserid,
+                                    storageuser: this.addForm.storageuser,
+                                    shelf_life: this.addForm.shelf_life,
+                                    losssize: parseInt(this.addForm.losssize),
+                                    thawcount: parseInt(this.addForm.thawcount),
+                                    surplussize: parseInt(this.addForm.surplussize)
+                                })
+                                .then((res) => {
+                                    if (res.data.success) {
+                                        this.addDialogVisible = false;
+                                        this.getData(this.pageIndex);
+                                        this.$message.success(res.data.message);
+                                    } else {
+                                        this.$message.error(res.data.message);
+                                    }
+                                });
+                        }
+                    }
+                });
+            },
+            // 关闭弹窗
+            addDialogClosed() {
+                this.$refs.addFormRef.resetFields();
+                this.addDialogVisible = false;
+            }
+        }
+    };
+</script>
+<!--<style scoped>-->
+<!--</style>-->

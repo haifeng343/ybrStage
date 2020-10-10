@@ -1,0 +1,124 @@
+<template>
+    <div>
+        <!-- <div class="headerTop">
+            <div class="headerTop_title">审核管理</div>
+            <i class="el-icon-d-arrow-right"></i>
+            <div class="headerTop_text">转移申请</div>
+            <i class="el-icon-d-arrow-right"></i>
+            <div class="headerTop_text">{{ showName }}</div>
+        </div> -->
+        <box-1 /> 
+        <!-- 转移弹窗 -->
+        <el-dialog :close-on-click-modal="false" :title="showName" :visible.sync="addDialogVisible" width="800px" @close="addDialogClosed">
+            <div class="dialog">
+                <div class="item1">
+                    <div class="title">样本盒转移前位置</div>
+                    <div class="cont">
+                        <div class="m1">
+                            <div class="label lms">房间</div>
+                            ：
+                            <div>301</div>
+                        </div>
+                        <div class="m1">
+                            <div class="label lms">容器</div>
+                            ：
+                            <div>立式大冰箱</div>
+                        </div>
+                        <div class="m1">
+                            <div class="label lml">设备编号</div>
+                            ：
+                            <div>BX-004</div>
+                        </div>
+                        <div class="m1">
+                            <div class="label lms">大层</div>
+                            ：
+                            <div>4</div>
+                        </div>
+                        <div class="m1">
+                            <div class="label lms">小层</div>
+                            ：
+                            <div>4</div>
+                        </div>
+                        <div class="m1">
+                            <div class="label lml">架子编号</div>
+                            ：
+                            <div>4</div>
+                        </div>
+                        <div class="m1">
+                            <div class="label">样本盒编号</div>
+                            ：
+                            <div>4</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item1">
+                    <div class="title">样本盒转移后位置</div>
+                    <div class="cont">
+                        <div class="m1">
+                            <div class="label lms">房间</div>
+                            ：
+                            <div>301</div>
+                        </div>
+                        <div class="m1">
+                            <div class="label lms">容器</div>
+                            ：
+                            <div>立式大冰箱</div>
+                        </div>
+                        <div class="m1">
+                            <div class="label lml">设备编号</div>
+                            ：
+                            <div>BX-004</div>
+                        </div>
+                        <div class="m1">
+                            <div class="label lms">大层</div>
+                            ：
+                            <div>4</div>
+                        </div>
+                        <div class="m1">
+                            <div class="label lms">小层</div>
+                            ：
+                            <div>4</div>
+                        </div>
+                        <div class="m1">
+                            <div class="label lml">架子编号</div>
+                            ：
+                            <div>4</div>
+                        </div>
+                        <div class="m1">
+                            <div class="label">样本盒编号</div>
+                            ：
+                            <div>4</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="addSubmitForm('addForm')">确 定</el-button>
+                <el-button @click="addDialogClosed">取 消</el-button>
+            </span>
+        </el-dialog>
+    </div>
+</template>
+<script>
+import box1 from '../applyForm/box1.vue';
+export default {
+    components:{
+        box1
+    },
+    data() {
+        return {
+            showName:'',
+            addDialogVisible:false,
+
+        };
+    },
+    methods: {
+        addDialogClosed(){
+            THIS.addDialogVisible = false;
+        },
+    },
+};
+</script>
+<style lang="less" scoped>
+
+</style>

@@ -180,6 +180,18 @@ const router = new Router({
                     meta: { title: '样本列表', permission: false }
                 },
                 {
+                    path: '/sampleDetail',
+                    name: '样本位置详情',
+                    component: () => import('../components/page/sample/sampleDetail.vue'),
+                    meta: { title: '样本位置详情' }
+                },
+                {
+                    path: '/roomDetail',
+                    name: '房间详情',
+                    component: () => import('../components/page/container/roomDetail.vue'),
+                    meta: { title: '房间详情' }
+                },
+                {
                     // 动物管理页面
                     path: '/animal',
                     name: 'animal',
@@ -259,7 +271,58 @@ const router = new Router({
                     component: () => import('../components/page/container/addContainer.vue'),
                     meta: { title: '新建冰箱' }
                 },
-
+                {
+                    path: '/takeout',
+                    name: '实验取出申请',
+                    component: () => import('../components/page/takeout.vue'),
+                    meta: { title: '实验取出申请' }
+                },
+                {
+                    path: '/returnsample',
+                    name: '归还申请',
+                    component: () => import('../components/page/returnsample.vue'),
+                    meta: { title: '归还申请' }
+                },{
+                    path: '/delayreturnsample',
+                    name: '延期申请',
+                    component: () => import('../components/page/delayreturnsample.vue'),
+                    meta: { title: '延期申请' }
+                },{
+                    path: '/overtime',
+                    name: '过期销毁',
+                    component: () => import('../components/page/overtime.vue'),
+                    meta: { title: '过期销毁' }
+                },
+                {
+                    path: '/addTank',
+                    name: '新建液氮罐',
+                    component: () => import('../components/page/container/addTank.vue'),
+                    meta: { title: '新建液氮罐' }
+                },
+                {
+                    path: '/tankDetail',
+                    name: '液氮罐详情',
+                    component: () => import('../components/page/container/tankDetail.vue'),
+                    meta: { title: '液氮罐详情' }
+                },
+                {
+                    path: '/addPare',
+                    name: '新建石蜡柜',
+                    component: () => import('../components/page/container/addPare.vue'),
+                    meta: { title: '新建石蜡柜' }
+                },
+                {
+                    path: '/pareDetail',
+                    name: '石蜡柜详情',
+                    component: () => import('../components/page/container/pareDetail.vue'),
+                    meta: { title: '石蜡柜详情' }
+                },
+                {
+                    path: '/application',
+                    name: '转移申请',
+                    component: () => import('../components/page/applyForm/application.vue'),
+                    meta: { title: '转移申请' }
+                },
             ]
         },
         {

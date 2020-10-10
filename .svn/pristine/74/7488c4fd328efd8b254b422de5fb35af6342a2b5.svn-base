@@ -1,0 +1,1063 @@
+<template>
+    <div>
+      <div class="container1">
+            <!-- 头部nav菜单 -->
+            <div class="navList">
+                <div
+                    :class="[showId == item.id ? 'active' : '', 'navItem']"
+                    v-for="item in navList"
+                    :key="item.id"
+                    @click="setShowId(item)"
+                >
+                    {{ item.name }}
+                </div>
+            </div>
+
+            <!-- 冰箱内容区域 -->
+            <div class="content3">
+                <!-- 左侧表单加容器 -->
+                <div class="box">
+                    <!-- 冰箱表单 -->
+                    <el-row :gutter="24">
+                        <el-form :model="form" label-width="65px" class="demo-ruleForm">
+                            <el-form-item label="盒子编号">
+                                <el-col :span="9" class="start" style="padding-left: 0">
+                                    <el-input v-model="form.no" class="input1" clearable></el-input>
+                                    <div class="search">搜索</div>
+                                </el-col>
+                            </el-form-item>
+                            <el-row :gutter="24">
+                                <el-col :span="10">
+                                    <el-form-item label="选择房间">
+                                        <el-select v-model="form.roomId" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="10" :offset="3">
+                                    <el-form-item label="选择容器">
+                                        <el-select v-model="form.containerId" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="24" v-if="showContainer == 1">
+                                <el-col :span="8">
+                                    <el-form-item label="选择大层">
+                                        <el-select v-model="form.levela" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="选择小层">
+                                        <el-select v-model="form.levelb" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="选择架子">
+                                        <el-select v-model="form.levelc_x" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="24" v-if="showContainer == 4 || showContainer == 3">
+                                <el-col :span="10">
+                                    <el-form-item label="选择架子">
+                                        <el-select v-model="form.levelc_x" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="24" v-if="showContainer == 2">
+                                <el-col :span="10">
+                                    <el-form-item label="选择大层">
+                                        <el-select v-model="form.levela" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form>
+                    </el-row>
+                    <!-- 冰箱主体 -->
+                    <div class="bx1" v-if="showId == 1">
+                        <!-- 立式大冰箱 -->
+                        <div class="binx" v-if="showContainer == 1">
+                            <div class="name">name</div>
+                            <div class="wendu">-80℃</div>
+                            <div class="brand">brand</div>
+                            <img src="../../../assets/img/bx.jpg" class="img1" alt="" />
+                            <div class="box1">
+                                <div
+                                    v-for="(item, index) in form.levela"
+                                    :key="index"
+                                    @click="setBoxShowId(index + 1)"
+                                    :class="[boxShowId == index + 1 ? 'boxShow' : '', 'boxItem']"
+                                >
+                                    <div class="list1" v-if="form.levelb && !form.levelc_x">
+                                        <div
+                                            class="item"
+                                            :style="{
+                                                height: 88 / form.levelb + 'px',
+                                                width: 216 / (form.levelc_x ? form.levelc_x : 1) + 'px'
+                                            }"
+                                            v-for="(item, index1) in form.levelb"
+                                            :key="index1"
+                                        ></div>
+                                    </div>
+                                    <div :class="['list2']" v-else>
+                                        <div
+                                            :class="['item' + form.levelc_x, 'item']"
+                                            v-for="(item, index1) in 12"
+                                            :style="{
+                                                height: 88 / form.levelb - 4 + 'px',
+                                                width: 216 / (form.levelc_x ? form.levelc_x : 1) - 4 + 'px'
+                                            }"
+                                            :key="index1"
+                                        ></div>
+                                    </div>
+                                    <img :src="require('../../../assets/img/c' + (index + 1) + '.png')" class="boxItemImg" alt />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 立式冰柜 -->
+                        <div class="binx1" v-if="showContainer == 2">
+                            <div class="name">name</div>
+                            <div class="wendu">0℃</div>
+                            <div class="brand">brand</div>
+                            <img src="../../../assets/img/bx1.png" class="img2" alt="" />
+                            <div class="cont">
+                                <div
+                                    :class="[boxShowId == index ? 'active' : '', 'item']"
+                                    :style="{ height: 410 / form.levela + 'px' }"
+                                    v-for="(item1, index) in form.levela"
+                                    :key="index"
+                                    @click="setBoxShowId(index)"
+                                ></div>
+                            </div>
+                        </div>
+                        <!-- 卧式小冰柜 -->
+                        <div class="binx2" v-if="showContainer == 3">
+                            <img src="../../../assets/img/bingui.png" class="img1" alt="" />
+                            <div class="cont">
+                                <div class="item" v-for="(item, index) in 12" :key="index">
+                                    <p class="name">{{ index }}</p>
+                                    <img src="../../../assets/img/g1.png" class="img2" alt="" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 卧式大冰柜 -->
+                        <div class="binx2" v-if="showContainer == 4">
+                            <img src="../../../assets/img/bingui1.png" class="img1" alt="" />
+                            <div class="cont">
+                                <div class="item1" v-for="(item, index) in 24" :key="index">
+                                    <p class="name">{{ index }}</p>
+                                    <img src="../../../assets/img/g1.png" class="img2" alt="" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 液氮罐 -->
+                        <div class="binx" v-if="showContainer == 5">
+                            <img src="../../../assets/img/gaizi.png" class="img1" alt="" />
+                            <div class="bxCont">
+                                <div
+                                    :class="[boxShowId == index ? 'active' : '', 'item']"
+                                    v-for="(item, index) in 4"
+                                    :key="index"
+                                    @click="setBoxShowId(index)"
+                                >
+                                    <div class="item1">
+                                        <img
+                                            src="../../../assets/img/y1.png"
+                                            v-for="(item1, index1) in 10"
+                                            :key="index1"
+                                            class="img2"
+                                            alt
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="jiazi">
+                            <div class="jiaziCont">
+                                <div
+                                    :class="[jiaziId == item ? 'active' : '', 'item1']"
+                                    v-for="(item, index) in 24"
+                                    :key="index"
+                                    @click="setJiaziId(index + 1)"
+                                >
+                                    {{ item }}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="jiazi" v-if="showContainer == 2">
+                            <div class="jiaziCont">
+                                <div
+                                    :class="[jiaziId == item ? 'active' : '', 'item1']"
+                                    v-for="(item, index) in form.levela"
+                                    :key="index"
+                                    :style="{height:512/form.levela+'px'}"
+                                    @click="setJiaziId(index + 1)"
+                                >
+                                    {{ item }}
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+                <!-- 右侧表单加容器 -->
+                <div class="box">
+                    <!-- 冰箱表单 -->
+                    <el-row :gutter="24">
+                        <el-form :model="form1" label-width="65px" class="demo-ruleForm">
+                            <el-form-item label="盒子编号">
+                                <el-col :span="9" class="start" style="padding-left: 0">
+                                    <el-input v-model="form1.no" class="input1" clearable></el-input>
+                                    <div class="search">搜索</div>
+                                </el-col>
+                            </el-form-item>
+                            <el-row :gutter="24">
+                                <el-col :span="10">
+                                    <el-form-item label="选择房间">
+                                        <el-select v-model="form1.roomId" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="10" :offset="3">
+                                    <el-form-item label="选择容器">
+                                        <el-select v-model="form1.containerId" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="24" v-if="showContainer1 == 1">
+                                <el-col :span="8">
+                                    <el-form-item label="选择大层">
+                                        <el-select v-model="form1.levela" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="选择小层">
+                                        <el-select v-model="form1.levelb" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="选择架子">
+                                        <el-select v-model="form1.levelc_x" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="24" v-if="showContainer1 == 4 || showContainer1 == 3">
+                                <el-col :span="10">
+                                    <el-form-item label="选择架子">
+                                        <el-select v-model="form1.levelc_x" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="24" v-if="showContainer1 == 2">
+                                <el-col :span="10">
+                                    <el-form-item label="选择大层">
+                                        <el-select v-model="form1.levela" filterable>
+                                            <el-option
+                                                v-for="item in navList"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="item.name"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form>
+                    </el-row>
+                    <!-- 冰箱主体 -->
+                    <div class="bx1" v-if="showId == 1">
+                        <!-- 立式大冰箱 -->
+                        <div class="binx" v-if="showContainer1 == 1">
+                            <div class="name">name</div>
+                            <div class="wendu">-80℃</div>
+                            <div class="brand">brand</div>
+                            <img src="../../../assets/img/bx.jpg" class="img1" alt="" />
+                            <div class="box1">
+                                <div
+                                    v-for="(item, index) in form1.levela"
+                                    :key="index"
+                                    @click="setBoxShowId1(index + 1)"
+                                    :class="[boxShowId1 == index + 1 ? 'boxShow' : '', 'boxItem']"
+                                >
+                                    <div class="list1" v-if="form1.levelb && !form1.levelc_x">
+                                        <div
+                                            class="item"
+                                            :style="{
+                                                height: 88 / form1.levelb + 'px',
+                                                width: 216 / (form1.levelc_x ? form1.levelc_x : 1) + 'px'
+                                            }"
+                                            v-for="(item, index1) in form1.levelb"
+                                            :key="index1"
+                                        ></div>
+                                    </div>
+                                    <div :class="['list2']" v-else>
+                                        <div
+                                            :class="['item' + form1.levelc_x, 'item']"
+                                            v-for="(item, index1) in 12"
+                                            :style="{
+                                                height: 88 / form1.levelb - 4 + 'px',
+                                                width: 216 / (form1.levelc_x ? form1.levelc_x : 1) - 4 + 'px'
+                                            }"
+                                            :key="index1"
+                                        ></div>
+                                    </div>
+                                    <img :src="require('../../../assets/img/c' + (index + 1) + '.png')" class="boxItemImg" alt />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 立式冰柜 -->
+                        <div class="binx1" v-if="showContainer1 == 2">
+                            <div class="name">name</div>
+                            <div class="wendu">0℃</div>
+                            <div class="brand">brand</div>
+                            <img src="../../../assets/img/bx1.png" class="img2" alt="" />
+                            <div class="cont">
+                                <div
+                                    :class="[boxShowId1 == index ? 'active' : '', 'item']"
+                                    :style="{ height: 410 / form1.levela + 'px' }"
+                                    v-for="(item1, index) in form1.levela"
+                                    :key="index"
+                                    @click="setBoxShowId1(index)"
+                                ></div>
+                            </div>
+                        </div>
+                        <!-- 卧式小冰柜 -->
+                        <div class="binx2" v-if="showContainer1 == 3">
+                            <img src="../../../assets/img/bingui.png" class="img1" alt="" />
+                            <div class="cont">
+                                <div class="item" v-for="(item, index) in 12" :key="index">
+                                    <p class="name">{{ index }}</p>
+                                    <img src="../../../assets/img/g1.png" class="img2" alt="" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 卧式大冰柜 -->
+                        <div class="binx2" v-if="showContainer1 == 4">
+                            <img src="../../../assets/img/bingui1.png" class="img1" alt="" />
+                            <div class="cont">
+                                <div class="item1" v-for="(item, index) in 24" :key="index">
+                                    <p class="name">{{ index }}</p>
+                                    <img src="../../../assets/img/g1.png" class="img2" alt="" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 液氮罐 -->
+                        <div class="binx" v-if="showContainer1 == 5">
+                            <img src="../../../assets/img/gaizi.png" class="img1" alt="" />
+                            <div class="bxCont">
+                                <div
+                                    :class="[boxShowId1 == index ? 'active' : '', 'item']"
+                                    v-for="(item, index) in 4"
+                                    :key="index"
+                                    @click="setBoxShowId1(index)"
+                                >
+                                    <div class="item1">
+                                        <img
+                                            src="../../../assets/img/y1.png"
+                                            v-for="(item1, index1) in 10"
+                                            :key="index1"
+                                            class="img2"
+                                            alt
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="jiazi" v-if="showContainer1 !== 2">
+                            <div class="jiaziCont">
+                                <div
+                                    :class="[jiaziId1 == item ? 'active' : '', 'item1']"
+                                    v-for="(item, index) in 24"
+                                    :key="index"
+                                    @click="setJiaziId1(index + 1)"
+                                >
+                                    {{ item }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="jiazi" v-if="showContainer1 == 2">
+                            <div class="jiaziCont">
+                                <div
+                                    :class="[jiaziId1 == item ? 'active' : '', 'item1']"
+                                    v-for="(item, index) in form.levela"
+                                    :key="index"
+                                    :style="{height:512/form.levela+'px'}"
+                                    @click="setJiaziId1(index + 1)"
+                                >
+                                    {{ item }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</template>
+<script>
+export default {
+    data() {
+        return {
+            addDialogVisible: false, //弹窗
+            showName: '样本盒转移',
+            showId: 1, //选择大类 1样本盒转移 2架子转移 3样本转移
+            navList: [
+                //什么转移
+                {
+                    id: 1,
+                    name: '样本盒转移'
+                },
+                {
+                    id: 2,
+                    name: '架子转移'
+                },
+                {
+                    id: 3,
+                    name: '样本转移'
+                }
+            ],
+            showContainer: 1, //左 1立式大冰箱 2立式冰柜 3卧式小冰箱 4卧式大冰箱 5液氮罐
+            boxShowId: 1, //左 选择了冰箱大层
+            showContainer1: 3, //右 1立式大冰箱 2立式冰柜 3卧式小冰箱 4卧式大冰箱 5液氮罐
+            boxShowId1: 1, //右 选择了冰箱大层
+            jiaziId: 1, //左 选择哪个架子
+            jiaziId1: 1, //右 选择哪个架子
+            form: {
+                //左边表单
+                //表单信息
+                no: '', //编号
+                roomId: '', //房间id
+                containerId: 1, //容器Id
+                levela: 5, //大层
+                levelb: 4, //小层
+                levelc_x: '' //架子
+            },
+            form1: {
+                //右边表单
+                //表单信息
+                no: '', //编号
+                roomId: '', //房间id
+                containerId: 1, //容器Id
+                levela: 6, //大层
+                levelb: 4, //小层
+                levelc_x: '' //架子
+            }
+        };
+    },
+    methods: {
+        // 选择了nav菜单
+        setShowId(item) {
+            this.showId = item.id;
+            this.showName = item.name;
+            JSON.str;
+        },
+        // 选择了架子
+        setJiaziId(Id) {
+            this.jiaziId = Id;
+        },
+        // 选择了冰箱大层
+        setBoxShowId(Id) {
+            this.boxShowId = Id;
+        },
+        // 关闭弹窗
+        addDialogClosed() {
+            this.addDialogVisible = false;
+        }
+    },
+    mounted() {}
+};
+</script>
+<style lang="less" scoped>
+.container1 {
+    width: 100%;
+    height: auto;
+    display: flex;
+    font-size: 14px;
+    color: #636572;
+    flex-direction: column;
+    .navList {
+        width: 402px;
+        height: 60px;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        .navItem {
+            font-size: 16px;
+            background: #eeeef2;
+            border-radius: 8px 8px 0px 0px;
+            width: 130px;
+            color: #161e33;
+            height: 60px;
+            text-align: center;
+            line-height: 60px;
+            position: relative;
+            cursor: pointer;
+        }
+        .active {
+            border-radius: 8px 8px 0px 0px;
+            position: relative;
+            background: #fff;
+        }
+        .active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 130px;
+            height: 6px;
+            background: #fa483a;
+            border-radius: 8px 8px 0px 0px;
+        }
+    }
+    .content3 {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        position: relative;
+        .box {
+            display: flex;
+            flex-direction: column;
+            width: 788px;
+            height: 880px;
+            border: none !important;
+            overflow-y: scroll;
+            background: #ffffff;
+            box-sizing: border-box;
+            padding: 40px 24px 0;
+            .start {
+                display: flex;
+                justify-content: flex-start;
+                .input1 {
+                    width: 196px;
+                    input {
+                        width: 100% !important;
+                    }
+                }
+                .search {
+                    border: none;
+                    color: #fff;
+                    width: 45px;
+                    height: 32px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-size: 14px;
+                    margin-top: 1px;
+                    cursor: pointer;
+                    background: #fa483a;
+                    border-radius: 0px 4px 4px 0px;
+                    margin-left: -2px;
+                    z-index: 2;
+                }
+            }
+            .bx1 {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: flex-start;
+                flex-direction: row;
+                margin-top: 20px;
+                position: relative;
+                .binx {
+                    width: 300px;
+                    height: 565px;
+                    margin-left: 70px;
+                    margin-right: 65px;
+                    position: relative;
+                    .bxCont {
+                        position: absolute;
+                        bottom: 38px;
+                        left: 2px;
+                        width: 297px;
+                        height: 405px;
+                        box-sizing: border-box;
+                        padding: 24px 10px 33px;
+                        display: flex;
+                        justify-content: space-between;
+                        flex-direction: row;
+                        .item {
+                            width: 64px;
+                            height: 348px;
+                            background: #dce6f8;
+                            border-radius: 12px;
+                            flex-direction: column;
+                            justify-content: flex-start;
+                            box-sizing: border-box;
+                            justify-content: center;
+                            align-items: center;
+                            padding: 14px 5px;
+                            cursor: pointer;
+                            box-sizing: border-box;
+                            .item1 {
+                                width: 54px;
+                                height: 26px;
+                                margin-bottom: 2px;
+                                .img2 {
+                                    width: 100%;
+                                    height: 100%;
+                                }
+                                .img2:last-child {
+                                    margin-bottom: 0;
+                                }
+                            }
+                        }
+                        .active {
+                            box-sizing: border-box;
+                            border: 2px solid #1ec084;
+                            .item1 {
+                                margin-left: -1px;
+                            }
+                        }
+                    }
+                    .wendu {
+                        position: absolute;
+                        width: 58px;
+                        height: 22px;
+                        border-radius: 4px;
+                        top: 8px;
+                        right: 36px;
+                        font-size: 12px;
+                        display: flex;
+                        align-items: center;
+                        color: #16277a;
+                        justify-content: center;
+                    }
+                    .brand {
+                        position: absolute;
+                        width: 160px;
+                        height: auto;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        left: 40px;
+                        bottom: 23px;
+                    }
+                    .name {
+                        position: absolute;
+                        width: 130px;
+                        height: auto;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        left: 40px;
+                        top: 10px;
+                    }
+                    .img1 {
+                        width: 100%;
+                        height: 100%;
+                    }
+                    .box1 {
+                        position: absolute;
+                        top: 38px;
+                        left: 22px;
+                        width: 250px;
+                        height: 435px;
+                        overflow-y: scroll;
+                        padding-top: 6px;
+                        .boxItem {
+                            width: 236px;
+                            height: 102px;
+                            margin: 0 auto 4px;
+                            background: #dce6f8;
+                            border-radius: 10px;
+                            position: relative;
+                            cursor: pointer;
+                            .boxItemImg {
+                                width: 100%;
+                                height: 100%;
+                                position: absolute;
+                                left: 0;
+                                top: 0;
+                                z-index: 0;
+                            }
+                        }
+                        .boxShow {
+                            width: 236px;
+                            height: 102px;
+                            background: #dce6f8;
+                            border-radius: 10px;
+                            margin: 0 auto 4px;
+                            overflow: hidden;
+                            position: relative;
+                            z-index: 3;
+                            .list1 {
+                                width: 100%;
+                                height: 100%;
+                                max-height: 102px;
+                                box-sizing: border-box;
+                                padding: 5px 10px;
+                                display: flex;
+                                flex-direction: column;
+                                .item {
+                                    width: 16px;
+                                    height: 12px;
+                                    background: #ffffff;
+                                    border-radius: 2px;
+                                    margin-bottom: 4px;
+                                }
+                                .item:last-child {
+                                    margin-bottom: 0;
+                                }
+                            }
+                            .list2 {
+                                width: 100%;
+                                height: 100%;
+                                box-sizing: border-box;
+                                padding: 5px 10px;
+                                display: flex;
+                                justify-content: flex-start;
+                                align-content: flex-start;
+                                flex-wrap: wrap;
+                                .item {
+                                    width: 16px;
+                                    height: 12px;
+                                    background: #ffffff;
+                                    border-radius: 2px;
+                                    box-sizing: border-box;
+                                    margin: 0 4px 4px 0;
+                                }
+                            }
+                            .boxItemImg {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+                .binx1 {
+                    width: 350px;
+                    height: 530px;
+                    position: relative;
+                    margin-right: 55px;
+                    margin-left: 30px;
+                    font-size: 14px;
+                    .name {
+                        position: absolute;
+                        width: 170px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        top: 13px;
+                        left: 47px;
+                        color: #fff;
+                    }
+                    .brand {
+                        position: absolute;
+                        width: 170px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        bottom: 38px;
+                        color: #fff;
+                        left: 47px;
+                    }
+                    .wendu {
+                        width: 58px;
+                        height: 18px;
+                        color: #fff;
+                        display: -webkit-box;
+                        display: -ms-flexbox;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        position: absolute;
+                        top: 12px;
+                        right: 30px;
+                    }
+                    .img2 {
+                        width: 100%;
+                        height: 100%;
+                    }
+                    .cont {
+                        position: absolute;
+                        width: 272px;
+                        height: 410px;
+                        top: 45px;
+                        left: 48px;
+                        .item {
+                            height: 100px;
+                            width: 100%;
+                            box-sizing: border-box;
+                            position: relative;
+                            cursor: pointer;
+                        }
+                        .active {
+                            border: 1px solid green;
+                            opacity: 0.4;
+                            border-radius: 4px;
+                        }
+                        .item::after {
+                            content: '';
+                            position: absolute;
+                            bottom: 0;
+                            left: 0;
+                            width: 100%;
+                            opacity: 0.3;
+                            height: 12px;
+                            background: linear-gradient(0deg, #7b7cb6 0%, #cbd2ee 100%);
+                        }
+                        .item:last-child::after {
+                            display: none;
+                        }
+                    }
+                }
+                .binx2 {
+                    width: 453px;
+                    height: auto;
+                    position: relative;
+                    margin-right: 30px;
+                    margin-left: 25px;
+                    margin-top: 140px;
+                    .img1 {
+                        width: 100%;
+                        height: auto;
+                    }
+                    .cont {
+                        position: absolute;
+                        top: 135px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: 325px;
+                        height: 144px;
+                        box-sizing: border-box;
+                        padding: 12px 0;
+                        display: flex;
+                        justify-content: flex-start;
+                        flex-wrap: wrap;
+                        .item {
+                            width: 50px;
+                            height: 50px;
+                            background: #ffffff;
+                            border-radius: 4px;
+                            margin: 0 4px 13px 0;
+                            cursor: pointer;
+                            position: relative;
+                            overflow: hidden;
+                        }
+                        .item:nth-child(6n + 6) {
+                            margin-right: 0;
+                        }
+                        .item1 {
+                            width: 36px;
+                            height: 36px;
+                            margin: 0 5px 12px 0;
+                            position: relative;
+                        }
+                        .item1:nth-child(8n) {
+                            margin-right: 0;
+                        }
+                        .name {
+                            width: 100%;
+                            text-align: center;
+                            position: absolute;
+                            font-size: 12px;
+                            color: red;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                        }
+                        .img2 {
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+                }
+                .jiazi {
+                    width: 188px;
+                    height: 562px;
+                    background: #dbe6f8;
+                    border-radius: 12px;
+                    box-sizing: border-box;
+                    padding: 20px 10px;
+                    .jiaziCont {
+                        height: 512px;
+                        overflow-y: scroll;
+                        .item1 {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-weight: bold;
+                            font-size: 14px;
+                            margin-bottom: 14px;
+                            width: 168px;
+                            height: 40px;
+                            background: #ffffff;
+                            border-radius: 4px;
+                            cursor: pointer;
+                        }
+                        .item1:last-child {
+                            margin-bottom: 0;
+                        }
+                        .active {
+                            background: #f9dcda;
+                            position: relative;
+                        }
+                        .active::after {
+                            content: '';
+                            position: absolute;
+                            left: 0;
+                            top: 0;
+                            width: 6px;
+                            height: 100%;
+                            background: #fa483a;
+                            border-radius: 3px 0px 0px 3px;
+                        }
+                    }
+                }
+            }
+        }
+        .box:nth-child(2) {
+            margin-left: 50px;
+        }
+        .box:first-child::after {
+            content: '';
+            width: 42px;
+            height: 123px;
+            position: absolute;
+            left: 788px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-image: url('../../../assets/img/applyPng.png');
+        }
+    }
+}
+.container1 .content3 .box:nth-child(2) .bx1 .jiazi .jiaziCont .active {
+    background: #e4f7f0;
+}
+.container1 .content3 .box:nth-child(2) .bx1 .jiazi .jiaziCont .active::after {
+    background: #1ec084;
+}
+.dialog {
+    width: 720px;
+    height: 268px;
+    display: flex;
+    justify-content: space-between;
+    .item1 {
+        width: 300px;
+        height: 268px;
+        background: #fff8f7;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        .title {
+            text-align: center;
+            line-height: 40px;
+            color: #fff;
+            height: 40px;
+            background: #fa483a;
+        }
+        .cont {
+            box-sizing: border-box;
+            padding: 24px 0 0 24px;
+            .m1 {
+                display: flex;
+                justify-content: flex-start;
+                flex-direction: row;
+                line-height: 25px;
+                .label {
+                    width: 73px;
+                }
+                .lms {
+                    letter-spacing: 12px;
+                }
+            }
+        }
+    }
+    .item1:nth-child(2) {
+        background: #f5fffc;
+        .title {
+            background: #1ec084;
+        }
+    }
+}
+</style>

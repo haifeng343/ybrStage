@@ -1,0 +1,342 @@
+<template>
+    <div>
+        <div class="header">
+            <div class="logo">
+                <img class="logo1" src="../../assets/img/logo1.png" alt />
+            </div>
+            <!-- 折叠按钮 -->
+            <!-- <div class="collapse-btn" @click="collapseChage">
+            <i v-if="!collapse" class="el-icon-s-fold"></i>
+            <i v-else class="el-icon-s-unfold"></i>
+            </div>-->
+            <div class="header-right">
+                <div class="header-user-con">
+                    <!-- 全屏显示 -->
+                    <div class="btn-fullscreen" @click="handleFullScreen">
+                        <el-tooltip
+                            effect="dark"
+                            :content="fullscreen?`取消全屏`:`全屏`"
+                            placement="bottom"
+                        >
+                            <i class="el-icon-rank"></i>
+                        </el-tooltip>
+                    </div>
+                    <!-- 消息中心 -->
+                    <!-- <div class="btn-bell">
+                    <el-tooltip
+                        effect="dark"
+                        :content="message?`有${message}条未读消息`:`消息中心`"
+                        placement="bottom"
+                    >
+                        <router-link to="/tabs">
+                            <i class="el-icon-bell"></i>
+                        </router-link>
+                    </el-tooltip>
+                    <span class="btn-bell-badge" v-if="message"></span>
+                    </div>-->
+                    <!-- 用户头像 -->
+                    <div class="user-avator">
+                        <img src="../../assets/img/img.jpg" />
+                    </div>
+                    <!-- 用户名下拉菜单 -->
+                    <el-dropdown class="user-name" trigger="click" @command="handleCommand">
+                        <span class="el-dropdown-link">
+                            {{username}}
+                            <i class="el-icon-arrow-down"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item @click.native="handleEditPwd">修改密码</el-dropdown-item>
+                            <el-dropdown-item
+                                divided
+                                @click.native="handleChangeDD"
+                                v-if="openid"
+                            >钉钉改绑</el-dropdown-item>
+                            <el-dropdown-item divided @click.native="handleChangeDD" v-else>钉钉绑定</el-dropdown-item>
+                            <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div>
+            </div>
+        </div>
+        <!-- 修改密码 -->
+        <!-- <el-dialog :close-on-click-modal="false"
+            title="修改密码"
+            :visible.sync="addDialogVisible"
+            width="40%"
+            @close="addDialogClosed"
+        >
+            <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="90px">
+                <el-form-item label="修改密码" prop="pwd">
+                    <el-input type="text" v-model="addForm.pwd" placeholder="请输入密码"></el-input>
+                </el-form-item>
+                <el-form-item label="确认密码" prop="pwd1">
+                    <el-input type="text" v-model="addForm.pwd1" placeholder="请确认密码"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="addDialogClosed">取 消</el-button>
+                <el-button @click="addSubmitForm('addForm')">确 定</el-button>
+            </span>
+        </el-dialog>-->
+
+        <!-- 钉钉改绑 -->
+        <el-dialog :close-on-click-modal="false"
+            :title="this.openid?'钉钉改绑':'钉钉绑定'"
+            :visible.sync="addDialogVisibleDD"
+            width="40%"
+            class="dialog1"
+            @close="addDialogClosedDD"
+        >
+            <div id="ding-login" v-if="addDialogVisibleDD"></div>
+        </el-dialog>
+    </div>
+</template>
+<script>
+import bus from '../common/bus';
+import qs from 'qs';
+// 钉钉后台获取的appid和appSecret，appSecret没有用到扫码中
+let appid = 'dingoavnbhbtdoebjs9u5j';
+let appSecret = '55AxDMCBrfRcqWs2O0RnWmSaRc8aPIEhs0WqFYzhlZ2M3KfDsZp_h1Sk1UfwPrRZ';
+// 重定向地址，因为vue用的hash，所以网址后面是 #/
+// let redirect = encodeURIComponent(`http://localhost:8081/dashboard`);
+let redirect = encodeURIComponent(`http://saas.mfetv.top/scanding`);
+// 官网给的跳转连接格式
+let http_url = encodeURIComponent(
+    `https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${appid}&response_type=code&scope=snsapi_login&state=login&redirect_uri=${redirect}`
+);
+export default {
+    data() {
+        return {
+            addDialogVisibleDD: false,
+            code: qs.parse(window.location.hash.substring(3)).code, // 获取的临时授权码,
+            collapse: false,
+            fullscreen: false,
+            name: 'linxin',
+            message: 2,
+            toggle: false,
+            openid: null,
+            // addDialogVisible: false,
+            // addForm: {
+            //     pwd: '',
+            //     pwd1: ''
+            // },
+            // addFormRules: {
+            //     pwd: [{ required: true, trigger: 'blur', message: '请输入密码' }],
+            //     pwd1: [{ required: true, trigger: 'blur', message: '请确认密码' }]
+            // }
+        };
+    },
+    computed: {
+        username() {
+            let username = localStorage.getItem('ms_username');
+            return username ? username : this.name;
+        }
+    },
+    created() {
+        // 获取到扫码结果，并且跳转获取临时登录码
+        var handleMessage = function (event) {
+            var origin = event.origin;
+            if (origin == 'https://login.dingtalk.com') {
+                //判断是否来自ddLogin扫码事件。
+                // 拿到 loginTmpCode 后，跳转连接拿到临时登陆码，之后返回到跳转的地址，会携带临时登陆码
+                var loginTmpCode = event.data;
+                let url = `https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${appid}&response_type=code&scope=snsapi_login&state=bind&redirect_uri=${http_url}&loginTmpCode=${loginTmpCode}`;
+                // 这边直接打开拼接好的连接，去获取临时登录码，回来地址在下面
+
+                location.href = url;
+                // let box = document.getElementById('ding-login');
+            }
+        };
+        if (typeof window.addEventListener != 'undefined') {
+            window.addEventListener('message', handleMessage, false);
+        } else if (typeof window.attachEvent != 'undefined') {
+            window.attachEvent('onmessage', handleMessage);
+        }
+    },
+    methods: {
+        // 钉钉改绑
+        handleChangeDD() {
+            this.addDialogVisibleDD = true;
+            // 这边需要用 $nextTick() 方法来等DOM渲染完成后，才能获取到盒子容器（$nextTick 方法见另一篇文章）
+            this.$nextTick(() => {
+                // 钉钉登录，参数文档中那些其他项就不展示了，按照文档自己配置就可以
+                var obj = DDLogin({
+                    id: 'ding-login',
+                    goto: http_url,
+                    style: 'border:none;background-color:#FFFFFF;'
+                });
+                // 重置扫码登录框的样式，让登录框居中
+                let box = document.getElementById('ding-login');
+                box.querySelector('iframe').style.position = 'absolute';
+                box.querySelector('iframe').style.top = '0';
+                box.querySelector('iframe').style.bottom = '0';
+                box.querySelector('iframe').style.left = '0';
+                box.querySelector('iframe').style.right = '0';
+                box.querySelector('iframe').style.margin = 'auto';
+            });
+        },
+        // 点击关闭钉钉修改弹窗
+        addDialogClosedDD() {
+            this.addDialogVisibleDD = false;
+        },
+        // 用户名下拉菜单选择事件
+        handleCommand(command) {
+            if (command == 'loginout') {
+                localStorage.removeItem('ms_username');
+                localStorage.removeItem('menu');
+                localStorage.removeItem('userInfo');
+                localStorage.removeItem('token');
+                this.$router.push('/login');
+            }
+            this.toggle = !this.toggle;
+        },
+        // 修改密码
+        handleEditPwd() {
+            this.addDialogVisible = true;
+        },
+        // 提交校验
+        addSubmitForm(formName) {
+            this.$refs.addFormRef.validate((valid) => {
+                if (valid) {
+                    // this.$http.post('/api/container/savebyfridge', {
+                    // }).then((res) => {
+                    //     if (res.data.success) {
+                    //         this.addDialogVisible = false;
+                    //         this.$message.success(res.data.message);
+                    //     } else {
+                    //         this.$message.error(res.data.message);
+                    //     }
+                    // });
+                }
+            });
+        },
+        // 关闭弹窗
+        addDialogClosed() {
+            this.$refs.addFormRef.resetFields();
+            this.addDialogVisible = false;
+        },
+        // 侧边栏折叠
+        collapseChage() {
+            this.collapse = !this.collapse;
+            bus.$emit('collapse', this.collapse);
+        },
+        // 全屏事件
+        handleFullScreen() {
+            let element = document.documentElement;
+            if (this.fullscreen) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitCancelFullScreen) {
+                    document.webkitCancelFullScreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            } else {
+                if (element.requestFullscreen) {
+                    element.requestFullscreen();
+                } else if (element.webkitRequestFullScreen) {
+                    element.webkitRequestFullScreen();
+                } else if (element.mozRequestFullScreen) {
+                    element.mozRequestFullScreen();
+                } else if (element.msRequestFullscreen) {
+                    // IE11
+                    element.msRequestFullscreen();
+                }
+            }
+            this.fullscreen = !this.fullscreen;
+        }
+    },
+    mounted() {
+        if (document.body.clientWidth < 1500) {
+            this.collapseChage();
+        }
+        setTimeout(() => {
+            this.openid = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).openid : '';
+            this.name = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).nickname : '';
+        }, 500);
+    }
+};
+</script>
+<style scoped>
+.header {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 70px;
+    font-size: 22px;
+}
+.collapse-btn {
+    float: left;
+    padding: 0 21px;
+    cursor: pointer;
+    line-height: 70px;
+}
+.header .logo {
+    float: left;
+    width: 250px;
+    line-height: 70px;
+}
+.header-right {
+    float: right;
+    padding-right: 50px;
+}
+.header-user-con {
+    display: flex;
+    height: 70px;
+    align-items: center;
+}
+.btn-fullscreen {
+    transform: rotate(45deg);
+    margin-right: 5px;
+    font-size: 24px;
+}
+.btn-bell,
+.btn-fullscreen {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    border-radius: 15px;
+    cursor: pointer;
+}
+.btn-bell-badge {
+    position: absolute;
+    right: 0;
+    top: -2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background: #f56c6c;
+    color: #fff;
+}
+.user-name {
+    margin-left: 10px;
+}
+.user-avator {
+    margin-left: 20px;
+}
+.user-avator img {
+    display: block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+#ding-login {
+    width: 500px;
+    height: 500px;
+    background: #fff;
+}
+.el-dialog__body {
+    max-height: 600px;
+    height: 600px !important;
+    position: relative;
+    overflow-y: scroll;
+    height: 500px;
+}
+.el-dropdown-menu__item {
+    text-align: center;
+}
+</style>

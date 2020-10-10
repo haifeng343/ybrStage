@@ -40,30 +40,30 @@
                     </div>
                 </div>
             </div>
-            <el-table
+            <!-- <el-table
                 :data="tableData"
                 border
                 class="table"
-                height="600"
+                height="560"
                 :header-cell-style="{background:'#fff',color:'#606266'}"
                 :row-class-name="tableRowClassName"
                 @selection-change="handleSelectionChange"
             >
-                <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column prop="id" fixed label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="name" fixed label="名称" align="center" width="200"></el-table-column>
-                <el-table-column prop="no" fixed label="描述" align="center"></el-table-column>
-                <el-table-column prop="createtime" fixed label="创建日期" align="center" width="200">
+                <el-table-column :resizable="false" type="selection" width="55"></el-table-column>
+                <el-table-column :resizable="false" prop="id" fixed label="ID" width="55" align="center"></el-table-column>
+                <el-table-column :resizable="false" prop="name" fixed label="名称" align="center" width="200"></el-table-column>
+                <el-table-column :resizable="false" prop="no" fixed label="描述" align="center"></el-table-column>
+                <el-table-column :resizable="false" prop="createtime" fixed label="创建日期" align="center" width="200">
                     <template slot-scope="scope">
                         <span>{{scope.row.createtime}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column fixed label="修改日期" align="center" width="200">
+                <el-table-column :resizable="false" fixed label="修改日期" align="center" width="200">
                     <template slot-scope="scope">
                         <span>{{scope.row.updatetime}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" width="180" align="center" fixed="right">
+                <el-table-column :resizable="false" label="操作" width="180" align="center" fixed="right">
                     <template slot-scope="scope">
                         <el-button
                             size="mini"
@@ -81,10 +81,59 @@
                         ></el-button>
                     </template>
                 </el-table-column>
-            </el-table>
-
+            </el-table> -->
+            <div class="container1">
+            <div class="item" v-for="item in tableData" :key="item.containerid">
+                <div class="item1 kk">
+                    <div class="itemTop">
+                        <img src="../../../assets/img/room.png" alt />
+                    </div>
+                    <div class="itemBot">
+                        <p>{{ item.name }}</p>
+                    </div>
+                </div>
+                <div class="item2 kk">
+                    <div class="itemTop2">
+                        <div class="start">
+                            <img src="../../../assets/img/tag.png" class="img1" alt />
+                            <div class="txt">
+                                冰箱编号：
+                                <p>{{ item.no }}</p>
+                            </div>
+                        </div>
+                        <div class="txt">
+                            冰箱名称：
+                            <p>{{ item.name }}</p>
+                        </div>
+                        <div class="txt">
+                            冰箱型号：
+                            <p>{{ item.model }}</p>
+                        </div>
+                        <div class="start">
+                            <img src="../../../assets/img/use.png" class="img1" alt />
+                            <div class="txt">{{ item.keeperuser }}</div>
+                        </div>
+                        <div class="dic">
+                            <div class="title">-30℃</div>
+                            <div class="txt1">海尔</div>
+                        </div>
+                    </div>
+                    <div class="itemBot2">
+                        <div class="title2">冰箱可放入材料：</div>
+                        <div class="txt2">冰箱可放入材料冰箱可放入材料冰箱可放入材料冰箱可放入材料冰箱可放入材料冰箱可放入材料</div>
+                    </div>
+                    <div class="more">
+                        <span @click="handleEdit(item)">修改</span>
+                        <span @click="toDetail(item)">查看详情</span>
+                        <span @click="handleDelete(item)">删除</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
             <!-- 分页 -->
             <el-pagination
+                v-if="pageSize > 10"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page="pageIndex"
@@ -95,7 +144,7 @@
             ></el-pagination>
 
             <!-- 添加用户 -->
-            <el-dialog
+            <el-dialog :close-on-click-modal="false"
                 :title="addForm.id?'编辑房间:':'新建房间:'"
                 :visible.sync="addDialogVisible"
                 width="50%"
@@ -186,6 +235,14 @@ export default {
                 no: '' //描述
             };
             // console.log(this.$refs.childRef.getData)//调用子组件的属性和方法
+        },
+        toDetail(item){
+            this.$router.push({
+                    query: {
+                        id: item.id,
+                    },
+                    path: '/roomDetail'
+                });
         },
         // 编辑
         handleEdit(index, item) {
@@ -286,6 +343,11 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+@import url('../../../assets/css/container.less');
+.itemTop img{
+    width: 248px!important;
+height: 166px!important;
+}
 .btnContentTop {
     border: none;
     box-shadow: none;

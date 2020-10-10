@@ -5,45 +5,21 @@
             <i class="el-icon-d-arrow-right"></i>
             <div class="headerTop_text">冰箱管理</div>
         </div>
+        <div class="middle">
+            <div class="content_btn success" @click="add">
+            <img src="../../../assets/img/add1.png" alt />
+            <p>新增冰箱</p>
+        </div>
+        <div class="roomList">
+            <div :class="['roomItem',item.id==roomId?'active':'']" v-for="item in roomList" :key="item.id" @click="changeRoom(item.id)">{{item.name}}</div>
+        </div>
+        </div>
         <!-- 头部搜索条件 -->
         <div class="btnContent">
-            <div class="btnContentTop">
-                <div class="btnContentLeft">
-                    <span>90%及以上</span>
-                    <span>60%及以上</span>
-                    <span>40%及以上</span>
-                    <span>20%及以上</span>
-                    <span>10%及以上</span>
-                </div>
-                <div class="btnContentRight">
-                    <!-- <div class="content_btn">
-                        <img src="../../assets/img/loading.png" alt />
-                        <p>重置</p>
-                    </div>-->
-                    <div class="content_btn success" @click="add">
-                        <img src="../../../assets/img/add1.png" alt />
-                        <p>新增冰箱</p>
-                    </div>
-                    <!-- <div class="content_btn error">
-                        <img src="../../assets/img/delete1.png" alt />
-                        <p>删除</p>
-                    </div>
-                    <div class="content_btn">
-                        <img src="../../assets/img/edit.png" alt />
-                        <p>修改</p>
-                    </div>-->
-                </div>
-            </div>
             <div class="btnContentBottom">
                 <div class="btnSelect">
-                    <span>选择房间:</span>
-                    <el-select v-model="value" @change="changeRoom" placeholder="请选择">
-                        <el-option
-                            v-for="item in roomList"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id"
-                        ></el-option>
+                    <el-select v-model="value" placeholder="请选择">
+                        <el-option v-for="item in allList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                     </el-select>
                 </div>
                 <div class="searchForm">
@@ -66,8 +42,14 @@
                     <div class="itemTop">
                         <img src="../../../assets/img/icebox.png" alt />
                     </div>
-                    <div class="itemBot">
-                        <p>{{item.name}}</p>
+                    <div class="itemBot1">
+                        <p>{{ item.name }}</p>
+                        <div class="right">
+                            <p>使用量：96%</p>
+                            <div class="progress">
+                                <div class="number"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="item2 kk">
@@ -76,20 +58,20 @@
                             <img src="../../../assets/img/tag.png" class="img1" alt />
                             <div class="txt">
                                 冰箱编号：
-                                <p>{{item.no}}</p>
+                                <p>{{ item.no }}</p>
                             </div>
                         </div>
                         <div class="txt">
                             冰箱名称：
-                            <p>{{item.name}}</p>
+                            <p>{{ item.name }}</p>
                         </div>
                         <div class="txt">
                             冰箱型号：
-                            <p>{{item.model}}</p>
+                            <p>{{ item.model }}</p>
                         </div>
                         <div class="start">
                             <img src="../../../assets/img/use.png" class="img1" alt />
-                            <div class="txt">{{item.keeperuser}}</div>
+                            <div class="txt">{{ item.keeperuser }}</div>
                         </div>
                         <div class="dic">
                             <div class="title">-30℃</div>
@@ -100,16 +82,10 @@
                         <div class="title2">冰箱可放入材料：</div>
                         <div class="txt2">冰箱可放入材料冰箱可放入材料冰箱可放入材料冰箱可放入材料冰箱可放入材料冰箱可放入材料</div>
                     </div>
-                    <div class="more" @click="toDetail">查看详情</div>
-                </div>
-                <div class="item3">
-                    <div class="item3Item" @click="handleEdit(item)">
-                        <img src="../../../assets/img/edit.png" alt />
-                        <p>编辑</p>
-                    </div>
-                    <div class="item3Item" @click="handleDelete(item)">
-                        <img src="../../../assets/img/delete.png" alt />
-                        <p>删除</p>
+                    <div class="more">
+                        <span @click="handleEdit(item)">修改</span>
+                        <span @click="toDetail">查看详情</span>
+                        <span @click="handleDelete(item)">删除</span>
                     </div>
                 </div>
             </div>
@@ -117,7 +93,8 @@
 
         <!-- 添加冰箱 -->
         <el-dialog
-            :title="addForm.id?'编辑冰箱':'新增冰箱'"
+            :close-on-click-modal="false"
+            :title="addForm.id ? '编辑冰箱' : '新增冰箱'"
             :visible.sync="addDialogVisible"
             width="40%"
             @close="addDialogClosed"
@@ -125,22 +102,12 @@
             <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="90px">
                 <el-form-item label="选择房间" prop="roomid">
                     <el-select v-model="addForm.roomid" filterable placeholder="请选择">
-                        <el-option
-                            v-for="item in roomList1"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id"
-                        ></el-option>
+                        <el-option v-for="item in roomList1" :key="item.id" :label="item.name" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="容器保管员" prop="keeperuserid">
                     <el-select v-model="addForm.keeperuserid" filterable placeholder="请选择">
-                        <el-option
-                            v-for="item in userList"
-                            :key="item.userid"
-                            :label="item.username"
-                            :value="item.userid"
-                        ></el-option>
+                        <el-option v-for="item in userList" :key="item.userid" :label="item.username" :value="item.userid"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="冰箱编号" prop="no">
@@ -191,10 +158,11 @@
 
         <!-- 分页 -->
         <el-pagination
+            v-if="pageSize > 10"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="pageIndex"
-            :page-sizes="[10, 20, 30, 40,50]"
+            :page-sizes="[10, 20, 30, 40, 50]"
             :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="totalCount"
@@ -211,6 +179,7 @@ export default {
             pageSize: 10, //条数
             totalCount: 0, //总条数
             tableData: [], //表格数据
+            roomId:0,//默认选择全部房间
             addForm: {
                 id: '',
                 roomid: '', //房间id
@@ -243,12 +212,38 @@ export default {
                 levela: [{ required: true, trigger: 'blur', message: '请输入大层层数' }],
                 levelb: [{ required: true, trigger: 'blur', message: '请输入小层层数' }],
                 levelb: [{ required: true, trigger: 'blur', message: '请输入小层层数' }],
-                remark: [{ required: true, trigger: 'blur', message: '请输入容器描述' }],
+                remark: [{ required: true, trigger: 'blur', message: '请输入容器描述' }]
             },
             roomList: [], //房间列表
             roomList1: [], //房间列表不包含全部
             userList: [], //用户列表
             addDialogVisible: false, //添加对话框的显示隐藏
+            allList:[
+                {
+                    id:0,
+                    name:'全部'
+                },
+                {
+                    id:1,
+                    name:'90%及以上'
+                },
+                {
+                    id:2,
+                    name:'60%及以上'
+                },
+                {
+                    id:3,
+                    name:'40%及以上'
+                },
+                {
+                    id:4,
+                    name:'20%及以上'
+                },
+                {
+                    id:5,
+                    name:'10%及以上'
+                },
+            ]
         };
     },
     mounted() {
@@ -258,8 +253,8 @@ export default {
     },
     methods: {
         // 切换房间
-        changeRoom(e){
-            this.value = e;
+        changeRoom(e) {
+            this.roomId = e;
             this.getData(1);
         },
         // 切换样本盒规格
@@ -301,10 +296,10 @@ export default {
                 });
         },
         // 编辑冰箱
-        handleEdit(item){
+        handleEdit(item) {
             console.log(item);
-            this.addForm={
-                id:item.containerid,
+            this.addForm = {
+                id: item.containerid,
                 roomid: item.roomid, //房间id
                 no: item.no, //冰箱编号
                 name: item.name, //冰箱名称
@@ -320,9 +315,9 @@ export default {
                 remark: item.remark, //容器描述
                 dataids: item.dataids, //可放入材料id
                 datas: item.datas, //可放入材料str
-                temperatureid: item.temperatureid==0?null:item.temperatureid, //温度id
+                temperatureid: item.temperatureid == 0 ? null : item.temperatureid, //温度id
                 temperature: item.temperature //温度str
-            }
+            };
             this.addDialogVisible = true;
         },
         // 跳转冰箱详情
@@ -344,7 +339,7 @@ export default {
             this.$http
                 .post('/api/container/getlistbyfridge', {
                     name: this.keyword,
-                    roomid:this.value,
+                    roomid: this.value,
                     pageIndex: pageIndex,
                     pageSize: this.pageSize,
                     fldSort: '',
@@ -482,17 +477,19 @@ export default {
             //     temperature: '' //温度str
             // }
             // this.addDialogVisible = true;
-            this.$router.push('/addContainer')
+            this.$router.push('/addContainer');
         },
         // 关闭弹窗
         addDialogClosed() {
             this.$refs.addFormRef.resetFields();
             this.addDialogVisible = false;
-        },
+        }
     }
 };
 </script>
 <style lang="less" scoped>
 @import url('../../../assets/css/container.less');
-
+.item3 {
+    z-index: 999;
+}
 </style>
